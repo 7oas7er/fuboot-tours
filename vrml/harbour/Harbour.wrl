@@ -33,7 +33,7 @@ DEF tmpView Viewpoint {
 }
 
 NavigationInfo {
-        type [ "WALK" ]
+        type [ "WALK", "ANY" ]
         headlight FALSE
         speed 1
 }
@@ -485,7 +485,7 @@ ROUTE Laby.foundBall TO ScoreCount.addScore
 EXTERNPROTO AMine [
   field  SFInt32 power
   eventOut SFInt32 damage
-] Mine2.wrl#Mine
+] "Mine2.wrl#Mine"
 # front line
   Transform {
         translation -12 .5 -9

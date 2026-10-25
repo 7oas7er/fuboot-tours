@@ -186,7 +186,7 @@ DEF Cont5b Content {
 EXTERNPROTO AMine [
   field  SFInt32 power
   eventOut SFInt32 damage
-] Mine2.wrl#Mine
+] "Mine2.wrl#Mine"
 Transform {
         translation -2 0 -8
         scale .4 .4 .4
