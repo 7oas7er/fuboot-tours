@@ -1,0 +1,69 @@
+#VRML V2.0 utf8
+
+# This is a barrel by Philipp
+
+Group {
+
+	children [
+		# a ring proto
+		DEF Ring Transform {
+			translation	0 0 0
+			children [
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF Defmaterial Material {}
+		    			texture
+						ImageTexture {
+			    			url	"barrel.jpg"
+						}
+					}
+	    			geometry Cylinder {
+						height 3
+						top	FALSE
+						bottom FALSE
+					}
+				}
+			]
+		}
+		DEF UppestRing Transform	{
+			translation	0 1.35 0
+			children [
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						USE	Defmaterial
+		    			texture
+						ImageTexture {
+			    			url	"barrel.jpg"
+						}
+					}
+	    			geometry Cylinder {
+						height 0.2
+						radius 1.05
+					}	
+				}
+			]
+		}
+		DEF	SecondRing Transform {
+			translation	0 -1.0 0
+			children [
+				USE	UppestRing
+			]
+		}
+		DEF	ThirdRing Transform {
+			translation	0 -1.75 0
+			children [
+				USE	UppestRing
+			]
+		}
+		DEF	LowestRing Transform {
+			translation	0 -2.7 0
+			children [
+				USE	UppestRing
+			]
+		}
+	]
+}

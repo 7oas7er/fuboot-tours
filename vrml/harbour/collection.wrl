@@ -134,7 +134,7 @@ PROTO Register [
                                 }
                                 texture DEF PicTexture ImageTexture { url IS pic1 }
                         }
-                        geometry Box { size .1 .1 0 }
+                        geometry Box { size .1 .1 0.02 }
                  }
                  Transform {
                         translation .04 -.04 0
@@ -238,7 +238,7 @@ PROTO Counter [
                                     }
                                     Shape {
                                    	   appearance Appearance { material Material { transparency 1 } }
-                                           geometry Box { size .2 .05 0 }
+                                           geometry Box { size .2 .05 0.02 }
                                     }
                                 ]
                              }
