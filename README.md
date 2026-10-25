@@ -29,6 +29,12 @@ On the open sea, hover the left strip for forward/back speed and the circular pa
 
 Originally needed a browser with the **Blaxxun Contact** VRML plugin and a PC of about Pentium III / Athlon era with 3D acceleration. Modern browsers can use the X_ITE pages above instead.
 
+## Agents / security
+
+- [`AGENTS.md`](AGENTS.md) — agent workflow (PRs → `staging`)
+- [`SECURITY.md`](SECURITY.md) — reporting and secrets
+- [`docs/github-branch-protection.md`](docs/github-branch-protection.md) — GitHub security floor
+
 ## Authors
 
 Andreas Gramm, Philipp Heroven, Oliver Kudell, Frank Schlesinger — Fachbereich Informatik, Freie Universität Berlin.

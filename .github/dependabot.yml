@@ -1,0 +1,17 @@
+# Supply-chain updates for GitHub Actions. PRs target staging.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    target-branch: staging
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+    groups:
+      github-actions:
+        patterns:
+          - "*"
