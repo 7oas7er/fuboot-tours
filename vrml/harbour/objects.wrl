@@ -1,0 +1,388 @@
+#VRML V2.0 utf8
+#
+# -- PROTO-objects for FUBOOT-TOURS
+#
+#
+# l.  25   Stair
+# l. 147   Vessel
+# l. 175   Barrel
+# l. 238   PileOfBarrels
+# l. 260   Tony
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+
+#a stairway.
+PROTO Stair [] {
+ Transform {
+    rotation 1 0 0 -.4
+    children [
+	DEF Stairy Transform {
+            children [
+		Transform {
+			translation -1 0 0
+		        children [
+		             DEF Bar Shape {
+		                                appearance DEF MetalApp Appearance {
+		                                        material Material { emissiveColor 0.654 0.334 0 }
+		                                        texture ImageTexture { url "im/metalGrip.jpg" }
+		                                        textureTransform TextureTransform { scale 1 4 }
+		                                }
+		                                geometry Cylinder {
+		                                           radius .1
+		                                           height 5
+		                                }
+		             }
+		       ]
+		}
+		Transform {
+			translation 1 0 0
+		        children [ USE Bar ]
+		}
+
+		DEF Step Transform {
+			rotation 1 0 0 .4
+			scale 1.2 .05 .3
+		        children [
+		             Shape {
+		                                appearance DEF MetalApp Appearance {
+		                                        material Material { emissiveColor 0.654 0.334 0 }
+		                                        texture ImageTexture { url "im/metalGrip.jpg" }
+		                                        textureTransform TextureTransform { scale 4.5 1 }
+		                                }
+		                                geometry Sphere { radius 1.2 }
+		             }
+		       ]
+		}
+		Transform {
+			translation 0 -1 0
+		        children [ USE Step ]
+		}
+		Transform {
+			translation 0 -2 0
+		        children [ USE Step ]
+		}
+		Transform {
+			translation 0 1 0
+		        children [ USE Step ]
+		}
+		Transform {
+			translation 0 2 0
+		        children [ USE Step ]
+		}
+	   ]
+	}
+	Transform {
+		translation 0 5 0
+		children [ USE Stairy ]
+	}
+	Transform {
+		translation 0 10 0
+		children [ USE Stairy ]
+	}
+	Transform {
+		translation 0 15 0
+		children [ USE Stairy ]
+	}
+	Transform {
+		translation 1 18 0
+		scale 1 .4 1
+		children [ USE Bar ]
+	}
+	Transform {
+		translation -1 18 0
+		scale 1 .4 1
+		children [ USE Bar ]
+	}	
+	Transform {				# invisible 'slide'
+			translation 0 7.2 .5
+		        children [
+		             Shape {
+		                                appearance DEF MetalApp Appearance { material Material { transparency 1 } }
+		                                geometry Box { size 3 20.5 0 }
+		             }
+		       ]
+	}
+   ]
+}
+Transform {
+		translation 1 17.45 -9.9
+		rotation 1 0 0 1.5708
+		children [ USE Bar ]
+}
+Transform {
+		translation -.8 17.45 -12.3
+		rotation 1 1 0 3.1428
+		scale 1 .7 1
+		children [ USE Bar ]
+}
+Transform {					# upper plattform
+ 	 translation -1 16 -9.2
+         children [
+                          DEF Platform Shape {
+                              appearance Appearance {
+		                      material Material { emissiveColor 0.654 0.334 0 }
+                                      texture ImageTexture { url "im/metalGrip.jpg" }
+                                      textureTransform TextureTransform { scale 2 2 }
+                               }
+                              geometry Box {
+                                       size 5 0.1 6
+                              }
+                          }
+         ]
+}
+} # end PROTO Stair
+
+
+# a vessel
+PROTO Vessel  [] {
+   Transform {
+        rotation 0 0 0.9 1
+        translation -10 15 -20
+
+                                        children [
+                                                Shape {
+                                                        appearance Appearance {
+                                                                material Material {
+                                                                         diffuseColor 0.9 0.5 0.5
+                                                                }
+                                                                texture ImageTexture {
+                                                                   url "im/cola.gif"
+                                                                   repeatS TRUE
+                                                                   repeatT TRUE
+
+                                                                }
+                                                        }
+                                                        geometry Cylinder {
+                                                                height 3
+                                                                radius 1
+                                                        }
+                                                }
+                                        ]
+   }
+} # end PTOTO Vessel
+
+# a barrel
+PROTO Barrel []
+{
+		# a ring
+		DEF Ring Transform {
+			translation	0 0 0
+			children [
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF Defmaterial Material {}
+		    			texture
+						ImageTexture {
+			    			url	"im/barrel.jpg"
+						}
+					}
+	    			geometry Cylinder {
+						height 3
+						top	FALSE
+						bottom FALSE
+					}
+				}
+			]
+		}
+		DEF UppestRing Transform	{
+			translation	0 1.35 0
+			children [
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						USE	Defmaterial
+		    			texture
+						ImageTexture {
+			    			url	"im/barrel.jpg"
+						}
+					}
+	    			geometry Cylinder {
+						height 0.2
+						radius 1.05
+					}	
+				}
+			]
+		}
+		DEF	SecondRing Transform {
+			translation	0 -1.0 0
+			children [
+				USE	UppestRing
+			]
+		}
+		DEF	ThirdRing Transform {
+			translation	0 -1.75 0
+			children [
+				USE	UppestRing
+			]
+		}
+		DEF	LowestRing Transform {
+			translation	0 -2.7 0
+			children [
+				USE	UppestRing
+			]
+		}
+} # end PROTO Barrel
+
+# a pile of barrels
+PROTO PileOfBarrels [] {
+  Transform {
+        translation 0 -0.7 0
+	rotation 0 0 1 1.578
+        children [ Barrel {} ]
+  }      
+  Transform {
+        translation 0 0 2
+	rotation 0 0 0 0
+        children [ Barrel {} ]
+  }      
+  Transform {
+        translation 2 0 2
+	rotation 1 0 0 -0.7
+        children [ Barrel {} ]
+  }      
+}
+
+PileOfBarrels {}
+
+PROTO Tony [ eventOut SFInt32 found ]
+{	
+DEF Can Transform {
+#        translation 0 0 -15
+#        rotation 0.7 0 0.2 1
+         children [
+                # Body of Can
+                Shape {
+                        appearance Appearance {
+                                material Material {
+                                        diffuseColor .5 .6 0
+                                      #  emissiveColor .5 .6 0
+                                }
+                        }
+                        geometry Cylinder {
+                                  height 4
+                                radius 1.35
+                                top FALSE
+                                bottom FALSE
+                          }
+                }
+                Shape {
+                        appearance Appearance {
+                                texture MovieTexture {
+                                        url "im/nuke.gif"
+                                        loop FALSE
+                                }
+                                textureTransform TextureTransform { scale 6 3 }
+#                                texture ImageTexture { url "im/cola2.gif" }
+                        }
+                        geometry Cylinder {
+                                bottom FALSE
+                                top FALSE
+                                 height 4
+                                radius 1.4
+                         }
+                }
+                Shape {
+                        appearance Appearance {
+                                texture DEF Texty MovieTexture {
+                                        url "im/nuke.gif"
+                                        loop TRUE
+                                        startTime -1
+                                }
+                        }
+                        geometry Cylinder {
+                                side FALSE
+                                  height 3.5
+                                radius 1
+                          }
+                }
+                Transform {
+                        translation 0 1.5 0
+                        rotation 1 0 0 3.14
+                        children [
+                                Shape {
+                                        appearance Appearance {
+                                                material Material {
+                                                        diffuseColor .5 .6 0
+                                                        emissiveColor .5 .6 0
+                                                }
+                                        }
+                                        geometry Cone {
+                                                bottomRadius 1.35
+                                                  height .9
+                                                  side TRUE
+                                                  bottom FALSE
+                                         }
+                                }
+                        ]
+                }
+                Transform {
+                        translation 0 -1.6 0
+                        children [
+                                Shape {
+                                        appearance Appearance {
+                                                material Material {
+                                                        diffuseColor .5 .6 0
+                                                       # emissiveColor .5 .6 0
+                                                }
+                                        }
+                                        geometry Cone {
+                                                bottomRadius 1.35
+                                                  height .9
+                                                  side TRUE
+                                                  bottom FALSE
+                                         }
+                                }
+                        ]
+                }
+		DEF TonyTouch TouchSensor { }
+                Transform {				# sound
+                     scale 20 15 20
+                     children [
+                          Sound {
+                                  source DEF Clippy AudioClip {
+                                          url "../sound/Content.wav"
+                                          startTime -1
+                                          loop FALSE
+                                  }
+                          }
+                     ]
+                }                		
+        ]
+}
+
+   DEF TonyScript Script {
+	eventIn  SFTime  touched
+	field    SFInt32 worth -50
+	eventOut SFInt32 tt IS found
+        directOutput TRUE
+        url ["javascript:
+                 function touched ( b ) { tt = worth; }
+        "]
+   }        
+
+#  Animation control:
+DEF Timer TimeSensor { cycleInterval 15 loop TRUE startTime 0 }
+DEF Rot1 OrientationInterpolator {
+    key [ 0.0, 0.15, 0.37, 0.7, 1.0 ]
+    keyValue [ 0.0 0.1 0.7 0.0, 0.0 1.0 0.7 1.0, 0.0 1.0 0.7 2.0, 0.0 1.0 0.7 3.14, 0.0 1.0 0.7 6.28 ]
+}
+ROUTE TonyTouch.touchTime TO TonyScript.touched
+ROUTE TonyTouch.touchTime TO Clippy.set_startTime
+ROUTE Timer.fraction_changed TO Rot1.set_fraction
+ROUTE Rot1.value_changed TO Can.set_rotation
+
+} # end Tony

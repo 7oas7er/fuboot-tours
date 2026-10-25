@@ -1,0 +1,15 @@
+# Third-party VRML tool installers (not redistributable)
+addon/**/*.exe
+addon/**/*.zip
+
+# Synology / sync conflict artifacts
+**/*Conflicted*
+**/(Conflicted*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/

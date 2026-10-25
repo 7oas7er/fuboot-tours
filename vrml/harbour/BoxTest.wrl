@@ -1,0 +1,87 @@
+#VRML V2.0 utf8
+#
+# Testing a box as external PROTO
+#
+
+NavigationInfo {
+        type [ "WALK" ]
+        headlight TRUE
+}
+Viewpoint {
+        position 0.0 1.5 8
+        description "Entry view"
+}
+Background {
+    skyColor [
+        0.0 0.2 0.9,
+        0.0 0.3 0.8,
+        0.15 0.1 0.1,
+        0.3 0.2 0
+    ]
+    skyAngle [
+        1.30,
+        1.7,
+        1.8,
+    ]
+}
+DirectionalLight {
+  ambientIntensity  0.8
+  color 0 0.2 .495
+  direction  0 0 -1
+  intensity  1
+}
+
+
+#     Scene for evaluation:
+
+EXTERNPROTO MyBoxy [
+        field MFString insideTexture
+        field MFString outsideTexture
+        field MFString contentURL
+        field SFVec3f  boxSize
+] "Box.wrl"
+
+# box1
+Transform {
+        translation -2 .3 -2
+        children [
+                MyBoxy {
+                        insideTexture [ "im/weirdBrownishSurface.jpg" ]
+                        outsideTexture [ "im/water.jpg" ]
+                        contentURL [ "NiceBall.wrl" ]
+                        boxSize 3 1 .9
+                }
+        ]
+}
+
+# box2
+Transform {
+        translation 2 .3 -2
+        children [
+                MyBoxy {
+                        insideTexture [ "im/lightSand.gif" ]
+                        outsideTexture [ "im/redMetal.jpg" ]
+                        contentURL [ "Ghost.wrl" ]
+                        boxSize 2 1.5 1.1
+                }
+        ]
+}
+
+# floor
+DEF Floor Transform {
+                  translation 0 0 0
+                  children [
+                          Shape {
+                              appearance Appearance {
+                                      material Material {
+                                               emissiveColor 0.354 0.494 0.3965
+                                      }
+                                      texture ImageTexture { url "im/greenPlaster.jpg" }
+                                       textureTransform TextureTransform { scale 8 8 }
+                               }
+                              geometry Box {
+                                       size 10 0 10
+                              }
+                          }
+                  ]
+}

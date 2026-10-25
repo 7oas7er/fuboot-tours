@@ -1,0 +1,589 @@
+#VRML V2.0 utf8
+
+
+
+
+
+DEF InfoCenters Transform {
+	translation 0 835 0
+	scale 15 15 15
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/Infocenter/infocenter.wrl"	   # OK
+		}
+	]
+}	# END OF INFORMATION CENTER (SET)
+
+# Set the derrick (drillisland ;-) )
+
+DEF	drillisland	Transform {
+	translation	1001 0 0
+	scale 20 20 20
+	rotation 0 0 1 -1.5
+	children [
+		Inline {
+			url	"./objekte/bohrinsel/bohrinsel.wrl"			# OK
+		}
+	]
+}	# END OF BOHRINSEL (SET)
+
+
+# Set a submarine wreck
+
+DEF	submarinewreck Transform {
+	translation	0 -990 0
+	scale 30 30 30
+	rotation 1 0 0 1
+	children [
+		Inline {
+			url	"./objekte/wreck/u-broot.wrl"				# OK
+		}
+	]
+}	# END OF SUBMARINE WRECK  (SET)
+
+# Set another broken submarine
+
+DEF	submarine2wreck Transform {
+	translation	-1000 0 0
+	scale 30 30 30
+	rotation 1 0 0 0.5
+	children [
+		Inline {
+			url	"./objekte/wreck/u-brootbroken.wrl"			# OK
+		}
+	]
+}	# END OF SUBMARINE WRECK  (SET)
+
+# Set a pile of barrrels
+
+DEF	pileofbarrels Transform {
+	translation	0 0 1000
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/barrels/pileOfBarrel.wrl"		# OK	
+		}
+	]
+}	# END OF BARRELS  (SET)
+ 
+DEF	pileofbarrels2 Transform {
+	translation	200 842 100
+	scale 5 5 5
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/barrels/pileOfBarrel.wrl"		# OK
+		}
+	]
+}	# END OF BARRELS  (SET)
+
+DEF	pileofbarrels3 Transform {
+	translation	0 843 -250
+	scale 5 5 5
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/barrels/pileOfBarrel.wrl"		# OK
+		}
+	]
+}	# END OF BARRELS  (SET)
+
+# Set a pile of rocks
+
+DEF	pileofrocks Transform {
+	translation	0 835 300
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/rocks/rocks.wrl"
+		}
+	]
+}	# END OF ROCKS  (SET)
+
+DEF	anotherpileofrocks Transform {
+	translation	-800 0 600
+	scale 10 10 10
+	rotation 1 0 0 1
+	children [
+		Inline {
+			url	"./objekte/rocks/rocks.wrl"
+		}
+	]
+}	
+DEF rocks1 Transform	{
+	translation	-50 0 0
+	scale .8 .8 .8
+	children [
+		USE anotherpileofrocks
+	]	
+}
+
+
+
+
+
+
+
+# END OF ROCKS  (SET)
+
+
+# versunkenes Labor:
+
+DEF	SunkenLab Transform {
+	translation	0 700 700 
+	rotation 1 0 0 .75
+	scale 4.2 4.2 4.2
+       children [
+		Inline { url "./objekte/Labor/sunkenLab.wrl" }
+	]
+}
+
+# mehrere Fische:
+
+
+# Anfang 01: Fischschwaerme, die um die Kugel schwimmen/ rotieren
+Transform {
+	rotation 1 0 0 1
+        children [
+		Inline { url "./objekte/Fische/fish_rotate.wrl" }
+	]
+}
+Transform {
+	rotation 1 0 0 3
+        children [
+		Inline { url "./objekte/Fische/fish_rotate.wrl" }
+	]
+}
+Transform {
+	rotation 0 0 1 2
+        children [
+		Inline { url "./objekte/Fische/fish_rotate.wrl" }
+	]
+}
+Transform {
+	translation	0 50 0
+        children [
+		Inline { url "./objekte/Fische/fish_rotate.wrl" }
+	]
+}
+Transform {
+	rotation 0 1 0 1
+	translation	0 -30 0
+        children [
+		Inline { url "./objekte/Fische/fish_rotate.wrl" }
+	]
+}
+# Ende 01
+
+# Anfang 02: Fischschwarm, der um die Kugel schwimmt/ rotiert
+Transform {
+	rotation 0 1 0 -1
+    children [
+		Inline { url "./objekte/Fische/fish_rotate2.wrl" }
+	]
+}
+
+
+# SET SEVERAL ROCKS
+
+DEF	rock Transform {				# not
+	translation	0 835 300
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/rocks/rock.wrl"
+		}
+	]
+}	
+
+DEF	rock1 Transform {				# not
+	translation	0 835 300
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/rocks/rock.wrl"
+		}
+	]
+}	
+
+DEF	rock2 Transform {				# not
+	translation	0 835 300
+	scale 20 10 15
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/rocks/rock.wrl"
+		}
+	]
+}
+
+DEF	rock3 Transform {				# not
+	translation	0 835 300
+	scale 15 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/rocks/rock.wrl"
+		}
+	]
+}	
+
+DEF	rock4 Transform {				# not
+	translation	0 835 300
+	scale 15 15 15
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/rocks/rock.wrl"
+		}
+	]
+}			# END OF ROCK SET
+
+# SET THESE FUCKING PLANTS
+
+DEF	plant Transform {				# OK
+	translation	301 874 286
+	scale 15 15 15
+	rotation 0.707 -0.708 0 12.88
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant3.wrl"
+		}
+	]
+}	
+
+DEF	plant1 Transform {				# OK
+	translation	286 880 429
+	scale 15 15 15
+	rotation 0.707 -0.708 0 12.88
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant3.wrl"
+		}
+	]
+}
+
+DEF	plant2 Transform {				#  not
+	translation	141 822 512
+	scale 15 15 15
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant3.wrl"
+		}
+	]
+}	
+
+DEF	plant3 Transform {				# not
+	translation	325 706 666
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant3.wrl"
+		}
+	]
+}	
+
+DEF	plant4 Transform {				# not
+	translation 328 799 522
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant3.wrl"
+		}
+	]
+}	
+
+DEF	plant5 Transform {				# not
+	translation	501 639 643
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant3.wrl"
+		}
+	]
+}
+
+DEF	plant6 Transform {				# not
+	translation	482 722 582
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant4.wrl"
+		}
+	]
+}	
+
+DEF	plant7 Transform {				# not
+	translation	461 804 418
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant4.wrl"
+		}
+	]
+}
+
+
+DEF	plant8 Transform {				# not
+	translation	459 869 259
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant4.wrl"
+		}
+	]
+}	
+
+DEF	plant9 Transform {				# not
+	translation 626 646 429
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant4.wrl"
+		}
+	]
+}
+
+
+DEF	plant10 Transform {				# not
+	translation	611 773 229
+	scale 10 10 10
+	rotation 0 1 0 1
+	children [
+		Inline {
+			url	"./objekte/pflanzen/plant4.wrl"
+		}
+	]
+}	
+
+
+
+
+
+
+
+
+
+ROUTE A1_Sensor.isOver TO Navigator.set_speed_1
+ROUTE A2_Sensor.isOver TO Navigator.set_speed_2
+ROUTE A3_Sensor.isOver TO Navigator.set_speed_3
+ROUTE A4_Sensor.isOver TO Navigator.set_speed_4
+ROUTE A5_Sensor.isOver TO Navigator.set_speed_5
+ROUTE A6_Sensor.isOver TO Navigator.set_speed_6
+ROUTE A7_Sensor.isOver TO Navigator.set_speed_7
+ROUTE A8_Sensor.isOver TO Navigator.set_speed_8
+ROUTE A9_Sensor.isOver TO Navigator.set_speed_9
+ROUTE A10_Sensor.isOver TO Navigator.set_speed_10
+ROUTE A11_Sensor.isOver TO Navigator.set_speed_11
+ROUTE A12_Sensor.isOver TO Navigator.set_speed_12
+ROUTE A13_Sensor.isOver TO Navigator.set_speed_13
+
+ROUTE B1_Sensor.isOver TO Navigator.set_ruder_B1
+ROUTE B2_Sensor.isOver TO Navigator.set_ruder_B2
+ROUTE B3_Sensor.isOver TO Navigator.set_ruder_B3
+ROUTE B4_Sensor.isOver TO Navigator.set_ruder_B4
+ROUTE B5_Sensor.isOver TO Navigator.set_ruder_B5
+ROUTE B6_Sensor.isOver TO Navigator.set_ruder_B6
+ROUTE B7_Sensor.isOver TO Navigator.set_ruder_B7
+ROUTE B8_Sensor.isOver TO Navigator.set_ruder_B8
+ROUTE B9_Sensor.isOver TO Navigator.set_ruder_B9
+ROUTE B10_Sensor.isOver TO Navigator.set_ruder_B10
+ROUTE B11_Sensor.isOver TO Navigator.set_ruder_B11
+ROUTE B12_Sensor.isOver TO Navigator.set_ruder_B12
+ROUTE B13_Sensor.isOver TO Navigator.set_ruder_B13
+
+ROUTE B1_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B2_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B3_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B4_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B5_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B6_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B7_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B8_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B9_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B10_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B11_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B12_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE B13_Sensor.isActive TO	Navigator.set_idle_rudder
+
+ROUTE C1_Sensor.isOver TO Navigator.set_ruder_C1
+ROUTE C2_Sensor.isOver TO Navigator.set_ruder_C2
+ROUTE C3_Sensor.isOver TO Navigator.set_ruder_C3
+ROUTE C4_Sensor.isOver TO Navigator.set_ruder_C4
+ROUTE C5_Sensor.isOver TO Navigator.set_ruder_C5
+ROUTE C6_Sensor.isOver TO Navigator.set_ruder_C6
+ROUTE C8_Sensor.isOver TO Navigator.set_ruder_C8
+ROUTE C9_Sensor.isOver TO Navigator.set_ruder_C9
+ROUTE C10_Sensor.isOver TO Navigator.set_ruder_C10
+ROUTE C11_Sensor.isOver TO Navigator.set_ruder_C11
+ROUTE C12_Sensor.isOver TO Navigator.set_ruder_C12
+ROUTE C13_Sensor.isOver TO Navigator.set_ruder_C13
+
+ROUTE C1_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C2_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C3_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C4_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C5_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C6_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C8_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C9_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C10_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C11_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C12_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE C13_Sensor.isActive TO	Navigator.set_idle_rudder
+
+
+ROUTE D1_Sensor.isOver TO Navigator.set_ruder_D1
+ROUTE D2_Sensor.isOver TO Navigator.set_ruder_D2
+ROUTE D3_Sensor.isOver TO Navigator.set_ruder_D3
+ROUTE D4_Sensor.isOver TO Navigator.set_ruder_D4
+ROUTE D5_Sensor.isOver TO Navigator.set_ruder_D5
+ROUTE D6_Sensor.isOver TO Navigator.set_ruder_D6
+ROUTE D8_Sensor.isOver TO Navigator.set_ruder_D8
+ROUTE D9_Sensor.isOver TO Navigator.set_ruder_D9
+ROUTE D10_Sensor.isOver TO Navigator.set_ruder_D10
+ROUTE D11_Sensor.isOver TO Navigator.set_ruder_D11
+ROUTE D12_Sensor.isOver TO Navigator.set_ruder_D12
+ROUTE D13_Sensor.isOver TO Navigator.set_ruder_D13
+
+ROUTE D1_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D2_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D3_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D4_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D5_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D6_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D8_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D9_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D10_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D11_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D12_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE D13_Sensor.isActive TO	Navigator.set_idle_rudder
+
+ROUTE E1_Sensor.isOver TO Navigator.set_ruder_E1
+ROUTE E2_Sensor.isOver TO Navigator.set_ruder_E2
+ROUTE E3_Sensor.isOver TO Navigator.set_ruder_E3
+ROUTE E4_Sensor.isOver TO Navigator.set_ruder_E4
+ROUTE E5_Sensor.isOver TO Navigator.set_ruder_E5
+ROUTE E6_Sensor.isOver TO Navigator.set_ruder_E6
+ROUTE E8_Sensor.isOver TO Navigator.set_ruder_E8
+ROUTE E9_Sensor.isOver TO Navigator.set_ruder_E9
+ROUTE E10_Sensor.isOver TO Navigator.set_ruder_E10
+ROUTE E11_Sensor.isOver TO Navigator.set_ruder_E11
+ROUTE E12_Sensor.isOver TO Navigator.set_ruder_E12
+ROUTE E13_Sensor.isOver TO Navigator.set_ruder_E13
+
+ROUTE E1_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E2_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E3_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E4_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E5_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E6_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E8_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E9_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E10_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E11_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E12_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE E13_Sensor.isActive TO	Navigator.set_idle_rudder
+
+
+ROUTE F1_Sensor.isOver TO Navigator.set_ruder_F1
+ROUTE F2_Sensor.isOver TO Navigator.set_ruder_F2
+ROUTE F3_Sensor.isOver TO Navigator.set_ruder_F3
+ROUTE F4_Sensor.isOver TO Navigator.set_ruder_F4
+ROUTE F5_Sensor.isOver TO Navigator.set_ruder_F5
+ROUTE F9_Sensor.isOver TO Navigator.set_ruder_F9
+ROUTE F10_Sensor.isOver TO Navigator.set_ruder_F10
+ROUTE F11_Sensor.isOver TO Navigator.set_ruder_F11
+ROUTE F12_Sensor.isOver TO Navigator.set_ruder_F12
+ROUTE F13_Sensor.isOver TO Navigator.set_ruder_F13
+
+ROUTE F1_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE F2_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE F3_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE F4_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE F5_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE F9_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE F10_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE F11_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE F12_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE F13_Sensor.isActive TO	Navigator.set_idle_rudder
+
+ROUTE G1_Sensor.isOver TO Navigator.set_ruder_G1
+ROUTE G2_Sensor.isOver TO Navigator.set_ruder_G2
+ROUTE G3_Sensor.isOver TO Navigator.set_ruder_G3
+ROUTE G4_Sensor.isOver TO Navigator.set_ruder_G4
+ROUTE G5_Sensor.isOver TO Navigator.set_ruder_G5
+ROUTE G9_Sensor.isOver TO Navigator.set_ruder_G9
+ROUTE G10_Sensor.isOver TO Navigator.set_ruder_G10
+ROUTE G11_Sensor.isOver TO Navigator.set_ruder_G11
+ROUTE G12_Sensor.isOver TO Navigator.set_ruder_G12
+ROUTE G13_Sensor.isOver TO Navigator.set_ruder_G13
+
+ROUTE G1_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE G2_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE G3_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE G4_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE G5_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE G9_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE G10_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE G11_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE G12_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE G13_Sensor.isActive TO	Navigator.set_idle_rudder
+
+ROUTE H1_Sensor.isOver TO Navigator.set_ruder_H1
+ROUTE H2_Sensor.isOver TO Navigator.set_ruder_H2
+ROUTE H3_Sensor.isOver TO Navigator.set_ruder_H3
+ROUTE H4_Sensor.isOver TO Navigator.set_ruder_H4
+ROUTE H5_Sensor.isOver TO Navigator.set_ruder_H5
+ROUTE H9_Sensor.isOver TO Navigator.set_ruder_H9
+ROUTE H10_Sensor.isOver TO Navigator.set_ruder_H10
+ROUTE H11_Sensor.isOver TO Navigator.set_ruder_H11
+ROUTE H12_Sensor.isOver TO Navigator.set_ruder_H12
+ROUTE H13_Sensor.isOver TO Navigator.set_ruder_H13
+
+ROUTE H1_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE H2_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE H3_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE H4_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE H5_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE H9_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE H10_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE H11_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE H12_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE H13_Sensor.isActive TO	Navigator.set_idle_rudder
+
+ROUTE I1_Sensor.isOver TO Navigator.set_ruder_I1
+ROUTE I2_Sensor.isOver TO Navigator.set_ruder_I2
+ROUTE I3_Sensor.isOver TO Navigator.set_ruder_I3
+ROUTE I4_Sensor.isOver TO Navigator.set_ruder_I4
+ROUTE I5_Sensor.isOver TO Navigator.set_ruder_I5
+ROUTE I9_Sensor.isOver TO Navigator.set_ruder_I9
+ROUTE I10_Sensor.isOver TO Navigator.set_ruder_I10
+ROUTE I11_Sensor.isOver TO Navigator.set_ruder_I11
+ROUTE I12_Sensor.isOver TO Navigator.set_ruder_I12
+ROUTE I13_Sensor.isOver TO Navigator.set_ruder_I13
+ROUTE Bootsuhr.fraction_changed TO Navigator.set_fraction
+
+ROUTE I1_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE I2_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE I3_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE I4_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE I5_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE I9_Sensor.isActive TO	Navigator.set_idle_rudder
+ROUTE I10_Sensor.isActive TO Navigator.set_idle_rudder
+ROUTE I11_Sensor.isActive TO Navigator.set_idle_rudder
+ROUTE I12_Sensor.isActive TO Navigator.set_idle_rudder
+ROUTE I13_Sensor.isActive TO Navigator.set_idle_rudder

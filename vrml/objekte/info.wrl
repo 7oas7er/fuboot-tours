@@ -1,0 +1,32 @@
+#VRML V2.0 utf8
+
+# This is a barrel by Philipp
+
+Group {
+
+	children [
+		# a ring proto
+		DEF Ring Transform {
+			translation	0 0 0
+			children [
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF Defmaterial Material {}
+		    			texture
+						ImageTexture {
+			    			url	"barrel.jpg"
+						}
+					}
+	    			geometry Cylinder {
+						height 3
+						top	FALSE
+						bottom FALSE
+					}
+				}
+			]
+		}
+		
+	]
+}

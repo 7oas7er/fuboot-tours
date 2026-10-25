@@ -1,0 +1,44 @@
+<html>
+
+
+<head>
+
+<title> Fuboot-tours Highscore </title>
+<meta name="author" content="Andreas Gramm">
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+
+ <SCRIPT language="JavaScript">
+     <!-- Hide from older browsers
+  var myCookie = document.cookie;
+  function printScore( i ) {
+    var index = myCookie.indexOf("FBT" + i + "=");
+    if (index == -1) return null;
+    index = myCookie.indexOf("=", index) + 1;
+    var endstr = myCookie.indexOf(";", index);
+    if (endstr == -1) endstr = myCookie.length;
+    document.write(i + ".  " + (unescape(myCookie.substring(index, endstr))) + "<br>");
+  }
+     // Stop hiding -->
+ </SCRIPT>
+
+</head>
+
+
+   <body bgcolor=#000000>
+
+  <center>
+  <p>  <font face="Arial" color="#50FF50"> <b><i>
+             <h1>FUBOOT-TOURS<br>Highscorelist</h1> <br>
+             <h5>Gl&uuml;ckwunsch! Du bist in <br> in die Highscore-Liste eingetragen!</h5>
+             <!-- h5>Congratulations! You managed <br> to enter the highscore list!</h5 -->
+             <br>
+             <script language="JavaScript">  for (i=1;i<11;i++) { printScore(i) }  </script>
+  </p>
+  <p align="center">
+        <a href="javascript:window.close()"> <font face="Arial" color="#50FF50" size="2"> Fenster schlie&szlig;en </font> </a>
+  </p>
+
+   </body>
+
+
+</html>

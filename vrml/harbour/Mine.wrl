@@ -1,0 +1,159 @@
+#VRML V2.0 utf8
+#
+# Content for a box.
+#
+
+Viewpoint {
+    position 0 0 20
+    description "Entry view"
+}
+
+# Mine to be discovered
+PROTO Mine [
+      eventIn SFTime explode
+      eventOut SFTime exploded
+      field SFNode aMine Transform {
+         children [
+             DEF Colly Collision {
+                                collide TRUE
+                                proxy Shape { geometry Sphere { radius 3.5 } }
+             }
+             Shape {
+                                appearance DEF MetalApp Appearance {
+                                        material Material { emissiveColor 0.454 0.234 0 }
+                                        texture ImageTexture { url "im/metalGrip.jpg" }
+                                        textureTransform TextureTransform { scale 4 4 }
+                                }
+                                geometry Sphere {
+                                           radius 2
+                                }
+             }
+             DEF Rods Group {
+                   children [
+                             DEF Rod Transform {
+                                 scale 17.5 1 1
+                                 children [
+                                          Shape {
+                                                appearance USE MetalApp
+                                                geometry Sphere {
+                                                           radius .2
+                                                }
+                                          }
+                                 ]
+                             }
+                             Transform {
+                                       rotation 0 1 1 3.14
+                                       children [  USE Rod  ]
+                             }
+                             Transform {
+                                       rotation 1 1 0 3.14
+                                       children [  USE Rod  ]
+                             }
+                             Transform {
+                                       rotation 1 0 1 3.14
+                                       children [  USE Rod  ]
+                             }
+                   ]
+             }
+             Transform {
+                       rotation 1 1 1 3.14
+                       children [  USE Rods  ]
+             }
+         ]
+      }
+]
+{
+      DEF MineHolder Transform {
+          children [
+                # Ball of Fire
+                DEF BallOfFire Transform {
+                   scale 1 1 1
+                   children [
+                          Shape {
+                                appearance DEF MetalApp Appearance {
+                                        material Material { emissiveColor 0.454 0.234 0 }
+                                        texture ImageTexture { url "im/flame.jpg" }
+                                        textureTransform TextureTransform { scale 2 2 }
+                                }
+                                geometry Sphere {
+                                           radius 1
+                                }
+                          }
+                   ]
+                }
+          ]
+      }
+      DEF Disappeary Script {
+             field    SFNode miney IS aMine
+             eventIn  SFTime explode IS explode
+             eventOut SFTime exploded IS exploded
+             eventOut SFTime startExplosion
+             eventOut MFNode createMine
+             eventOut MFNode deleteMine
+             directOutput TRUE
+             url ["javascript:
+                 function initialize (v, ts) {
+                          createMine = new MFNode;
+                          createMine[0] = miney;
+                 }
+                 function explode ( t ) {
+                          startExplosion = t;
+             		  exploded = t;                          
+                          clearOff ();
+                 }
+                 function clearOff () {
+                          deleteMine = new MFNode;
+                          deleteMine[0] = miney;
+                 }
+             "]
+      }
+      DEF ExplosionTimer TimeSensor { cycleInterval 2 loop FALSE startTime -1 }
+      DEF Plosie PositionInterpolator {
+            key [ 0, .3, .6, .9, .99, 1 ]
+            keyValue [ 1 1 1, 10 10 10 , 30 30 30, 100 100 100, 500 500 500, 0 0 0 ]
+      }
+      ROUTE Disappeary.createMine TO MineHolder.addChildren
+      ROUTE Disappeary.deleteMine TO MineHolder.removeChildren
+      ROUTE Disappeary.startExplosion TO ExplosionTimer.set_startTime
+      ROUTE ExplosionTimer.fraction_changed TO Plosie.set_fraction
+      ROUTE Plosie.value_changed TO BallOfFire.set_scale
+} # end PROTO
+
+DEF MineHolder Transform {
+    children [
+             DEF myMine Mine {}
+             DEF Touchy TouchSensor {}
+    ]
+}
+      Transform {				# sound
+        scale 5 1 5
+        children [
+                Sound {
+                        minFront 15.0
+                        minBack 15.0
+                        maxFront 30.0
+                        maxBack 30.0
+                        spatialize TRUE
+                        source DEF Clippy AudioClip {
+                                url "../sound/splash.wav"
+                                startTime -1
+                                loop FALSE
+                        }
+                }
+        ]
+      }
+      
+ROUTE Colly.collideTime TO myMine.explode
+ROUTE Touchy.touchTime TO myMine.explode
+ROUTE Colly.collideTime TO Clippy.set_startTime
+ROUTE Touchy.touchTime TO Clippy.set_startTime
+DEF Timey TimeSensor { cycleInterval 20 loop TRUE startTime 0 }
+DEF Rotty OrientationInterpolator {
+    key [ 0.0, 0.5, 1.0 ]
+    keyValue [ 1 1 1 0.0, 1 1 1 3.14, 1 1 1 6.28 ]
+}
+ROUTE Timey.fraction_changed TO Rotty.set_fraction
+ROUTE Rotty.value_changed TO MineHolder.set_rotation
+
+
+

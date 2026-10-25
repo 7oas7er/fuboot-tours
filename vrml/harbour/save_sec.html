@@ -1,0 +1,125 @@
+<html>
+
+
+<head>
+
+<title> Sace Score </title>
+<meta name="author" content="Andreas Gramm">
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+
+ <SCRIPT language="JavaScript">
+     <!-- Hide from older browsers
+
+  var score2 = 0;
+  var myCookie = document.cookie;
+  var CN = "FBT";
+
+  function setScore2( s ) { score2 = s; }
+
+  function getScore2( s ) { return score2; }
+
+  function setCookie( i, value ) {
+         var today = new Date();
+         var cookieText = CN + i + "=" + escape(value) + "; expires=" + new Date(today.getTime() + 315360000000).toGMTString();
+         document.cookie = cookieText;
+         myCookie = document.cookie;
+  }
+
+  function getCookie( i ) {
+    var index = myCookie.indexOf(CN + i + "=");
+    if (index == -1) { return ""; }    // no cookie yet marked by negative score
+    index = myCookie.indexOf("=", index) + 1;
+    var endstr = myCookie.indexOf(";", index);
+    if (endstr == -1) endstr = myCookie.length;
+    if (myCookie != null && myCookie != "" && index!=endstr) { return unescape(myCookie.substring(index, endstr)); }
+    else return -1;
+  }
+
+  function getScore( i ) {
+    var index = myCookie.indexOf(CN + i + "=");
+    if (index == -1) { return index; }    // no cookie yet marked by negative score
+    index = myCookie.indexOf("=", index) + 1;
+    var midstr = myCookie.indexOf("%20", index);
+    if (midstr == -1) midstr = myCookie.length;
+    var endstr = myCookie.indexOf(";", index);
+    if (endstr == -1) endstr = myCookie.length;
+    if (myCookie != null && myCookie != "" && index!=endstr) { return unescape(myCookie.substring(midstr + 3, endstr)); }
+    else return -1;
+  }
+
+  function getName( i ) {
+    var index = myCookie.indexOf(CN + i + "=");
+    if (index == -1) { return index; }    // no cookie yet marked by negative score
+    index = myCookie.indexOf("=", index) + 1;
+    var midstr = myCookie.indexOf("%20", index);
+    if (midstr == -1) midstr = myCookie.length;
+    var endstr = myCookie.indexOf(";", index);
+    if (endstr == -1) endstr = myCookie.length;
+    if (myCookie != null && myCookie != "" && index!=endstr) { return unescape(myCookie.substring(index, midstr - 3)); }
+    else return -1;
+  }
+
+  function checkScore( s, n ) {
+        if (n == "") {
+           alert("Please enter your name!");
+           return;
+        }
+        var i = 10;
+        //  alert("Former highscore holder is " + getName(1) + " leading with " + getScore(1) + " points.");
+        if (s <= getScore(i)) { showHSList(0); return; }    // not in highscore list
+        while ((0<i) && (getScore(i)<s)) i--;
+        var tmp1 = n + ": " + s;
+        var tmp2 = getCookie(1);
+        if ((i++==0) && (getScore(i) < s)) {
+                alert("Congratulation! \n With " + s + " points you set \n the new highscore beating \n " + tmp2);
+                alert("new entry " + s + " is best beating " + tmp2);
+                setCookie(i, tmp1);
+                tmp1 = tmp2;
+        }
+        else { i++; }
+        for(j=i;j<11;j++) {
+                tmp2 = getCookie(j);
+                if (tmp1 != "") {
+                   if (j==i) alert("placed " + i + ". with " + s + " pts. \n before " + tmp2);
+                   setCookie(j, tmp1);
+                }
+                tmp1 = tmp2;
+        }
+        showHSList(1);
+  }
+
+  function showHSList( b ) {
+        var barwin;
+        if (b == 1) barwin=window.open ("Highscore.html","answerFrame","width=300,height=410,screenX=200,screenY=100,resizable=no,scrollbars=no");
+        else barwin=window.open ("HighscoreMissed.html","answerFrame","width=300,height=410,screenX=200,screenY=100,resizable=no,scrollbars=no");
+        location = "blank.html";
+  }
+
+     // Stop hiding -->
+ </SCRIPT>
+
+</head>
+
+
+   <body bgcolor="#000000">
+
+   <center>
+          <FORM name="setCookieForm">
+             <font face="Arial" color="#50FF50"> <b>
+              name:  &nbsp; &nbsp; <i> <INPUT type="text" name="nameField" size=10 textColor="#50FF50"> </i>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+              score: &nbsp; &nbsp; </b> <i>
+             <script language="JavaScript">
+                     setScore2(parent.bottom.getScore());
+                     document.writeln(getScore2());
+             </script>  </i> <b>
+              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+             <INPUT type="button" value="save score" color="#50FF50" onClick="checkScore(getScore2(),document.setCookieForm.nameField.value);" description=" save your score to highscore list ... ">
+             <script language="JavaScript">
+                        var hs = getScore(1);
+                        if (hs>0) document.write(" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; high score: &nbsp; &nbsp; </b> <i>" + hs);
+             </script> </i> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          </FORM>
+   </body>
+
+
+</html>

@@ -1,0 +1,511 @@
+#VRML V2.0 utf8
+#
+
+
+WorldInfo {
+        title "FU-Boot Tours"
+        info [ "by Andi" ]
+}
+NavigationInfo {
+        type [ "WALK" ]
+        headlight FALSE
+}
+DEF EntryView Viewpoint {
+        position -10 8 10
+        description "Entry view"
+}
+DEF OutOfSubView Viewpoint {
+        position 11 9.625 -17.2
+        orientation 0 -1 0 2.9459
+        description "User has just left submarine view"
+}
+DEF DoorView Viewpoint {
+        position 3 1.5 -15
+        description "Nice view on the door"
+}
+DEF StairView Viewpoint {
+        position 3 0 10
+        description "Nice view on the stairs"
+}
+DEF BehindSubView Viewpoint {
+        position 2 .5 -11.5
+        orientation 0 1 -.05 2.8459
+        description "Just bhind the submarine"
+}
+DEF GateView Viewpoint {
+        position 0 4 -30
+        orientation 0 1 0 3.1459
+        description "Nice view on the gate"
+}
+
+
+#
+#  G E N E R A L   S C E N E :
+#
+# The following will not be executed if this world is called from an external world.
+Background {
+    skyColor [
+        0.1 .2 0.05,
+        0.15 .2 .05,
+        0.1 .2 0.1,
+        0.05 .1 0.05,
+        0.1 .1 0.05
+    ]
+    skyAngle [
+        1.,
+        1.40,
+        1.50,
+        1.58,
+    ]
+}
+DEF Licht1 Transform {
+  translation 0 50 0
+  children [
+    PointLight {
+         ambientIntensity .2
+         intensity .8
+         color 0.6 0.4 0.1
+         radius 50
+      }
+  ]
+}
+
+# The Lock
+PROTO LockWall [
+      field SFVec3f wallSize 14 14 1
+      field SFVec2f wallScale 14 10
+]
+{
+   Transform {
+        children [
+                 Shape {
+                       appearance Appearance {
+                                  material Material { diffuseColor .05 .05 .05 }
+                                  texture ImageTexture { url "im/rusty3.jpg" }
+                                  textureTransform TextureTransform { scale IS wallScale }
+                       }
+                       geometry Box { size IS wallSize }
+                 }
+        ]
+   }
+} # end PROTO LockWall
+Transform {
+        translation 0 10 -13
+        rotation 1 0 0 1.5708
+        scale 4 2.5 1.8
+        children [
+                 Shape {
+                       appearance DEF lockSurface Appearance {
+                                  material Material { diffuseColor 0.05 0.05 0.05 }
+                                  texture ImageTexture { url "im/rusty3.jpg" }
+                                  textureTransform TextureTransform {
+                                                   scale 40 50
+                                                   rotation 1.5708
+                                  }
+                       }
+                       geometry Cylinder {
+                               height 25
+                               radius  7
+                               top FALSE
+                               bottom FALSE
+                       }
+                 }
+                 # back wall
+                 Transform {                        # left wall
+                           translation -3.5 -12 0
+                           rotation 1 0 0 1.5708
+                           children [
+                                    LockWall {
+                                             wallSize 7 14 1
+                                             wallScale 7 10
+                                    }
+                           ]
+                 }
+                 Transform {                       # right wall
+                           translation 4.5 -12 0
+                           rotation 1 0 0 1.5708
+                           children [
+                                    LockWall {
+                                             wallSize 7 14 1
+                                             wallScale 7 10
+                                    }
+                           ]
+                 }
+                 Transform {                       # arch
+                           translation .5 -12 -1.5
+                           rotation 1 0 0 1.5708
+                           children [
+                                    LockWall {
+                                             wallSize 1 11 1
+                                             wallScale 1 7.85
+                                    }
+                           ]
+                 }
+                 # front wall (gate side)
+                 Transform {                        # left wall
+                           translation -6 12 0
+                           rotation 1 0 0 1.5708
+                           children [
+                                    LockWall {
+                                             wallSize 3 14 1
+                                             wallScale 3 10
+                                    }
+                           ]
+                 }
+                 Transform {                       # right wall
+                           translation 6 12 0
+                           rotation 1 0 0 1.5708
+                           children [
+                                    LockWall {
+                                             wallSize 3 14 1
+                                             wallScale 3 10
+                                    }
+                           ]
+                 }
+                 Transform {                       # arch
+                           translation 0 12 -4.3
+                           rotation 1 0 0 1.5708
+                           children [
+                                    LockWall {
+                                             wallSize 9 5 1
+                                             wallScale 9 3.55
+                                    }
+                           ]
+                 }
+        ]
+} # end Lock
+# door
+DEF Door Transform {
+   translation 2 0 -42
+   children [
+            Shape {
+                  appearance Appearance {
+                          material Material { diffuseColor .05 .05 .05 }
+                          texture ImageTexture { url "im/metalGrip.jpg" }
+                          textureTransform TextureTransform { scale 5 8 }
+                  }
+                  geometry Box { size 4 5.6 .3 }
+            }
+            DEF DoorTouchy TouchSensor {}
+   ]
+}
+DEF DoorTimey TimeSensor { cycleInterval 20 loop FALSE startTime -1 }
+DEF Possy PositionInterpolator {
+key [ 0.0, .075, .2, .8, .925, 1 ]
+keyValue [ 2 0 -42, 2.5 0 -41.5, 4.2 0 -40.7, 4.2 0 -40.7, 2.5 0 -41.5, 2 0 -42 ]
+}
+DEF Rotty OrientationInterpolator { # makes the lids turn
+key [ 0.0, .13, .2, .8, .87, 1 ]
+keyValue [ 0 0 0 0.0, 0 1 0 .8, 0 1 0 2, 0 1 0 2, 0 1 0 .8, 0 0 0 0.0 ]
+}
+ROUTE DoorTouchy.touchTime TO DoorTimey.set_startTime
+ROUTE DoorTimey.fraction_changed TO Possy.set_fraction
+ROUTE Possy.value_changed TO Door.set_translation
+ROUTE DoorTimey.fraction_changed TO Rotty.set_fraction
+ROUTE Rotty.value_changed TO Door.set_rotation
+
+# Lift:
+DEF Platform Transform {                      # flour
+                  translation 2 -2.5 -46
+                  children [
+                          Shape {
+                              appearance Appearance {
+                                      material Material {
+                                               diffuseColor 0.354 0.494 0.3965
+                                               emissiveColor 0.75 0.9 0.8
+                                      }
+                                      texture ImageTexture { url "im/metalGrip.jpg" }
+                                      textureTransform TextureTransform { scale 4 4 }
+                               }
+                              geometry Box { size 4 0.6 4 }
+                          }
+                  ]
+}
+Transform {					# bars
+	translation 3.3 -1 -46
+	children [
+	  DEF Bar Group {
+	    children [
+	        Transform {					
+		     rotation 1 0 0 1.5708
+		     children [
+	                Shape {
+	                                appearance DEF MetalApp Appearance {
+	                                        material Material { emissiveColor .2 .2 .2 }
+	                                        texture ImageTexture { url "im/metalGrip.jpg" }
+	                                        textureTransform TextureTransform { scale 1 4 }
+	                                }
+	                                geometry Cylinder {
+	                                           radius .04
+	                                           height 1.25
+	                                }
+	                }
+	             ]
+	        }
+	        Transform {					
+		     translation 0 -1.05 -1.3
+		     rotation 1 0 0 .5708
+		     children [
+	                DEF Handle Shape {
+	                                appearance USE MetalApp
+	                                geometry Cylinder {
+	                                           radius .04
+	                                           height 2.5
+	                                }
+	                }
+	             ]
+	        }
+	        Transform {					
+		     translation 0 -1.05 1.3
+		     rotation 1 0 0 -.5708
+		     children [ USE Handle ]
+		}
+	     ]
+	   }
+	]
+}        
+Transform {
+	translation .7 -1 -46
+	children [ USE Bar ]
+}        
+
+DEF Lift Transform {                        # walls
+   translation 2 -2 -44
+   scale 2 1 2
+   children [
+        Transform {
+           translation 0 43 -2
+           children [
+               Shape {
+                  appearance DEF LiftApp Appearance {
+                          material Material { emissiveColor .905 .905 .905 }
+                          texture ImageTexture { url "im/tiles3D.jpg" }
+                          textureTransform TextureTransform { scale 1.3 50 }
+                  }
+                  geometry Box { size 2.2 100 0.3 }
+               }
+           ]
+        }
+        Transform {
+           translation 0 55 0
+           children [
+               Shape {
+                  appearance USE LiftApp
+                  geometry Box { size 2.2 100 .0 }
+               }
+           ]
+        }
+        Transform {
+           translation 1 48 -1
+           rotation 0 1 0 1.5708
+           children [  
+               DEF LiftSideWall Shape {
+                  appearance USE LiftApp
+                  geometry Box { size 2.2 100 .3 }
+               }
+
+           ]
+        }
+        Transform {
+           translation -1 48 -1
+           rotation 0 1 0 1.5708
+           children [  USE LiftSideWall  ]
+        }
+        Transform {					# up-button
+           translation 0 1.7 -1.8
+           scale .5 .5 .5
+           children [
+                DEF Button Shape {
+                  appearance DEF LiftApp Appearance {
+                          #material Material { emissiveColor .2 .2 .9 }
+                          texture MovieTexture { url "im/arrow.gif" }
+                          textureTransform TextureTransform { rotation -1.5708 }
+                  }
+                  geometry Box { size .4 .8 0 }
+                }
+        	DEF LiftUpTouchy TouchSensor {}
+           ]
+        }        
+        Transform {					# down-button
+           translation 0 94.5 -.1
+           scale .5 .5 .5
+           children [
+                DEF Button Shape {
+                  appearance DEF LiftApp Appearance {
+                          #material Material { emissiveColor .9 .2 .2 }
+                          texture MovieTexture { url "im/arrow.gif" }
+                          textureTransform TextureTransform { rotation 1.5708 }
+                  }
+                  geometry Box { size .4 .8 0 }
+                }
+        	DEF LiftDownTouchy TouchSensor {}
+           ]
+        }        
+        Transform {					# get-lift-up-button
+           translation 0 1.7 -3
+           scale .3 .3 .3
+           children [
+                DEF Button Shape {
+                  appearance DEF LiftApp Appearance {
+                          #material Material { emissiveColor .2 .2 .9 }
+                          texture MovieTexture { url "im/arrow.gif" }
+                          textureTransform TextureTransform { rotation 1.5708 }
+                  }
+                  geometry Box { size .4 .8 0 }
+                }
+        	DEF LiftUpTouchy2 TouchSensor {}
+           ]
+        }        
+        Transform {					# get-lift-down-button
+           translation 0 94.5 1
+           scale .3 .3 .3
+           children [
+                DEF Button Shape {
+                  appearance DEF LiftApp Appearance {
+                          #material Material { emissiveColor .2 .2 .9 }
+                          texture MovieTexture { url "im/arrow.gif" }
+                          textureTransform TextureTransform { rotation -1.5708 }
+                  }
+                  geometry Box { size .4 .8 0 }
+                }
+        	DEF LiftDownTouchy2 TouchSensor {}
+           ]
+        }        
+   ]
+}
+DEF LiftUpTimey TimeSensor { cycleInterval 20 loop FALSE startTime -1 }
+DEF LiftDownTimey TimeSensor { cycleInterval 20 loop FALSE startTime -1 }
+DEF LiftUp PositionInterpolator {
+key [ 0, .1, .9, 1 ]
+keyValue [ 2 -2 -44, 2 -8 -44, 2 -92 -44, 2 -95 -44 ]
+}
+DEF LiftDown PositionInterpolator {
+key [ 0, .1, .9, 1 ]
+keyValue [ 2 -95 -44, 2 -92 -44, 2 -8 -44, 2 -2 -44 ]
+}
+ROUTE LiftUpTouchy.touchTime TO LiftUpTimey.set_startTime
+ROUTE LiftUpTouchy2.touchTime TO LiftUpTimey.set_startTime
+ROUTE LiftDownTouchy.touchTime TO LiftDownTimey.set_startTime
+ROUTE LiftDownTouchy2.touchTime TO LiftDownTimey.set_startTime
+ROUTE LiftUpTimey.fraction_changed TO LiftUp.set_fraction
+ROUTE LiftUp.value_changed TO Lift.set_translation
+ROUTE LiftDownTimey.fraction_changed TO LiftDown.set_fraction
+ROUTE LiftDown.value_changed TO Lift.set_translation
+
+
+
+#
+### submarines:
+#
+DEF Sub1 Transform {                                  # parked one
+  translation -15 0 -10
+  rotation -1 0 0 1.5708
+  scale .045 .03 .04
+  children [
+       Transform {
+         rotation 0 0 1 1.5708    # 4.7167
+         children [  Inline { url "SubmarineJ.wrl" }  ]
+       }
+  ]
+}
+Transform {
+  translation -11.5 -2 -16
+  scale .6 .38 .5
+  children [ Inline { url "stair.wrl" } ]
+}
+DEF UserSub Transform {                                  # user's sub
+  translation 8.5 4 -27
+  rotation -1 0 0 1.5708
+  scale .04 .022 .04
+  children [
+       Transform {
+         rotation 0 0 -1 1.5708    # 4.7167
+         children [
+           Inline { url "SubmarineJ.wrl" }
+
+         ]
+       }
+  ]
+}
+Transform {
+  translation 9.7 9.8 -16
+  children [
+    Anchor {
+        url "../index2.html"
+        parameter [ "target=_top" ]
+#        description " Enter sumbarine. "
+        description " Ins U-Boot steigen und weiterfahren. "
+        children [
+            Shape {
+                  appearance Appearance { material Material { transparency 1 }  }
+                  geometry Box { size 1 3.5 12 }
+            }
+            Transform {	
+                  translation -.5 1 -1
+                  rotation 0 0 1 -2
+                  scale 2 2 2
+                  children [
+                                                                DEF Button Shape {
+                                                                  appearance DEF LiftApp Appearance {
+                                                                          material Material { emissiveColor .9 .5 .2 }
+                                                                          texture MovieTexture { url "im/arrow.gif" }
+                                                                  }
+                                                                  geometry Box { size .4 .8 0 }
+                                                                }
+                  ]
+	    }
+            
+        ]
+    }
+  ]
+}
+Transform {
+  translation 12 0 -10
+  scale .8 .5 .6
+  children [ Inline { url "stair.wrl" } ]
+}
+
+
+#
+### --- G A T E
+#
+DEF Gate Transform {
+translation 0 1 5
+scale 1.8 1.4 1
+children [
+   Transform {
+        translation -5 3 14
+        children [
+                 Transform {
+                     translation 0 0 -.5
+                     children [
+                         Shape {
+                               appearance Appearance {
+                                    material Material { emissiveColor .2 .2 .1 }
+                                    texture ImageTexture { url "im/slideDoorR.jpg" }
+                               }
+                               geometry Box { size 10 12 1.2 }
+                        }
+                    ]
+                 }
+        ]
+   }
+   Transform {
+        translation 5 3 14
+        children [
+                 Transform {
+                     translation 0 0 -.5
+                     children [
+                         Shape {
+                               appearance Appearance {
+                                    material Material { emissiveColor .2 .2 .1 }
+                                    texture ImageTexture { url "im/slideDoorL.jpg" }
+                               }
+                               geometry Box { size 10 12 2.2 }
+                        }
+                    ]
+                 }
+        ]
+   }
+]
+}

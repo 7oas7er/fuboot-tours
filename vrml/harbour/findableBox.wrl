@@ -1,0 +1,49 @@
+PROTO Content [
+        field    SFVec3f  location   0 0 0
+        field    MFString contURL    [ "NiceBall.wrl" ]
+        field    SFInt32  worth      100
+        field    SFFloat  proxyShape 2
+        eventIn  SFBool   getNode
+        eventOut SFInt32  found
+        eventOut MFNode   sendNode
+]
+{
+        DEF ContentHolder Transform {        translation IS location   }
+        DEF adminCont Script {
+                eventIn  SFTime  foundNode
+                eventIn  SFBool  reqNode IS getNode
+                eventOut SFInt32 myFound IS found
+                eventOut MFNode  createNode
+                eventOut MFNode  mySendNode IS sendNode
+                eventOut MFNode  delNode
+                field    SFInt32 myWorth IS worth
+                field    SFNode  cont Transform {
+                                children [
+                                        DEF Colly Collision {
+                                                            collide TRUE
+                                                            proxy Shape { geometry Sphere { radius IS proxyShape } }
+                                        }
+                                        DEF Content Inline { url IS contURL }
+                                ]
+                }
+                directOutput TRUE
+                url ["javascript:
+                                function initialize ( v, tm ) {
+                                        createNode = new MFNode;
+                                        createNode[0] = cont;
+                                }
+                                function foundNode ( t ) {
+                                        myFound = myWorth;
+                                        delNode = new MFNode;
+                                        delNode[0] = cont;
+                                }
+                                function reqNode ( t ) {
+                                        mySendNode = new MFNode;
+                                        mySendNode[0] = cont;
+                                }
+                "]
+        }
+        ROUTE Colly.collideTime TO adminCont.foundNode
+        ROUTE adminCont.createNode TO ContentHolder.addChildren
+        ROUTE adminCont.delNode TO ContentHolder.removeChildren
+} # end PROTO Content

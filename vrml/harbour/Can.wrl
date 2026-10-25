@@ -1,0 +1,124 @@
+#VRML V2.0 utf8
+
+
+NavigationInfo {
+	type [ "EXAMINE", "ANY" ]
+	headlight TRUE
+}
+
+Viewpoint {
+	position 0 1 -15
+	orientation 0 0.2 0.0 0
+	description "Entry view"
+}
+
+DEF Can Transform {
+#	rotation 0.7 0 0.2 1
+	children [
+		# Body of Can
+		Shape {
+			appearance Appearance {
+				material Material {
+					diffuseColor 0.354 0.494 0.3965
+					emissiveColor 0.354 0.494 0.3965
+					transparency 0
+				}
+				texture ImageTexture { url "im/cola.gif" }
+			}
+			geometry Cylinder {
+				bottom FALSE
+				top FALSE				
+  				height 3
+				radius 0.8
+  			}
+		}
+		
+		Shape {
+			appearance Appearance {
+				material Material {
+					diffuseColor 0.354 0.494 0.3965
+					emissiveColor 0.354 0.494 0.3965
+					transparency 0
+				}
+				texture ImageTexture { url "im/cola2.gif" }
+			}
+			geometry Cylinder {
+				bottom FALSE
+				top FALSE				
+  				height 3
+				radius 0.8
+  			}
+		}
+		
+		# Sides of Can
+		DEF sideOfCan Transform {
+			translation 0 0.15 0
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor 0.354 0.494 0.3965
+#							emissiveColor 0.354 0.494 0.3965
+							transparency 0
+						}
+					}
+					geometry Cone {
+						bottomRadius 0.78
+  						height 0.5
+		  				side TRUE
+  						bottom FALSE
+ 					}
+				}
+				Transform {
+					translation 0 -0.1 0
+					children [
+					Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor 0.354 0.494 0.3965
+#							emissiveColor 0.354 0.494 0.3965
+							transparency 0
+						}
+					}
+					geometry Cone {
+						bottomRadius 0.73
+  						height 0
+		  				side FALSE
+  						bottom TRUE
+					}
+					}
+					]
+				}
+			]
+		}
+
+		Transform {
+			translation 0 1.39 0
+			rotation 0 0 3.1468 -3.1468
+			children [ USE sideOfCan ]
+		}
+
+		Transform {
+			translation 0 -1.39 0
+			children [ USE sideOfCan ]
+		}
+		
+	]
+}	
+
+
+#
+#  Animation control:
+
+#DEF Touch TouchSensor { }
+
+DEF Timer TimeSensor { cycleInterval 7.0 loop TRUE startTime 0 }
+
+DEF Rot1 OrientationInterpolator {
+    key [ 0.0, 0.15, 0.37, 0.7, 1.0 ]
+    keyValue [ 0.0 0.1 0.7 0.0, 0.0 1.0 0.7 1.0, 0.0 1.0 0.7 2.0, 0.0 1.0 0.7 3.14, 0.0 1.0 0.7 6.28 ]
+}
+
+#ROUTE Touch.touchTime TO Timer.set_startTime
+ROUTE Timer.fraction_changed TO Rot1.set_fraction
+ROUTE Rot1.value_changed TO Can.set_rotation

@@ -1,0 +1,191 @@
+#VRML V2.0 utf8
+#
+# A skeleton showing it's got the right groove !!!
+#
+
+PROTO Bony [ eventIn SFTime start ]
+{   
+    Transform {
+        children [
+           Billboard {
+              axisOfRotation 0.0 1.0 0.0
+              children [
+                # head
+                DEF Head Transform {
+                    translation 0 1.2 0
+                    rotation .4 1 .4 1.5708
+                    children [
+                             Shape {
+                                appearance Appearance {
+                                        material Material {
+                                                emissiveColor .8 1 0
+                                                transparency 0.2
+                                        }
+                                        texture DEF Texty MovieTexture {
+                                                url "im/skullGlow.gif"
+                                                loop TRUE
+                                                startTime -1
+                                        }
+                                    textureTransform TextureTransform { scale 2.2 2.2 }
+                                }
+                                geometry Sphere {
+                                           radius 0.3
+                                }
+                             }
+                    ]
+                }
+                # arms
+                DEF Arms Transform {
+                    translation 0 .5 0
+                    children [
+                      Shape {
+                        appearance Appearance { 
+                                material Material { diffuseColor 1 1 1 }
+                        	texture ImageTexture { url "im/bonesArms.png" } 
+                        }
+                        geometry Box { size .5 1 0 }
+                      }
+                    ]
+                }
+                #  back
+                DEF Back Transform {
+                    translation 0 .3 0
+                    children [
+                      Shape {
+                        appearance Appearance { 
+                	        material Material { diffuseColor 1 1 1 }
+                        	texture ImageTexture { url "im/bonesBack.png" } 
+                        }
+                        geometry Box { size .5 1 0 }
+                      }
+                    ]
+                }
+                #  legs
+                DEF Legs Transform {
+                    translation .05 -.5 0
+                    children [
+                      Shape {
+                        appearance Appearance { 
+                        	material Material { diffuseColor 1 1 1 }
+                        	texture ImageTexture { url "im/bonesLegs.png" } 
+                        }
+                        geometry Box { size .5 1 0 }
+                      }
+                    ]
+                }
+           	DEF Scripty Script {
+           		eventIn  SFTime start IS start
+           		eventOut SFTime swing
+           		directOutput TRUE
+             		url ["javascript:
+             			function start( t ) { swing = start; }
+             		"]
+           	}
+              ]
+           }
+        ]
+    } # end Transform
+#
+#  Animation control:
+
+    DEF Timey TimeSensor { cycleInterval 2.5 loop TRUE startTime -1 }
+
+    DEF LegsRot OrientationInterpolator {
+        key [ 0, .15, .3, .45, .55, .6, .75, 1.0 ]
+        keyValue [ .2 0 1 0, .2 0 1 .5, .2 0 1 .5, .2 0 1 0, .2 0 1 0, .2 0 1 -.5, .2 0 1 -.5, .2 0 1 0.0 ]
+    }
+    DEF ArmsRot OrientationInterpolator {
+        key [ 0, .15, .3, .45, .55, .6, .75, 1.0 ]
+        keyValue [ .2 0 1 0, .2 0 1 .7, .2 0 1 .7, .2 0 1 0, .2 0 1 0, .2 0 1 -.7, .2 0 1 -.7, .2 0 1 0.0 ]
+    }
+    DEF LegsPos PositionInterpolator {
+        key [ 0, .15, .3, .45, .55, .6, .75, 1.0 ]
+        keyValue [ .05 -.5 0, .2 -.4 0, .2 -.4 0, .05 -.5 0, .05 -.5 0, -.2 -.5 0, -.2 -.5 0, .05 -.5 0 ]
+    }
+    DEF ArmsPos PositionInterpolator {
+        key [ 0, .15, .3, .45, .55, .6, .75, 1.0 ]
+        keyValue [ 0 .5 0, .3 .5 0, .3 .5 0, 0 .5 0, 0 .5 0, -.3 .5 0, -.3 .5 0, 0 .5 0 ]
+    }
+    DEF HeadPos PositionInterpolator {
+        key [ 0, .15, .3, .45, .55, .6, .75, 1.0 ]
+        keyValue [ 0 1.2 0, 0 1.1 0, 0 1.1 0, 0 1.2 0, 0 1.2 0, 0 1.1 0, 0 1.1 0, 0 1.2 0 ]
+    }
+
+    ROUTE Scripty.swing TO Timey.set_startTime
+    ROUTE Scripty.swing TO Texty.set_startTime
+    ROUTE Timey.fraction_changed TO LegsRot.set_fraction
+    ROUTE LegsRot.value_changed TO Legs.set_rotation
+    ROUTE Timey.fraction_changed TO LegsPos.set_fraction
+    ROUTE LegsPos.value_changed TO Legs.set_translation
+    ROUTE Timey.fraction_changed TO ArmsRot.set_fraction
+    ROUTE ArmsRot.value_changed TO Arms.set_rotation
+    ROUTE Timey.fraction_changed TO ArmsPos.set_fraction
+    ROUTE ArmsPos.value_changed TO Arms.set_translation
+    ROUTE Timey.fraction_changed TO HeadPos.set_fraction
+    ROUTE HeadPos.value_changed TO Head.set_translation
+
+} # end PROTO Bony
+
+
+
+PROTO findableBony [ 
+	eventIn  SFTime   start 
+        field    SFInt32  worth      111
+        eventOut SFInt32  found
+]
+{
+DEF ContentHolder Transform {}
+DEF adminCont Script {
+                eventIn  SFTime  foundNode
+                field    SFInt32 myWorth IS worth
+                eventOut SFInt32 myFound IS found
+                eventOut MFNode  createNode
+                eventOut MFNode  delNode
+                field    SFNode  cont Transform {
+                                children [
+                                        DEF Colly Collision {
+                                                            collide TRUE
+                                                            proxy Shape { geometry Sphere { radius 1 } }
+                                        }
+                                        DEF Content Bony { start IS start }
+                                ]
+                }
+                directOutput TRUE
+                url ["javascript:
+                                function initialize ( v, tm ) {
+                                        createNode = new MFNode;
+                                        createNode[0] = cont;
+                                }
+                                function foundNode ( t ) {
+                                        myFound = myWorth;
+                                        delNode = new MFNode;
+                                        delNode[0] = cont;
+                                }
+                                function reqNode ( t ) {
+                                        mySendNode = new MFNode;
+                                        mySendNode[0] = cont;
+                                }
+                "]
+}
+Transform {				# sound
+        scale 20 15 20
+        children [
+                Sound {
+                        source DEF Clippy AudioClip {
+                                url "../sound/Bony.wav"
+                                startTime -1
+                                loop FALSE
+                        }
+                }
+        ]
+}
+ROUTE Colly.collideTime TO adminCont.foundNode
+ROUTE Colly.collideTime TO Clippy.set_startTime
+ROUTE adminCont.createNode TO ContentHolder.addChildren
+ROUTE adminCont.delNode TO ContentHolder.removeChildren
+
+
+} # end findableBony
+
+
+Bony {}

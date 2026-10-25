@@ -1,0 +1,143 @@
+#VRML V2.0 utf8
+#
+# A chest like box to be opened by touching it!!
+#
+
+DEF Boxy Transform {
+        translation 0 -2 -12
+        rotation 0.05 0 0 0.2
+        children [
+                #  Outer side of box
+                DEF Outer Shape {
+                        appearance Appearance {
+                                material Material {
+                                        # diffuseColor 0.354 0.494 0.3965
+                                        # emissiveColor 0.354 0.494 0.3965
+                                        transparency 0
+                                }
+                                texture ImageTexture { url "im/wood.jpg" }
+                        }
+                        geometry Box {
+                                 size 2 1 1
+                                 # top FALSE
+                        }
+                }
+                #  Content of box
+                DEF Content Transform {
+                    translation 0 0.5 0
+                    children [
+                             Shape {
+                                appearance Appearance {
+                                        material Material {
+                                                 diffuseColor 0.354 0.494 0.3965
+                                                 emissiveColor 0.354 0.194 0.2965
+                                                 transparency 0.1
+                                        }
+                                        texture ImageTexture { url "im/weirdButColourful.jpg" }
+                                }
+                                geometry Box {
+                                         size 1.95 0.15 1
+                                }
+                             }
+                    ]
+                }
+                # Content of the box coming up to be discovered
+                DEF Cont Transform {
+                    translation 0 -0.25 0
+                    children [
+                          DEF ContHolder Group {
+                             children [
+	                             DEF Conty Shape {
+	                                appearance Appearance {
+	                                        material Material {
+	                                                emissiveColor 0.454 0.494 0
+	                                        }
+	                                        texture ImageTexture { url "im/weirdButColourful.jpg" }
+	                                }
+	                                geometry Sphere {
+	                                           radius 0.2
+	                                }
+	                             }
+			     ]
+			  }
+                          DEF ContTouchy TouchSensor {}
+                    ]
+                }
+                # Lid of the box (to be opened by mouse click
+                DEF Lid Transform {
+                    translation 0 0.55 0
+                    children [
+                            Shape {
+                                appearance Appearance {
+                                        material Material {
+                                                # diffuseColor 0.354 0.494 0.3965
+                                                # emissiveColor 0.354 0.494 0.3965
+                                                transparency 0
+                                        }
+                                        texture ImageTexture { url "im/wood.jpg" }
+                                }
+                                geometry Box {
+                                         size 2 0.1 1
+                                }
+                            }
+                    ]
+                }
+        ]
+}
+
+
+#
+# Script to clear away the content of the box
+#
+DEF ClearCont Script {
+ 	field    SFBool on TRUE
+	eventIn  SFBool clear
+	eventOut SFNode Nody
+	eventOut MFNode toBeCleared
+        directOutput TRUE
+            url "javascript:
+                        function clear( b, tm ) {
+			   if ( b == FALSE ) return;
+			   else {
+			      Nody = Conty;
+			      toBeCleared[1] = Nody;			      
+			   }
+                        }"
+   }
+ROUTE ContTouchy.isActive TO ClearCont.clear
+ROUTE ClearCont.toBeCleared TO ContHolder.removeChildren
+
+#
+#  Animation control:
+#
+
+DEF Touchy TouchSensor { }
+
+DEF Timey TimeSensor { cycleInterval 10.0 loop FALSE startTime -1 }
+
+DEF Rotty OrientationInterpolator {
+    key [ 0.0, 0.2, 0.8, 1.0 ]
+    keyValue [ 0.1 0 0 0.0, 0.1 0 0 -0.9, 0.1 0 0 -0.9, 0.1 0 0 0.0 ]
+}
+DEF UppyRot OrientationInterpolator {
+    key [ 0.0, 0.5, 1.0 ]
+    keyValue [ 1 1 1 0.0, 1 1 1 3.14, 1 1 1 6.28 ]
+}
+DEF Possy PositionInterpolator {
+    key [ 0.0, 0.2, 0.8, 1.0 ]
+    keyValue [ 0 0.55 0, 0 0.95 -0.13, 0 0.95 -0.13, 0 0.55 0 ]
+}
+DEF Uppy PositionInterpolator {
+    key [ 0.0, 0.3, 0.4, 0.45, 0.65, 0.7, 0.8, 1.0 ]
+    keyValue [ 0 -0.35  0, 0 0.25  0.3, 0 1.9 0.3,  0 2.9 0.3,  0 2.9 0.3, 0 1.9 0.3, 0 0.25 0.3, 0 -0.35 0 ]
+}
+
+ROUTE Touchy.touchTime TO Timey.set_startTime
+ROUTE Timey.fraction_changed TO Rotty.set_fraction
+ROUTE Rotty.value_changed TO Lid.set_rotation
+ROUTE Timey.fraction_changed TO Possy.set_fraction
+ROUTE Possy.value_changed TO Lid.set_translation
+ROUTE Timey.fraction_changed TO Uppy.set_fraction
+ROUTE Uppy.value_changed TO Cont.set_translation
+ROUTE Timey.fraction_changed TO UppyRot.set_fraction
+ROUTE UppyRot.value_changed TO Cont.set_rotation

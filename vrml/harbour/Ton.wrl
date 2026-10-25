@@ -1,0 +1,128 @@
+#VRML V2.0 utf8
+
+
+NavigationInfo {
+        type [ "EXAMINE", "ANY" ]
+        headlight TRUE
+}
+
+Viewpoint {
+        position 0.0 0.0 0.0
+        orientation 0 0.2 0.0 0
+        description "Entry view"
+}
+
+PROTO Ton [
+        field MFString sideURL [ "im/nuke.gif" ]
+        field MFString topURL  [ "im/nuke.gif" ]
+        field SFFloat  tonHeight  4
+        field SFFloat  tonRadius  1.35
+]
+{
+   DEF TonBody Transform {
+        children [
+                # Body of ton
+                Shape {
+                        appearance Appearance {
+                                material Material {
+                                        diffuseColor .5 .6 0
+                                        emissiveColor .5 .6 0
+                                }
+                        }
+                        geometry Cylinder {
+                                height IS tonHeight
+                                radius IS tonRadius
+                                top FALSE
+                                bottom FALSE
+                          }
+                }
+                Shape {
+                        appearance Appearance {
+                                texture MovieTexture {
+                                        url IS sideURL
+                                        loop FALSE
+                                }
+                                textureTransform TextureTransform { scale 8 4 }
+                        }
+                        geometry Cylinder {
+                                bottom FALSE
+                                top FALSE
+                                height IS tonHeight
+                                radius IS tonRadius
+                         }
+                }
+                Shape {
+                        appearance Appearance {
+                                texture DEF Texty MovieTexture {
+                                        url IS topURL
+                                        loop TRUE
+                                        startTime -1
+                                }
+                        }
+                        geometry Cylinder {
+                                side FALSE
+                                height IS tonHeight
+                                radius IS tonRadius
+                          }
+                }
+                Transform {
+                        translation 0 1.5 0
+                        rotation 1 0 0 3.14
+                        children [
+                                Shape {
+                                        appearance Appearance {
+                                                material Material {
+                                                        diffuseColor .5 .6 0
+                                                        emissiveColor .5 .6 0
+                                                }
+                                        }
+                                        geometry Cone {
+                                                bottomRadius 1.35
+                                                  height .9
+                                                  side TRUE
+                                                  bottom FALSE
+                                         }
+                                }
+                        ]
+                }
+                Transform {
+                        translation 0 -1.6 0
+                        children [
+                                Shape {
+                                        appearance Appearance {
+                                                material Material {
+                                                        diffuseColor .5 .6 0
+                                                        emissiveColor .5 .6 0
+                                                }
+                                        }
+                                        geometry Cone {
+                                                bottomRadius IS tonRadius
+                                                height .9
+                                                side TRUE
+                                                bottom FALSE
+                                         }
+                                }
+                        ]
+                }
+        ]
+   } # end of group
+
+
+  #
+  #  Animation control:
+
+  DEF Touch TouchSensor { }
+
+  DEF Timer TimeSensor { cycleInterval 7.0 loop TRUE startTime -1 }
+
+  DEF Rot1 OrientationInterpolator {
+    key [ 0.0, 0.15, 0.37, 0.7, 1.0 ]
+    keyValue [ 0.0 0.1 0.7 0.0, 0.0 1.0 0.7 1.0, 0.0 1.0 0.7 2.0, 0.0 1.0 0.7 3.14, 0.0 1.0 0.7 6.28 ]
+  }
+
+  ROUTE Touch.touchTime TO Timer.set_startTime
+  ROUTE Touch.touchTime TO Texty.set_startTime
+  ROUTE Timer.fraction_changed TO Rot1.set_fraction
+  ROUTE Rot1.value_changed TO TonBody.set_rotation
+
+} # end PROTO Can

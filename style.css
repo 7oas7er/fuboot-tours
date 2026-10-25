@@ -1,0 +1,21 @@
+BODY {
+	color :#8DFF84;
+	background-color : Black;
+	font-family : Arial, sans-serif;
+	font-size : medium;
+}
+
+H2 {
+	font-size : large;
+}
+
+
+A, A:LINK, A:VISITED, A:ACTIVE {
+	text-decoration : none;
+	color : #8DFF84;
+}
+
+
+A:HOVER {
+	color : White;
+}

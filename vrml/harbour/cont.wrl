@@ -1,0 +1,464 @@
+#VRML V2.0 utf8
+#
+#  cont.wrl
+#        by Andi Gramm
+#
+#  This file illustrates the use of a script to make an object disappear and register in a bar with pics
+#
+
+
+
+####################################################
+#
+# - the world ...
+#
+WorldInfo {
+    title "Collect Me"
+    info [ "Copyright (c) 2001, Andi Gramm" ]
+}
+Viewpoint {
+    position 0.0 0 6.8
+    description "Entry view"
+}
+NavigationInfo {
+    type [ "WALK", "ANY" ]
+    headlight TRUE
+}
+Background {
+    skyColor [
+        0.0 0.0 0.0,
+        0.0 0.0 0.0,
+        0.5 0.0 0.2,
+        0.4 0.0 0.3,
+    ]
+    skyAngle [
+        1.77
+        1.87,
+        1.97,
+    ]
+}
+
+
+####################################################
+#
+# - the content ...
+#
+
+PROTO Content [
+        field    SFVec3f  location   0 0 0
+        field    MFString contURL    [ "NiceBall.wrl" ]
+        field    SFInt32  worth      100
+        field    SFFloat  proxyShape 2
+        eventIn  SFBool   getNode
+        eventOut SFInt32  found
+        eventOut MFNode   sendNode
+]
+{
+        DEF ContentHolder Transform {        translation IS location   }
+        DEF adminCont Script {
+                eventIn  SFTime  foundNode
+                eventIn  SFBool  reqNode IS getNode
+                eventOut SFInt32 myFound IS found
+                eventOut MFNode  createNode
+                eventOut MFNode  mySendNode IS sendNode
+                eventOut MFNode  delNode
+                field    SFInt32 myWorth IS worth
+                field    SFNode  cont Transform {
+                                children [
+                                        DEF Colly Collision {
+                                                            collide TRUE
+                                                            proxy Shape { geometry Sphere { radius IS proxyShape } }
+                                        }
+                                        DEF Content Inline { url IS contURL }
+                                ]
+                }
+                directOutput TRUE
+                url ["javascript:
+                                function initialize ( v, tm ) {
+                                        createNode = new MFNode;
+                                        createNode[0] = cont;
+                                }
+                                function foundNode ( t ) {
+                                        myFound = myWorth;
+                                        delNode = new MFNode;
+                                        delNode[0] = cont;
+                                }
+                                function reqNode ( t ) {
+                                        mySendNode = new MFNode;
+                                        mySendNode[0] = cont;
+                                }
+                "]
+        }
+        ROUTE Colly.collideTime TO adminCont.foundNode
+        ROUTE adminCont.createNode TO ContentHolder.addChildren
+        ROUTE adminCont.delNode TO ContentHolder.removeChildren
+} # end PROTO Content
+
+### --- the different objects
+
+DEF Cont1a Content {
+        contURL [ "NiceBall.wrl" ]
+        worth 100
+        location -2 0 -10
+        proxyShape .5
+}
+DEF Cont1b Content {
+        contURL [ "NiceBall.wrl" ]
+        worth 100
+        location 2 0 -10
+        proxyShape .5
+}
+DEF Cont1c Content {
+        contURL [ "NiceBall.wrl" ]
+        worth 100
+        location 0 0 -5
+        proxyShape .5
+}
+DEF Cont2a Content {
+        contURL [ "Bony.wrl" ]
+        worth 300
+        location 3.5 0 0
+        proxyShape 1
+}
+DEF Cont2b Content {
+        contURL [ "Bony.wrl" ]
+        worth 300
+        location -7.2 0 -3
+        proxyShape 1
+}
+
+EXTERNPROTO Boxy [ 
+	field    SFVec3f location
+	field    MFString contURL
+	field	 SFVec3f  contScale
+	field    MFString lidURL
+	field    MFString textureURL
+	field    SFInt32  worth	    
+	eventOut SFInt32 found 
+] "Box.wrl"
+DEF Cont3a Boxy {
+        location -3.5 0 0
+	contURL "Ghost.wrl"
+	contScale .5 .5 .5
+	lidURL  [ "im/hammerUndSichel.jpg" ]
+	textureURL  "im/camoflage.jpg"
+	worth 250
+}
+DEF Cont3b Boxy {
+        location 3.5 -.3 -3
+	contURL "Sword.wrl"
+	contScale .5 .5 .5
+	lidURL  [ "../sponsoren/sponsor5.png", "../sponsoren/sponsor5.gif", "../sponsoren/sponsor5.jpg" ]
+	textureURL  "im/wood.jpg"
+	worth 150
+}
+
+DEF Cont4a Content {
+        contURL [ "starfish.wrl" ]
+        worth 75
+        location -12 0 -5
+        proxyShape 1
+}
+DEF Cont4b Content {
+        contURL [ "starfish.wrl" ]
+        worth 75
+        location 17 0 -7
+        proxyShape 1
+}
+DEF Cont4c Content {
+        contURL [ "starfish.wrl" ]
+        worth 75
+        location -2 0 -8
+        proxyShape 1
+}
+DEF Cont5a Content {
+        contURL [ "Tony.wrl" ]
+        worth 275
+        location 15 0 -10
+        proxyShape 5
+}
+DEF Cont5b Content {
+        contURL [ "Tony.wrl" ]
+        worth 275
+        location -15 0 -13
+        proxyShape 5
+}
+EXTERNPROTO AMine [
+  field  SFInt32 power
+  eventOut SFInt32 damage
+] Mine2.wrl#Mine
+Transform {
+        translation -2 0 -8
+        scale .4 .4 .4
+        children [ DEF Miny1 AMine { power 450 } ]
+}
+Transform {
+        translation -15 .5 -20
+        scale .4 .4 .4
+        children [ DEF Miny2 AMine { power 450 } ]
+}
+Transform {
+        translation 13 -.5 -17.3
+        scale .4 .4 .4
+        children [ DEF Miny3 AMine { power 450 } ]
+}
+
+
+####################################################
+#
+# - registration of collected items ...   (bar with pics is part of the HUD)
+#
+
+PROTO Register [
+        eventIn  SFInt32  found
+        field    SFVec3f  location 0 0 0
+        field    MFString pic1  [ "im/pic1.png"  ]
+        field    MFString pic2  [ "im/pic1_.png" ]
+]
+{
+        DEF RegHolder Transform {
+            translation IS location
+            children [
+                 Shape {
+                        appearance Appearance {
+                                material Material {
+                                         emissiveColor 1 1 1
+                                         transparency 0.4
+                                }
+                                texture DEF PicTexture ImageTexture { url IS pic1 }
+                        }
+                        geometry Box { size .1 .1 0 }
+                 }
+                 Transform {
+                        translation 0 -.1 0
+                        children [
+                             Shape {
+                                   appearance Appearance { material Material { diffuseColor .1 .2 .35 } }
+                                   geometry DEF Texty Text {
+                                                    string [ "0" ]
+                                                    fontStyle FontStyle {
+                                                              style "BOLD"
+                                                              size    .04
+                                                              family  "SANS"
+                                                    }
+                                   }
+                             }
+                        ]
+                 }
+            ]
+        }
+        DEF adminReg Script {
+                 field    SFInt32  findings 0
+                 field    MFString picURL IS pic2
+                 eventIn  SFInt32  foundNode IS found
+                 eventOut MFString newText
+                 eventOut MFString newPic
+                 directOutput TRUE
+                 url ["javascript:
+                        function foundNode ( i ) {
+                                 newText = new MFString;
+                                 newText[0] = ++findings;
+                                 if (findings == 1) newPic = picURL;
+                        }
+                "]
+        } # end Script adminReg
+        ROUTE adminReg.newPic  TO PicTexture.set_url
+        ROUTE adminReg.newText TO Texty.set_string
+} # end PROTO Register
+
+PROTO Counter [
+        eventIn  SFInt32  addScore
+        field    SFVec3f  location 0 0 0
+]
+{
+        DEF CountHolder Transform {
+            translation IS location
+            children [
+                 Transform {
+                        translation 0 0 0
+                        children [
+                             Shape {
+                                   appearance Appearance { material Material { diffuseColor .1 .2 .35 } }
+                                   geometry Text {
+                                                    string [ "COUNTER" ]
+                                                    fontStyle DEF MyFS FontStyle {
+                                                              style "BOLD"
+                                                              size    .04
+                                                              family  "SANS"
+                                                              justify "MIDDLE"
+                                                    }
+                                   }
+                             }
+                        ]
+                 }
+                 Transform {
+                        translation 0 -.045 0
+                        children [
+                             Shape {
+                                   appearance Appearance { material Material { diffuseColor .1 .2 .35 } }
+                                   geometry DEF Texty Text {
+                                                    string [ "0" ]
+                                                    fontStyle USE MyFS
+                                   }
+                             }
+                        ]
+                 }
+                 Transform {
+                        translation 0 -.09 0
+                        children [
+                             Anchor {
+                                url "save.html"
+                                parameter [ "target=bottom" ] #"target=bottom","onClick=adminConut.saveScore()"
+                                description " save your score to highscore list ... "
+                                children [
+                                    Shape {
+                                           appearance Appearance { material Material { diffuseColor .1 .2 .35 } }
+                                           geometry Text {
+                                                            string [ "SAVE SCORE" ]
+                                                            fontStyle USE MyFS
+                                           }
+                                    }
+                                ]
+                             }
+                             # DEF saveTouchy TouchSensor {}
+                        ]
+                 }
+            ]
+        }
+        DEF adminCount Script {
+                 field    SFInt32  score 0
+                 field    SFString cookieText ""
+                 eventIn  SFInt32  addScore IS addScore
+                 eventIn  SFTime   saveScore
+                 eventOut MFString newScore
+                 directOutput TRUE
+                 url ["javascript:
+                        function addScore ( s ) {
+                                 score = (score + s);
+                                 if (score < 0) { score = 0; }
+                                 newScore = new MFString;
+                                 newScore[0] = score;
+                        }
+                        function saveScore ( t ) {
+                                 addScore (1000);
+                                 document.bottom.forms.setCookieForm.scoreField.value = score;
+                        }
+                "]
+        } # end Script adminCount
+        ROUTE adminCount.newScore  TO Texty.set_string
+        # ROUTE saveTouchy.touchTime TO adminCount.saveScore
+} # end PROTO Counter
+
+#                                 newScore[0] = "SCORE";
+
+########
+#
+# - H U D : Here comes the HUD holding a bar with the pictures of trophies to be found.
+#
+DEF Hud Collision {
+        collide TRUE
+        children [
+                # Proximity sensor for notifying viewpoint changes
+                DEF HudProximity ProximitySensor {
+                        center 0 1.8 10
+                        size 200 200 200
+                }
+                # HUD frame:
+                DEF HudGeometry Transform {
+                        children [
+                                 ## registers:
+                                 DEF Reg1 Register {
+                                        location -.6 0.55 -1.5
+                                        pic1 "im/pic1.png"
+                                        pic2 "im/pic1_.png"
+                                 }
+                                 DEF Reg2 Register {
+                                        location -.4 0.55 -1.5
+                                        pic1 "im/pic2.png"
+                                        pic2 "im/pic2_.png"
+                                 }
+                                 DEF Reg3 Register {
+                                        location -.2 0.55 -1.5
+                                        pic1 "im/pic3.png"
+                                        pic2 "im/pic3_.png"
+                                 }
+                                 DEF Reg4 Register {
+                                        location .2 0.55 -1.5
+                                        pic1 "im/pic4.png"
+                                        pic2 "im/pic4_.png"
+                                 }
+                                 DEF Reg5 Register {
+                                        location .4 0.55 -1.5
+                                        pic1 "im/pic5.png"
+                                        pic2 "im/pic5_.png"
+                                 }
+                                 DEF Reg6 Register {
+                                        location .6 0.55 -1.5
+                                        pic1 "im/pic1.png"
+                                        pic2 "im/pic1_.png"
+                                 }
+                                 DEF ScoreCount Counter { location 0 0.55 -1.5 }
+                                 ## Bar:
+                                 Transform {
+                                        translation 0 0.7 -2
+                                        children [
+                                                Shape {
+                                                        appearance Appearance {
+                                                                material Material {
+                                                                         # diffuseColor 0.5 0.5 0.0
+                                                                         emissiveColor 0.5 0.6 0.0
+                                                                         transparency 0
+                                                        }
+                                                                texture ImageTexture { url "im/lightSand.gif" }
+                                                                textureTransform TextureTransform { scale 10 2 }
+                                                        }
+                                                        geometry Box {
+                                                                size 2.9 0.25 0
+                                                        }
+                                                }
+                                        ]
+                                 }
+                        ]
+                }
+        ]
+}
+#### ---- adjusting the HUD ...
+# Place the proximity center at the current viewpoint
+ROUTE HudProximity.position_changed TO HudProximity.set_center
+# Adjust the orientation of the Hud geometry
+ROUTE HudProximity.orientation_changed TO HudGeometry.set_rotation
+# Adjust the position of the Hud geometry
+ROUTE HudProximity.position_changed TO HudGeometry.set_translation
+
+#### ---- now routing events of found objects to the picture bar in the HUD ...
+ROUTE Cont1a.found TO Reg1.found
+ROUTE Cont1b.found TO Reg1.found
+ROUTE Cont1c.found TO Reg1.found
+ROUTE Cont2a.found TO Reg2.found
+ROUTE Cont2b.found TO Reg2.found
+ROUTE Cont3a.found TO Reg3.found
+ROUTE Cont3b.found TO Reg3.found
+ROUTE Cont4a.found TO Reg4.found
+ROUTE Cont4b.found TO Reg4.found
+ROUTE Cont4c.found TO Reg4.found
+ROUTE Cont5a.found TO Reg5.found
+ROUTE Cont5b.found TO Reg5.found
+ROUTE Cont1a.found TO Reg6.found
+ROUTE Cont1b.found TO Reg6.found
+
+ROUTE Cont1a.found TO ScoreCount.addScore
+ROUTE Cont1b.found TO ScoreCount.addScore
+ROUTE Cont1c.found TO ScoreCount.addScore
+ROUTE Cont2a.found TO ScoreCount.addScore
+ROUTE Cont2b.found TO ScoreCount.addScore
+ROUTE Cont3a.found TO ScoreCount.addScore
+ROUTE Cont3b.found TO ScoreCount.addScore
+ROUTE Cont4a.found TO ScoreCount.addScore
+ROUTE Cont4b.found TO ScoreCount.addScore
+ROUTE Cont4c.found TO ScoreCount.addScore
+ROUTE Cont5a.found TO ScoreCount.addScore
+ROUTE Cont5b.found TO ScoreCount.addScore
+
+ROUTE Miny1.damage TO ScoreCount.addScore
+ROUTE Miny2.damage TO ScoreCount.addScore
+ROUTE Miny3.damage TO ScoreCount.addScore

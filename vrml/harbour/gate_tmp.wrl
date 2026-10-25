@@ -1,0 +1,107 @@
+#VRML V2.0 utf8
+#
+#   gate_tmp.wrl
+#
+
+
+#
+### --- G A T E
+#
+DEF Gate Transform {
+children [
+# Gate to outside world
+DEF GateProximity ProximitySensor {
+                        center 10 0 1
+                        size 10 6 10
+}
+DEF LeftDoor Transform {
+        translation -5 5.5 2
+        children [
+                 Transform {
+                     translation 0 0 .5
+                     children [
+                 	Shape {
+                               appearance Appearance {
+                                    material Material { 
+                                    	emissiveColor 1 .8 0 
+                                    	diffuseColor 1 .8 0
+                                    }
+                                    texture ImageTexture { url "im/slideDoorL.jpg" }
+                               }
+                               geometry Box { size 10 12 1.2 }
+                        }
+                    ]
+                 }
+                 Transform {
+                     translation 0 0 -.5
+                     children [
+                 	Shape {
+                               appearance Appearance {
+                                    material Material { 
+                                    	emissiveColor 1 .8 0 
+                                    	diffuseColor 1 .8 0
+                                    }
+                                    texture ImageTexture { url "im/slideDoorR.jpg" }
+                               }
+                               geometry Box { size 10 12 1.2 }
+                        }
+                    ]
+                 }
+                 DEF TouchL TouchSensor {}
+        ]
+}
+DEF RightDoor Transform {
+        translation 5 5.5 2
+        children [
+                 Transform {
+                     translation 0 0 .5
+                     children [
+                 	Shape {
+                               appearance Appearance {
+                                    material Material { 
+                                    	emissiveColor 1 .8 0 
+                                    	diffuseColor 1 .8 0
+                                    }
+                                    texture ImageTexture { url "im/slideDoorR.jpg" }
+                               }
+                               geometry Box { size 10 12 2.2 }
+                        }
+                    ]
+                 }                 	
+                 Transform {
+                     translation 0 0 -.5
+                     children [
+                 	Shape {
+                               appearance Appearance {
+                                    material Material { 
+                                    	emissiveColor 1 .8 0 
+                                    	diffuseColor 1 .8 0
+                                    }
+                                    texture ImageTexture { url "im/slideDoorL.jpg" }
+                               }
+                               geometry Box { size 10 12 2.2 }
+                        }
+                    ]
+                 }                 	
+                 DEF TouchR TouchSensor {}
+        ]
+}
+DEF Timey TimeSensor { cycleInterval 20 loop FALSE startTime -1 }
+DEF ShiftL PositionInterpolator {
+    key [ 0.0, 0.05, 0.25, 0.3, 0.7, 0.75, 0.95, 1.0 ]
+    keyValue [ -5 5.5 2, -6 5.5 2, -13 5.5 2, -14 5.5 2, -14 5.5 2,  -13 5.5 2, -6 5.5 2, -5 5.5 2 ]
+}
+DEF ShiftR PositionInterpolator {
+    key [ 0.0, 0.05, 0.25, 0.3, 0.7, 0.75, 0.95, 1.0 ]
+    keyValue [ 5 5.5 2, 6 5.5 2, 13 5.5 2, 14 5.5 2, 14 5.5 2,  13 5.5 2, 6 5.5 2, 5 5.5 2 ]
+}
+ROUTE TouchL.touchTime TO Timey.set_startTime
+ROUTE TouchR.touchTime TO Timey.set_startTime
+ROUTE GateProximity.enterTime TO Timey.set_startTime
+ROUTE Timey.fraction_changed TO ShiftL.set_fraction
+ROUTE Timey.fraction_changed TO ShiftR.set_fraction
+ROUTE ShiftL.value_changed TO LeftDoor.set_translation
+ROUTE ShiftR.value_changed TO RightDoor.set_translation
+]
+} # end Gate
+

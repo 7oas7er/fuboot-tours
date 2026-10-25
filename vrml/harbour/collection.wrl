@@ -1,0 +1,271 @@
+#VRML V2.0 utf8
+#
+#  collection.wrl  --  PROTOs for collecting items
+#        by Andi Gramm
+#
+
+PROTO Content [
+        field    SFVec3f  location   0 0 0
+        field    MFString contURL    [ "NiceBall.wrl" ]
+        field    SFInt32  worth      100
+        field    SFFloat  proxyShape 2
+        eventOut SFInt32  found
+]
+{
+        DEF ContentHolder Transform {        translation IS location   }
+        DEF adminCont Script {
+                eventIn  SFTime  foundNode
+                eventOut SFInt32 myFound IS found
+                eventOut MFNode  createNode
+                eventOut MFNode  delNode
+                field    SFInt32 myWorth IS worth
+                field    SFNode  cont Transform {
+                                children [
+                                        DEF Colly Collision {
+                                                            collide TRUE
+                                                            proxy Shape { geometry Sphere { radius IS proxyShape } }
+                                        }
+                                        DEF Content Inline { url IS contURL }
+                                ]
+                }
+                directOutput TRUE
+                url ["javascript:
+                                function initialize ( v, tm ) {
+                                        createNode = new MFNode;
+                                        createNode[0] = cont;
+                                }
+                                function foundNode ( t ) {
+                                        myFound = myWorth;
+                                        delNode = new MFNode;
+                                        delNode[0] = cont;
+                                }
+                "]
+        }
+        Transform {				# sound
+           scale 20 15 20
+           children [
+                Sound {
+                        minFront 15.0
+                        minBack 15.0
+                        maxFront 30.0
+                        maxBack 30.0
+                        spatialize TRUE
+                        source DEF Clippy AudioClip {
+                                url "../sound/Content.wav"
+                                startTime -1
+                                loop FALSE
+                        }
+                }
+           ]
+        }        
+        ROUTE Colly.collideTime TO adminCont.foundNode
+        ROUTE Colly.collideTime TO Clippy.set_startTime
+        ROUTE adminCont.createNode TO ContentHolder.addChildren
+        ROUTE adminCont.delNode TO ContentHolder.removeChildren
+} # end PROTO Content
+
+PROTO Content2 [
+        field    SFVec3f  location   0 0 0
+        field    MFString contURL    [ "NiceBall.wrl" ]
+        field    SFInt32  worth      100
+        eventOut SFInt32  found
+]
+{
+        DEF ContentHolder Transform {        translation IS location   }
+        DEF adminCont Script {
+                eventIn  SFTime  foundNode
+                eventOut SFInt32 myFound IS found
+                eventOut MFNode  createNode
+                eventOut MFNode  delNode
+                field    SFInt32 myWorth IS worth
+                field    SFNode  cont Transform {
+                                children [
+                                        DEF ContTouch TouchSensor {}
+                                        DEF Content Inline { url IS contURL }
+                                ]
+                }
+                directOutput TRUE
+                url ["javascript:
+                                function initialize ( v, tm ) {
+                                        createNode = new MFNode;
+                                        createNode[0] = cont;
+                                }
+                                function foundNode ( t ) {
+                                        myFound = myWorth;
+                                        delNode = new MFNode;
+                                        delNode[0] = cont;
+                                }
+                "]
+        }
+        Transform {				# sound
+           scale 20 15 20
+           children [
+                Sound {
+                        source DEF Clippy AudioClip {
+                                url "../sound/Content.wav"
+                                startTime -1
+                                loop FALSE
+                        }
+                }
+           ]
+        }                
+        ROUTE ContTouch.touchTime TO adminCont.foundNode
+        ROUTE ContTouch.touchTime TO Clippy.set_startTime
+        ROUTE adminCont.createNode TO ContentHolder.addChildren
+        ROUTE adminCont.delNode TO ContentHolder.removeChildren
+} # end PROTO Content2
+
+# - registration of collected items ...   (bar with pics is part of the HUD)
+PROTO Register [
+        eventIn  SFInt32  found
+        field    SFVec3f  location 0 0 0
+        field    MFString pic1  [ "im/pic1.png"  ]
+        field    MFString pic2  [ "im/pic1_.png" ]
+]
+{
+        DEF RegHolder Transform {
+            translation IS location
+            children [
+                 Shape {
+                        appearance Appearance {
+                                material Material {
+                                         emissiveColor 1 1 1
+                                         transparency 0.4
+                                }
+                                texture DEF PicTexture ImageTexture { url IS pic1 }
+                        }
+                        geometry Box { size .1 .1 0 }
+                 }
+                 Transform {
+                        translation .04 -.04 0
+                        children [
+                             Shape {
+                                   appearance Appearance { material Material { emissiveColor 0 1 .2 } }
+                                   geometry DEF Texty Text {
+                                                    string [ "0" ]
+                                                    fontStyle FontStyle {
+                                                              style "BOLD"
+                                                              size    .025
+                                                              family  "SANS"
+                                                              justify "END"                                                              
+                                                    }
+                                   }
+                             }
+                        ]
+                 }
+            ]
+        }
+        DEF adminReg Script {
+                 field    SFInt32  findings 0
+                 field    MFString picURL IS pic2
+                 eventIn  SFInt32  foundNode IS found
+                 eventOut MFString newText
+                 eventOut MFString newPic
+                 directOutput TRUE
+                 url ["javascript:
+                        function foundNode ( i ) {
+                                 newText = new MFString;
+                                 newText[0] = ++findings;
+                                 if (findings == 1) newPic = picURL;
+                        }
+                "]
+        } # end Script adminReg
+        ROUTE adminReg.newPic  TO PicTexture.set_url
+        ROUTE adminReg.newText TO Texty.set_string
+} # end PROTO Register
+
+# counting score ...
+PROTO Counter [
+        eventIn  SFInt32  addScore
+        field    SFVec3f  location 0 0 0
+]
+{
+        DEF CountHolder Transform {
+            translation IS location
+            children [
+                 Transform {
+                        translation -.04 .01 0
+                        children [
+                             Shape {
+                                   appearance Appearance { material Material { emissiveColor 0 1 .2 } }
+                                   geometry Text {
+                                                    string [ "SCORE: " ]
+                                                    fontStyle FontStyle {
+                                                              style "BOLD"
+                                                              size    .03
+                                                              family  "SANS"
+                                                              justify "MIDDLE"
+                                                    }
+                                   }
+                             }
+                        ]
+                 }
+                 Transform {
+                        translation .09 .01 0
+                        children [
+                             Shape {
+                                   appearance Appearance { material Material { emissiveColor 0 1 .2 } }
+                                   geometry DEF Texty Text {
+                                                    string [ "0" ]
+                                                    fontStyle FontStyle {
+                                                              style "BOLD"
+                                                              size    .025
+                                                              family  "SANS"
+                                                              justify "END"
+                                                    }
+                                   }
+                             }
+                        ]
+                 }
+                 Transform {
+                        translation 0 -.04 0
+                        children [
+                             DEF SaveAnchor Anchor {
+                                url [ "javascript:parent.save.setScore(0)" ]
+                                description " save your score to highscore list ... "
+                                children [
+                                    Shape {
+                                   	   appearance Appearance { material Material { emissiveColor 0 1 .2 } }
+                                           geometry Text {
+                                                            string [ "SAVE SCORE" ]
+                                                    	    fontStyle DEF MyFS FontStyle {
+                                                              style "BOLD"
+                                                              size    .025
+                                                              family  "SANS"
+                                                              justify "MIDDLE"
+                                                    	    }
+                                           }
+                                    }
+                                    Shape {
+                                   	   appearance Appearance { material Material { transparency 1 } }
+                                           geometry Box { size .2 .05 0 }
+                                    }
+                                ]
+                             }
+                        ]
+                 }
+            ]
+        }
+        DEF adminCount Script {
+                 field    SFInt32  score 0
+                 field	  SFString s1 "javascript:parent.save.setScore("
+                 field	  SFString s2 ")"
+                 eventIn  SFInt32  addScore IS addScore
+                 eventOut MFString newScore
+                 eventOut MFString newURL
+                 directOutput TRUE
+                 url ["javascript:
+                        function addScore ( s ) {
+                                 score = (score + s);
+                                 if (score < 0) { score = 0; }
+                                 newScore = new MFString;
+                                 newScore[0] = score;
+                                 newURL = new MFString;
+                                 newURL[0] = s1 + score + s2;
+                        }
+                "]
+        } # end Script adminCount
+        
+        ROUTE adminCount.newScore TO Texty.set_string
+        ROUTE adminCount.newURL   TO SaveAnchor.set_url
+} # end PROTO Counter

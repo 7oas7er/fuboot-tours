@@ -1,0 +1,105 @@
+#VRML V2.0 utf8
+#
+# Bubbles.wrl    -   A number of bubbles
+#
+
+Viewpoint {
+        position 0 0 10
+        description "Entry view"
+}
+
+
+PROTO Bubble [
+      field SFFloat bubbleRadius 0.2
+      field SFColor bubbleColor .5 .9 .2
+]
+{
+    Transform {
+        children [
+                 Shape {
+                        appearance Appearance {
+                                material Material {
+                                        diffuseColor IS bubbleColor
+                                        emissiveColor IS bubbleColor
+                                        transparency 0.7
+                                }
+                        }
+                        geometry Sphere {
+                                 radius IS bubbleRadius
+                        }
+                }
+        ]
+    }
+}
+
+DEF B1 Transform { children [ Bubble { bubbleRadius 0.13 } ] }
+DEF B2 Transform { children [ Bubble { bubbleRadius 0.075 } ] }
+DEF B3 Transform { children [ Bubble { bubbleRadius 0.05 } ] }
+DEF B4 Transform { children [ Bubble { bubbleRadius 0.11 } ] }
+DEF B5 Transform { children [ Bubble { bubbleRadius 0.05 } ] }
+DEF B6 Transform { children [ Bubble { bubbleRadius 0.125 } ] }
+
+#
+#  Animation control:
+
+DEF T1 TimeSensor {
+    cycleInterval 20
+    loop TRUE
+    startTime 0
+}
+DEF T2 TimeSensor {
+    cycleInterval 20
+    loop TRUE
+    startTime 7.35
+}
+DEF T3 TimeSensor {
+    cycleInterval 20
+    loop TRUE
+    startTime 14.76
+}
+
+DEF P1 PositionInterpolator {
+    key [ 0.0, 1.0 ]
+    keyValue [ 0 -2.5 0, 0 15 0 ]
+}
+DEF P2 PositionInterpolator {
+    key [ 0.0, 1.0 ]
+    keyValue [ .4 -2.5 1,  .4 14 1 ]
+}
+DEF P3 PositionInterpolator {
+    key [ 0.0, 1.0 ]
+    keyValue [ -2 -2.5 -1, -2 16 -1 ]
+}
+DEF P4 PositionInterpolator {
+    key [ 0.0, 1.0 ]
+    keyValue [ 1.7 -2.5 -1.4,  1.7 15 -1.4]
+}
+DEF P5 PositionInterpolator {
+    key [ 0.0, 1.0 ]
+    keyValue [ .2 -2 1.2, .2 15 1.2]
+}
+DEF P6 PositionInterpolator {
+    key [ 0.0, 1.0 ]
+    keyValue [ 3 -2.5 1.2,  3 14 1.2]
+}
+
+
+# DEF Touch TouchSensor {}
+
+# ROUTE Touch.touchTime TO T1.set_startTime
+# ROUTE Touch.touchTime TO T2.set_startTime
+# ROUTE Touch.touchTime TO T3.set_startTime
+
+ROUTE T1.fraction_changed TO P1.set_fraction
+ROUTE T2.fraction_changed TO P2.set_fraction
+ROUTE T3.fraction_changed TO P3.set_fraction
+ROUTE T1.fraction_changed TO P4.set_fraction
+ROUTE T2.fraction_changed TO P5.set_fraction
+ROUTE T3.fraction_changed TO P6.set_fraction
+
+ROUTE P1.value_changed TO B1.set_translation
+ROUTE P2.value_changed TO B2.set_translation
+ROUTE P3.value_changed TO B3.set_translation
+ROUTE P4.value_changed TO B4.set_translation
+ROUTE P5.value_changed TO B5.set_translation
+ROUTE P6.value_changed TO B6.set_translation

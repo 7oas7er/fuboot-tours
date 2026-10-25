@@ -1,0 +1,28 @@
+#VRML V2.0 utf8
+#
+# Content for a box.
+#
+
+# Ghost to be discovered
+Transform {
+    scale 2.5 1 2
+    rotation .4 1 .4 1.5708
+    children [
+             Shape {
+                appearance Appearance {
+                        material Material {
+                                emissiveColor 0.25 0.1 0.9
+                                transparency 0.1
+                        }
+                        texture MovieTexture { 
+                        	url "im/skull.gif"
+                        	loop TRUE
+                        }
+                    textureTransform TextureTransform { scale 2 2 }                                                                                                                
+                }
+                geometry Sphere {
+                           radius 0.3
+                }
+             }
+    ]
+}

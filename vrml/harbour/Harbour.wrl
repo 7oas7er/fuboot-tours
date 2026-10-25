@@ -1,0 +1,591 @@
+#VRML V2.0 utf8
+#
+# World C   -   Harbour
+#
+
+WorldInfo {
+        title "FU-Boot Tours"
+        info [ "by Andi" ]
+}
+
+DEF tmpView Viewpoint {
+        position 80 1.5 -80
+        orientation 0 1 0 -1.3
+}
+DEF EntryView Viewpoint {
+        position -70.3 11.625 6.4
+        orientation 0 -1 0 4.5167
+        description "User has just left submarine - view"
+}
+DEF OutOfSubView Viewpoint {
+        position -70.3 11.625 6.4
+        orientation 0 -1 0 4.5167
+        description "User has just left submarine - view"
+}
+DEF MyEntryView Viewpoint {
+        position -20 1.5 -3
+        orientation 0 1 0 -1.3
+        description "Entry view"
+}
+DEF tmpView Viewpoint {
+        position 80 1.5 -80
+        orientation 0 1 0 -1.3
+}
+
+NavigationInfo {
+        type [ "WALK" ]
+        headlight FALSE
+        speed 1
+}
+
+
+# The following will not be executed if this world is called from an external world.
+Background {
+    skyColor [
+        0.1 .2 0.05,
+        0.15 .2 .05,
+        0.1 .2 0.1,
+        0.05 .1 0.05,
+        0.1 .1 0.05
+    ]
+    skyAngle [
+        1.,
+        1.40,
+        1.50,
+        1.58,
+    ]
+}
+
+EXTERNPROTO Content [
+        field    SFVec3f  location
+        field    MFString contURL
+        field    SFInt32  worth
+        field    SFFloat  proxyShape
+        eventOut SFInt32  found
+] "collection.wrl#Content"
+EXTERNPROTO Register [
+        eventIn  SFInt32  found
+        field    SFVec3f  location
+        field    MFString pic1
+        field    MFString pic2
+] "collection.wrl#Register"
+EXTERNPROTO Counter [
+        eventIn  SFInt32  addScore
+        field    SFVec3f  location
+] "collection.wrl#Counter"
+
+# HUD:
+DEF Hud Collision {
+        collide FALSE
+        children [
+                # Proximity sensor for notifying viewpoint changes
+                DEF HudProximity ProximitySensor {
+                        center 0 1.8 10
+                        size 200 200 200
+                }
+                DEF HudGeometry Transform {                ##### - Licht nur wenn direkt geladen !!
+                        children [
+                                # HUD-Spotlights
+                                Transform {
+                                  translation 0 -2 10
+                                  children [
+                                    DEF hudLight SpotLight {
+                                      ambientIntensity .9
+                                      beamWidth        0.070796
+                                      color            0.6 0.6 0.4
+                                      cutOffAngle      0.385398
+                                      direction        0 -0.2 -1.7
+                                      location         0 5 5
+                                      intensity        .6
+                                      radius           80
+                                    }
+                                  ]
+                                }
+                                # HUD-Overheadlights
+                                Transform {
+                                  translation 0 50 10
+                                  children [
+                                    DEF OHLight PointLight {
+                                         ambientIntensity 0
+                                         intensity .5
+                                         color 0.5 0.8 0.4
+                                         radius 100
+                                      }
+                                  ]
+                                }
+                                 ### Registers:
+                                 DEF Reg1 Register {
+                                        location -.65 0.56 -1.5
+                                        pic1 "im/pics/pic1.png"
+                                        pic2 "im/pics/pic1_.png"
+                                 }
+                                 DEF Reg2 Register {
+                                        location -.5 0.56 -1.5
+                                        pic1 "im/pics/pic2.png"
+                                        pic2 "im/pics/pic2_.png"
+                                 }
+                                 DEF Reg3 Register {
+                                        location -.35 0.56 -1.5
+                                        pic1 "im/pics/pic3.png"
+                                        pic2 "im/pics/pic3_.png"
+                                 }
+                                 DEF Reg4 Register {
+                                        location -.2 0.56 -1.5
+                                        pic1 "im/pics/pic4.png"
+                                        pic2 "im/pics/pic4_.png"
+                                 }
+                                 DEF Reg5 Register {
+                                        location .2 0.56 -1.5
+                                        pic1 "im/pics/pic5.png"
+                                        pic2 "im/pics/pic5_.png"
+                                 }
+                                 DEF Reg6 Register {  # bottle
+                                        location .35 0.56 -1.5
+                                        pic1 "im/pics/pic6.png"
+                                        pic2 "im/pics/pic6_.png"
+                                 }
+                                 DEF Reg7 Register {  # sword
+                                        location .5 0.56 -1.5
+                                        pic1 "im/pics/pic7.png"
+                                        pic2 "im/pics/pic7_.png"
+                                 }
+                                 DEF Reg8 Register {  # ball
+                                        location .65 0.56 -1.5
+                                        pic1 "im/pics/pic8.png"
+                                        pic2 "im/pics/pic8_.png"
+                                 }
+                                 DEF ScoreCount Counter { location 0 0.56 -1.5 }
+                                 ### Bar:
+                                 Transform {
+                                        translation 0 0.75 -2
+                                        children [
+                                                Shape {
+                                                        appearance Appearance {
+                                                                material Material {
+                                                                         diffuseColor 0 0 0
+                                                                         emissiveColor 0 0 0
+                                                                         transparency 0
+                                                                }
+                                                        }
+                                                        geometry Box {
+                                                                size 2.9 0.16 0
+                                                        }
+                                                }
+                                        ]
+                                 }
+                        ]
+                }
+        ]
+}
+# Place the proximity center at the current viewpoint
+ROUTE HudProximity.position_changed TO HudProximity.set_center
+# Adjust the orientation of the Hud geometry
+ROUTE HudProximity.orientation_changed TO HudGeometry.set_rotation
+# Adjust the position of the Hud geometry
+ROUTE HudProximity.position_changed TO HudGeometry.set_translation
+
+Transform {
+        scale .5 .25 .5
+        children [
+                Sound {
+                        minFront 15.0
+                        minBack 15.0
+                        maxFront 30.0
+                        maxBack 30.0
+                        spatialize TRUE
+                        source AudioClip {
+                                url "../sound/water.wav"
+                                startTime 1.0
+                                stopTime  0.0
+                                loop TRUE
+                        }
+                }
+        ]
+}
+
+##########################################################################
+
+
+
+# extra levels:
+
+
+# lock
+Transform {
+    translation -87.5  2  -4.4
+    rotation 0 -1 0 1.5708
+    children [ Inline { url "Lock_Harbour.wrl" } ]
+}
+
+# aquarium
+Transform {
+    translation 105.5 1.5 -139
+    children [ Inline { url "Aquarium.wrl" } ]
+}
+
+# lab
+EXTERNPROTO Lab [
+        eventOut SFInt32 foundBony
+        eventOut SFInt32 foundBottles
+        eventOut SFInt32 foundBall
+] "Lab.wrl#Lab"
+Transform {
+    translation 62.75 13.5 1
+    rotation 0 1 0 3.1459
+    scale 4 3 4
+    children [ DEF Laby Lab {} ]
+}
+
+# static parts of harbour
+Inline { url "Harbour_statics.wrl" }
+
+
+
+# Objects:
+
+DEF Cont1a Content {
+        contURL [ "NiceBall.wrl" ]
+        worth 55
+        location -3 1 -78
+        proxyShape .5
+}
+DEF Cont1b Content {
+        contURL [ "NiceBall.wrl" ]
+        worth 55
+        location 3 1 -61
+        proxyShape .5
+}
+DEF Cont1c Content {
+        contURL [ "NiceBall.wrl" ]
+        worth 55
+        location 23 1 -87
+        proxyShape .5
+}
+DEF Cont1d Content {
+        contURL [ "NiceBall.wrl" ]
+        worth 55
+        location 97 1 -61
+        proxyShape .5
+}
+DEF Cont1e Content {
+        contURL [ "NiceBall.wrl" ]
+        worth 55
+        location 100 1 -50
+        proxyShape .5
+}
+DEF Cont2a Content {
+        contURL [ "Bony.wrl" ]
+        worth 333
+        location 3.5 1 -14
+        proxyShape 1
+}
+DEF Cont2b Content {
+        contURL [ "Bony.wrl" ]
+        worth 333
+        location 5.5 1 -12
+        proxyShape 1
+}
+DEF Cont2c Content {
+        contURL [ "Bony.wrl" ]
+        worth 333
+        location 37 17.5 -96.5
+        proxyShape 1
+}
+EXTERNPROTO Boxy [
+        field    SFVec3f location
+        field    MFString contURL
+        field    MFString adURL
+        field    SFVec3f  contScale
+        field    MFString lidURL
+        field    MFString textureURL
+        field    SFInt32  worth
+        eventOut SFInt32 found
+] "Box.wrl"
+Transform {
+    translation 57 0 -81
+    rotation 0 1 0 2.9
+    children [
+            DEF Cont3a Boxy {
+                contURL "Ghost.wrl"
+                contScale .5 .5 .5
+                lidURL  [ "../../sponsoren/sponsor8.png", "../../sponsoren/sponsor8.gif", "../../sponsoren/sponsor8.jpg" ]
+                adURL   [ "../../sponsoren/sponsor8.html" ]
+                textureURL  "im/camoflage.jpg"
+                worth 777
+        }
+    ]
+}
+Transform {
+    translation 105 0 -38
+    rotation 0 1 0 2.2
+    children [
+        DEF Cont3b Boxy {
+                contURL "Sword.wrl"
+                contScale .5 .5 .5
+                lidURL  [ "../../sponsoren/sponsor7.png", "../../sponsoren/sponsor7.gif", "../../sponsoren/sponsor7.jpg" ]
+                adURL   [ "../../sponsoren/sponsor7.html" ]
+                textureURL  "im/wood.jpg"
+                worth 1111
+        }
+    ]
+}
+Transform {
+    translation 108 .8 -158
+    rotation 0 1 0 1.3
+    children [
+        DEF Cont4a Boxy {
+                contURL "starfish.wrl"
+                contScale .5 .5 .5
+                lidURL  [ "../../sponsoren/sponsor6.png", "../../sponsoren/sponsor6.gif", "../../sponsoren/sponsor6.jpg" ]
+                adURL   [ "../../sponsoren/sponsor6.html" ]
+                textureURL  "im/redMetal.jpg"
+                worth 111
+        }
+    ]
+}
+Transform {
+    translation 110 1.5 -143
+    rotation 0 -1 0 .7
+    children [
+        DEF Cont4b Boxy {
+                contURL "starfish.wrl"
+                contScale .5 .5 .5
+                lidURL  [ "../../sponsoren/sponsor6.png", "../../sponsoren/sponsor6.gif", "../../sponsoren/sponsor6.jpg" ]
+                adURL   [ "../../sponsoren/sponsor6.html" ]
+                textureURL  "im/redMetal.jpg"
+                worth 111
+        }
+    ]
+}
+Transform {
+    translation 102 -.5 -140
+    rotation 0 1 0 1.2
+    children [
+        DEF Cont4c Boxy {
+                contURL "starfish.wrl"
+                contScale .5 .5 .5
+                lidURL  [ "../../sponsoren/sponsor6.png", "../../sponsoren/sponsor6.gif", "../../sponsoren/sponsor6.jpg" ]
+                adURL   [ "../../sponsoren/sponsor6.html" ]
+                textureURL  "im/redMetal.jpg"
+                worth 111
+        }
+    ]
+}
+# Cans
+EXTERNPROTO Tony [ eventOut SFInt32 found ] "objects.wrl#Tony"
+Transform {
+        translation 95 1 -33
+        rotation 0.7 0 0.2 1
+        scale .4 .4 .4
+        children [ DEF Cont5a Tony {} ]
+}
+Transform {
+        translation 90 1 -35
+        rotation 0.7 0 0.2 1.8
+        scale .4 .4 .4
+        children [  DEF Cont5b Tony {} ]
+}
+Transform {
+        translation 103 1 -102
+        rotation 0.7 0 0.2 1
+        scale .4 .4 .4
+        children [  DEF Cont5c Tony {} ]
+}
+Transform {
+        translation 94 1 -97
+        rotation 0.7 0 0.2 2.5
+        scale .4 .4 .4
+        children [  DEF Cont5d Tony {} ]
+}
+Transform {
+        translation 97 6 -100
+        rotation 0.7 0 0.2 1
+        scale .5 .5 .5
+        children [ Inline { url "Tony.wrl" } ]
+}
+Transform {
+        translation 93 6 -103
+        rotation 0.7 0 0.2 2
+        scale .5 .5 .5
+        children [ Inline { url "Tony.wrl" } ]
+}
+Transform {
+        translation 18.0 2 -38.0
+        scale .2 .2 .2
+        rotation 0.7 0 0.2 1
+        children [ Inline { url "Can.wrl" } ]
+}
+Transform {
+        translation 20.0 3 -40.0
+        scale .2 .2 .2
+        rotation 0.7 0 0.2 1
+        children [ Inline { url "Can.wrl" } ]
+}
+Transform {
+        translation 21 2 -37.2
+        scale .2 .2 .2
+        rotation 0.7 0 0.2 1
+        children [ Inline { url "Can.wrl" } ]
+}
+
+EXTERNPROTO Vessel [] "objects.wrl#Vessel"
+Transform {
+    translation -9 5 -40
+    children [ Vessel {} ]
+}
+Transform {
+    translation 54 5 -60
+    children [ Vessel {} ]
+}
+
+ROUTE Cont1a.found TO Reg1.found
+ROUTE Cont1b.found TO Reg1.found
+ROUTE Cont1c.found TO Reg1.found
+ROUTE Cont2a.found TO Reg2.found
+ROUTE Cont2b.found TO Reg2.found
+ROUTE Cont2c.found TO Reg2.found
+ROUTE Laby.foundBony TO Reg2.found
+ROUTE Cont3a.found TO Reg3.found
+ROUTE Cont4a.found TO Reg4.found
+ROUTE Cont4b.found TO Reg4.found
+ROUTE Cont4c.found TO Reg4.found
+ROUTE Cont5a.found TO Reg5.found
+ROUTE Cont5b.found TO Reg5.found
+ROUTE Cont5c.found TO Reg5.found
+ROUTE Cont5d.found TO Reg5.found
+ROUTE Laby.foundBottles TO Reg6.found
+ROUTE Cont3b.found TO Reg7.found
+ROUTE Laby.foundBall TO Reg8.found
+
+ROUTE Cont1a.found TO ScoreCount.addScore
+ROUTE Cont1b.found TO ScoreCount.addScore
+ROUTE Cont1c.found TO ScoreCount.addScore
+ROUTE Cont1d.found TO ScoreCount.addScore
+ROUTE Cont1e.found TO ScoreCount.addScore
+ROUTE Cont2a.found TO ScoreCount.addScore
+ROUTE Cont2b.found TO ScoreCount.addScore
+ROUTE Cont2c.found TO ScoreCount.addScore
+ROUTE Cont3a.found TO ScoreCount.addScore
+ROUTE Cont3b.found TO ScoreCount.addScore
+ROUTE Cont4a.found TO ScoreCount.addScore
+ROUTE Cont4b.found TO ScoreCount.addScore
+ROUTE Cont4c.found TO ScoreCount.addScore
+ROUTE Cont5a.found TO ScoreCount.addScore
+ROUTE Cont5b.found TO ScoreCount.addScore
+ROUTE Cont5c.found TO ScoreCount.addScore
+ROUTE Cont5d.found TO ScoreCount.addScore
+ROUTE Laby.foundBottles TO ScoreCount.addScore
+ROUTE Laby.foundBony TO ScoreCount.addScore
+ROUTE Laby.foundBall TO ScoreCount.addScore
+
+
+#
+# --  mine field
+#
+EXTERNPROTO AMine [
+  field  SFInt32 power
+  eventOut SFInt32 damage
+] Mine2.wrl#Mine
+# front line
+  Transform {
+        translation -12 .5 -9
+        scale .2 .2 .2
+        children [ DEF Miny1 AMine { power 450 } ]
+  }
+  Transform {
+        translation -6 .5 -11
+        scale .2 .2 .2
+        children [ DEF Miny2 AMine { power 450 } ]
+  }
+  Transform {
+        translation 0 .5 -9
+        scale .2 .2 .2
+        children [ DEF Miny3 AMine { power 450 } ]
+  }
+  Transform {
+        translation 6 .5 -11
+        scale .2 .2 .2
+        children [ DEF Miny4 AMine { power 450 } ]
+  }
+  Transform {
+        translation 12 .5 -9
+        scale .2 .2 .2
+        children [ DEF Miny5 AMine { power 450 } ]
+  }
+# middle line
+  Transform {
+        translation -15.5 .5 -19
+        scale .2 .2 .2
+        children [ DEF Miny6 AMine { power 450 } ]
+  }
+  Transform {
+        translation -9.5 .5 -21
+        scale .2 .2 .2
+        children [ DEF Miny7 AMine { power 450 } ]
+  }
+  Transform {
+        translation -3.5 .5 -19
+        scale .2 .2 .2
+        children [ DEF Miny8 AMine { power 450 } ]
+  }
+  Transform {
+        translation 2.5 .5 -21
+        scale .2 .2 .2
+        children [ DEF Miny9 AMine { power 450 } ]
+  }
+  Transform {
+        translation 9.5 .5 -19
+        scale .2 .2 .2
+        children [ DEF Miny10 AMine { power 450 } ]
+  }
+  Transform {
+        translation 15.5 .5 -21
+        scale .2 .2 .2
+        children [ DEF Miny11 AMine { power 450 } ]
+  }
+# back line
+  Transform {
+        translation -12 .5 -31
+        scale .2 .2 .2
+        children [ DEF Miny12 AMine { power 450 } ]
+  }
+  Transform {
+        translation -6 .5 -29
+        scale .2 .2 .2
+        children [ DEF Miny13 AMine { power 450 } ]
+  }
+  Transform {
+        translation 0 .5 -31
+        scale .2 .2 .2
+        children [ DEF Miny14 AMine { power 450 } ]
+  }
+  Transform {
+        translation 6 .5 -29
+        scale .2 .2 .2
+        children [ DEF Miny15 AMine { power 450 } ]
+  }
+  Transform {
+        translation 12 .5 -31
+        scale .2 .2 .2
+        children [ DEF Miny16 AMine { power 450 } ]
+  }
+
+
+
+
+ROUTE Miny1.damage TO ScoreCount.addScore
+ROUTE Miny2.damage TO ScoreCount.addScore
+ROUTE Miny3.damage TO ScoreCount.addScore
+ROUTE Miny4.damage TO ScoreCount.addScore
+ROUTE Miny5.damage TO ScoreCount.addScore
+ROUTE Miny6.damage TO ScoreCount.addScore
+ROUTE Miny7.damage TO ScoreCount.addScore
+ROUTE Miny8.damage TO ScoreCount.addScore
+ROUTE Miny9.damage TO ScoreCount.addScore
+ROUTE Miny10.damage TO ScoreCount.addScore
+ROUTE Miny11.damage TO ScoreCount.addScore
+ROUTE Miny12.damage TO ScoreCount.addScore
+ROUTE Miny13.damage TO ScoreCount.addScore
+ROUTE Miny14.damage TO ScoreCount.addScore
+ROUTE Miny15.damage TO ScoreCount.addScore
+ROUTE Miny16.damage TO ScoreCount.addScore

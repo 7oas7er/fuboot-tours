@@ -1,0 +1,160 @@
+#VRML V2.0 utf8
+#
+# A chest like box holding a ghost to be opened by touching it!!
+#
+
+NavigationInfo {
+        type [ "WALK" ]
+        headlight TRUE
+}
+
+Viewpoint {
+        position 0.0 1.5 5
+        description "Entry view"
+}
+
+PROTO Box [
+	field    MFString contURL "Ghost.wrl"
+	field    MFString lidURL  "im/hammerUndSichel.jpg"
+	field    MFString textureURL  "im/camoflage.jpg"
+	field    SFInt32  worth	  75
+	eventOut SFInt32  found
+]
+{
+Transform {
+        translation 0 0.2 0
+        children [
+                #  Outer side of box
+                DEF Outer Shape {
+                        appearance Appearance {
+                                material DEF BoxMat Material {
+                                        # diffuseColor 0.354 0.494 0.3965
+                                        # emissiveColor 0.354 0.494 0.3965
+                                        transparency 0
+                                }
+                                texture ImageTexture { url IS textureURL }
+                                textureTransform TextureTransform { scale 3 2 }
+                        }
+                        geometry Box {
+                                 size 2 1 1
+                                 # top FALSE
+                        }
+                }
+                #  dark fake content of box
+                DEF Content Transform {
+                    translation 0 0.5 0
+                    children [
+                             Shape {
+                                appearance Appearance {
+                                        material Material {
+                                                 diffuseColor 0 0 0
+                                                 emissiveColor 0 0 0
+                                                 transparency 0.5
+                                        }
+                                }
+                                geometry Box { size 1.95 0.05 0.95 }
+                             }
+                    ]
+                }
+                # Lid of the box (to be opened by mouse click
+                DEF Lid1 Transform {
+                    translation 0 0.5 0
+                    children [
+                            Shape {
+                                appearance Appearance {
+                                        material USE BoxMat
+                                	texture ImageTexture { url IS textureURL }
+                                        textureTransform TextureTransform { scale 3 1 }
+                                }
+                                geometry Box {
+                                         size 2 0.08 1
+                                }
+                            }
+                    ]
+                }
+                DEF Lid2 Transform {
+                    translation 0 0.45 0
+                    children [
+                            Shape {
+                                appearance Appearance {
+                                        material USE BoxMat
+                                        texture ImageTexture { url IS lidURL }
+                                }
+                                geometry Box {
+                                         size 1.95 0.04 0.95
+                                }
+                            }
+                    ]
+                }
+                DEF Touchy TouchSensor { }                
+        ]
+} # end Transform1
+Transform {
+        translation 0 0.2 0
+        children [
+                # Content of the box coming up to be discovered
+                DEF ContentHolder Transform { translation 0 -0.25 0 }
+                DEF ContTouchy TouchSensor {}                
+        ]
+} # end Transform2
+
+
+#  Animation control Box + Content:
+DEF Timey TimeSensor { cycleInterval 30.0 loop FALSE startTime -1 }
+DEF Rotty OrientationInterpolator {
+    key [ 0.0, 0.2, 0.8, 1.0 ]
+    keyValue [ 0.1 0 0 0.0, 0.1 0 0 -1.1, 0.1 0 0 -1.1, 0.1 0 0 0.0 ]
+}
+DEF Possy1 PositionInterpolator { # lifts  outer lid
+    key [ 0.0, 0.2, 0.8, 1.0 ]
+    keyValue [ 0 0.5 0, 0 0.9 -0.25, 0 0.9 -0.25, 0 0.5 0 ]
+}
+DEF Possy2 PositionInterpolator { # lifts  inner lid
+    key [ 0.0, 0.2, 0.8, 1.0 ]
+    keyValue [ 0 0.45 0, 0 0.9 -0.22, 0 0.9 -0.22, 0 0.45 0 ]
+}
+DEF Uppy PositionInterpolator {  # lifts the ball
+    key [ 0.0, 0.2, 0.3, 0.35, 0.65, 0.7, 0.8, 1.0 ]
+    keyValue [ 0 0 -0.1, 0 .2  -0.1, 0 .7 -0.1,  0 .9 0.1,  0 .9 0.1, 0 .7 -0.1, 0 .2 -0.1, 0 0 -0.1 ]
+}
+ROUTE Touchy.touchTime TO Timey.set_startTime
+ROUTE Timey.fraction_changed TO Rotty.set_fraction
+ROUTE Rotty.value_changed TO Lid1.set_rotation
+ROUTE Rotty.value_changed TO Lid2.set_rotation
+ROUTE Timey.fraction_changed TO Possy1.set_fraction
+ROUTE Possy1.value_changed TO Lid1.set_translation
+ROUTE Timey.fraction_changed TO Possy2.set_fraction
+ROUTE Possy2.value_changed TO Lid2.set_translation
+ROUTE Timey.fraction_changed TO Uppy.set_fraction
+ROUTE Uppy.value_changed TO ContentHolder.set_translation
+
+
+DEF adminCont Script {
+                eventIn  SFTime  foundNode
+                eventOut SFInt32 myFound IS found
+                eventOut MFNode  createNode
+                eventOut MFNode  delNode
+                field    SFInt32 myWorth IS worth
+                field    SFNode  cont Transform {
+                                children [ DEF Content Inline { url IS contURL } ]
+                }
+                directOutput TRUE
+                url ["javascript:
+                                function initialize ( v, tm ) {
+                                        createNode = new MFNode;
+                                        createNode[0] = cont;
+                                }
+                                function foundNode ( t ) {
+                                        myFound = myWorth;
+                                        delNode = new MFNode;
+                                        delNode[0] = cont;
+                                }
+                "]
+}
+ROUTE ContTouchy.touchTime TO adminCont.foundNode
+ROUTE adminCont.createNode TO ContentHolder.addChildren
+ROUTE adminCont.delNode TO ContentHolder.removeChildren
+
+} # end PROTO Box
+
+Box {}

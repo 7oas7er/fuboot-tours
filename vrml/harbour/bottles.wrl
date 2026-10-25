@@ -1,0 +1,92 @@
+#VRML V2.0 utf8
+
+# "Submarine"
+
+NavigationInfo {
+	type ["EXAMINE", "ANY" ]
+}
+
+######################################################################
+# World
+
+# Bottle
+PROTO Bottle [
+	field SFColor dColor .4 1 .3
+	field SFColor eColor .2 .6 .8
+]
+{  Transform {
+	children [
+		Transform {
+			scale .2 .6 .2
+			translation 0 1.55 0
+			children [
+				Shape {
+                		    appearance DEF GlassApp Appearance {
+                               		material Material {
+	                                        diffuseColor  IS eColor
+        	                                emissiveColor IS dColor
+                	                        transparency 0
+                        	        }
+        	            	    }
+        	            	    geometry Sphere { radius 2.5 }
+        	            	}
+			]
+		}
+		Transform {
+			children [
+		       	    DEF Body Shape {
+                		    appearance USE GlassApp
+                	    	    geometry Cylinder {
+                        	     	radius .5
+	                             	height 3
+        	                     	top FALSE
+	                    	    }
+        		    }
+			]
+		}
+		Transform {
+			scale .5 .3 .5
+			translation 0 3 0		
+			children [
+				USE Body
+			]
+		}
+		Transform {
+			translation 0 3.4 0
+			scale .6 .05 .6
+			children [
+		       	    DEF Body Shape {
+                		    appearance USE GlassApp
+                	    	    geometry Cylinder {
+                        	     	radius .5
+	                             	height 3
+	                    	    }
+        		    }
+			]
+		}
+	]
+   }
+}
+
+
+Transform {
+	translation 2 0 0
+	children [ Bottle {} ]
+}		  
+
+Transform {
+	translation 0 0 0
+	children [ Bottle {
+				eColor .5  .6 1
+				dColor .2 .4 .9
+		   } ]
+}		  
+	
+Transform {
+	translation -2 0 0
+	children [ Bottle {
+				eColor 1  .6 .5
+				dColor .9 .4 .2
+		   } ]
+}		  
+		

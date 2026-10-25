@@ -1,0 +1,103 @@
+#VRML V2.0 utf8
+
+# This is a broken submarine by Philipp and Oliver (BETA)
+
+DEF submarine Transform {
+	rotation 0 0 1 -1.5708
+	scale 1 1.5 1
+	
+	children [
+		# a body
+		DEF Body Transform	{
+			translation	0 0 0
+			children [ 
+				Shape {
+					appearance Appearance {
+		    			    	material Material {
+						}
+						texture ImageTexture {
+					     		url "im/rost2.gif"
+						}
+						textureTransform TextureTransform {
+						}
+		    		}
+		    		geometry Cylinder {
+						bottom FALSE
+						top	FALSE
+	    				radius 0.75
+						height 5
+					}
+				}
+			]
+		}
+		DEF	Stern Transform {
+			scale 1 2 1
+			translation	0 2.5 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {
+						}
+						texture ImageTexture {
+					     		url "im/rost3.gif"
+						}
+							textureTransform TextureTransform {
+							scale 2 1
+							translation 0.5 0.5
+						}
+					}
+					geometry Sphere {
+					    radius .75 # Oliver
+					}
+				}
+			]
+		} 
+		DEF	Egress Transform {
+			translation	-.75 0 0
+			scale 1.6 1 1
+			rotation 0 0 1 1.5708
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {
+						}
+						texture ImageTexture {
+					     		url "im/rost3.gif"
+						}
+							textureTransform TextureTransform {
+							scale 2 1
+						}
+					}
+					geometry Cylinder {
+					    height 1.25 
+					    radius 0.5
+					}
+				}
+			]
+		} 
+		DEF	Fly Transform {
+			translation 0 0 0
+			scale 0.1 1 1
+			rotation 1 0 0 1.5708
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {
+						}
+						texture ImageTexture {
+					     		url "im/rost4.gif"
+						}
+							textureTransform TextureTransform {
+							scale 2 1
+						}
+					}
+					geometry Cylinder {
+					    height 3 
+					    radius 0.5
+					}
+				}
+			]
+		}
+	]
+}
+

@@ -1,0 +1,667 @@
+#VRML V2.0 utf8
+#
+# World C   -   Harbour
+#
+
+WorldInfo {
+        title "FU-Boot Tours  --  harbour statics"
+        info [ "by Andi" ]
+}
+
+DEF EntryView Viewpoint {
+        position -20 1.5 -3
+        orientation 0 1 0 -1.3
+        description "Entry view"
+}
+
+NavigationInfo {
+        type [ "WALK" ]
+        headlight TRUE
+}
+
+# Objects:
+
+# structure
+Transform {
+    translation 112 -.5 -117
+    rotation .4 1 0 .9
+    scale 1.5 3 1.5
+    children [
+             DEF Structure Shape {
+                        appearance Appearance {
+                                texture ImageTexture { url "im/underwaterStructure.jpg" }
+                                textureTransform TextureTransform { scale 6 1 }
+                        }
+                        geometry Box { size 10 1 6 }
+            }
+    ]
+}
+
+# structured floor: 
+Transform {
+    translation 55 0 -34
+    rotation 0.2 1 0 0.7
+    children [ USE Structure ]
+}
+Transform {
+    translation 40 0 -36
+    rotation 0.6 1 0 0.3
+    children [ USE Structure ]
+}
+Transform {
+    translation 42 -.2 -28
+    rotation 0.4 1 0 1.5
+    children [ USE Structure ]
+}
+Transform {
+    translation 45 0 -26
+    rotation 0.2 1 0 0.8
+    children [ USE Structure ]
+}
+Transform {
+    translation 78 0 -27
+    rotation 0.1 1 0 0.3
+    children [ USE Structure ]
+}
+Transform {
+    translation 65 0.3 -23
+    rotation -.4 1 0 0.4
+    children [ USE Structure ]
+}
+# Stairs
+EXTERNPROTO Stair [] "objects.wrl#Stair"
+Transform {					# to lab
+    translation 59 -2 -22.5
+    rotation 0 1 0 1.5708
+    children [ Stair {} ]
+}
+Transform {					# to belle vue
+    translation 27 0 -97.5
+    rotation 0 -1 0 1.5708
+    scale 1 1 1
+    children [ Stair {} ]
+}
+
+# Submarines:
+Transform {		# small wreck next to tunnel
+    translation 25 1 -35
+    rotation 0 2.5 1 3.2
+    scale 1 2 2
+    children [
+        Inline { url "wrak.wrl" }
+    ]
+}
+Transform {		# small wreck on the left
+    translation -17 .5 -43
+    rotation 0.4 1.4 -.5 0.6
+    scale 1.5 2 2
+    children [
+        Inline { url "wrak.wrl" }
+    ]
+}
+DEF Sub1 Transform {		# big one ch2
+  scale .05 .05 .05
+  rotation 1 0 0 -1.5708
+  translation 45 16 -110
+  children [
+    Inline { url "SubmarineJ.wrl" }
+  ]
+}
+DEF Sub2 Transform {		# small one ch2
+    translation 80 5 -80
+    rotation 0 0 1 0.3
+    children [
+        Inline { url "sub.wrl" }
+    ]
+}
+DEF Sub3 Transform {		# big one ch1
+    translation -25 15 -45
+    rotation 1 1 .8 4.6124
+    scale .04 .05 .04
+    children [
+        Inline { url "SubmarineJ.wrl" }
+    ]
+}
+DEF Uhr TimeSensor {
+  cycleInterval 223
+  loop TRUE
+}
+DEF Uhr2 TimeSensor {
+  cycleInterval 90
+  loop TRUE
+}
+DEF SubPos PositionInterpolator {
+  key [ 0, .2, .3, .4, .4, .5 , .55, .6, .7, .75, .8, .9, 1 ]
+  keyValue [ 45 16 -110, 45 16 -110, 45 13 -110, 45 7 -110, 45 5 -110, 50 4 -110, 65 4 -110, 70 0 -110, 70 0 -110, 65 4 -110, 50 4 -110, 45 7 -110, 45 16 -110,  ]
+}
+DEF SubPos2 PositionInterpolator {
+  key [ 0, .1, .15 , .3, .4, .6, .8, .9, 1 ]
+  keyValue [ 80 3 -80, 80 3 -80, 80 6 -80, 80 12 -85, 80 19 -90, 80 19 -90, 80 12 -85, 80 6 -80, 80 3 -80]
+}
+DEF SubPos3 PositionInterpolator {
+  key [ 0, .2, .8 , 1 ]
+  keyValue [ -25 15 -45, -25 5 -45, -25 5 -45, -25 15 -45 ]
+}
+ROUTE Uhr.fraction_changed TO SubPos.set_fraction
+ROUTE SubPos.value_changed TO Sub1.set_translation
+ROUTE Uhr2.fraction_changed TO SubPos2.set_fraction
+ROUTE SubPos2.value_changed TO Sub2.set_translation
+ROUTE Uhr.fraction_changed TO SubPos3.set_fraction
+ROUTE SubPos3.value_changed TO Sub3.set_translation
+
+
+#
+### ground:
+#
+Transform {
+        translation -10 -0.3 -200
+        children [
+                    Shape {
+                        appearance Appearance {
+                        	material Material { emissiveColor .075 .05 0.02 }
+                                texture ImageTexture {
+#                                        url "im/weirdBrownish2.jpg"
+                                        url "im/plaster.jpg"
+                                        repeatS TRUE
+                                        repeatT TRUE
+                                }
+                                textureTransform TextureTransform { scale 100 100 }
+                        }
+                        geometry ElevationGrid {
+                                zDimension 4
+                                xDimension 4
+                                xSpacing 170
+                                zSpacing 80
+                                solid TRUE
+                                creaseAngle 1.585
+                                height [ -15, -10, -10, -15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+                        }
+                     }
+        ]
+}
+
+
+#
+### --- G A T E S
+#
+PROTO Gate [ field SFColor color  .2 .2 .1 ] {
+ Transform {
+  children [
+	# Gate to outside world
+	DEF GateProximity ProximitySensor {
+                        center 0 5 0
+                        size 15 20 20
+	}
+	DEF LeftDoor Transform {
+           translation -5 5.5 0
+	   scale 1 1.1 1
+           children [
+                 Transform {
+                     translation 0 -1 .5
+                     children [
+                 	Shape {
+                               appearance Appearance {
+                                    material Material { emissiveColor .2 .2 .1 }
+                                    texture ImageTexture { url "im/slideDoorL.jpg" }
+                               }
+                               geometry Box { size 10 12 2.2 }
+                        }
+                    ]
+                 }
+                 Transform {
+                     translation 0 -1 -.5
+                     children [
+                 	Shape {
+                               appearance Appearance {
+                                    material Material { emissiveColor .2 .2 .1 }
+                                    texture ImageTexture { url "im/slideDoorR.jpg" }
+                               }
+                               geometry Box { size 10 12 2.2 }
+                        }
+                    ]
+                 }
+           ]
+	}
+	DEF RightDoor Transform {
+           translation 5 5.5 0
+	   scale 1 1.1 1
+           children [
+                 Transform {
+                     translation 0 -1 .5
+                     children [
+                 	Shape {
+                               appearance Appearance {
+                                    material Material { emissiveColor .2 .2 .1 }
+                                    texture ImageTexture { url "im/slideDoorR.jpg" }
+                               }
+                               geometry Box { size 10 12 2.2 }
+                        }
+                    ]
+                 }                 	
+                 Transform {
+                     translation 0 -1 -.5
+                     children [
+                 	Shape {
+                               appearance Appearance {
+                                    material Material { emissiveColor .2 .2 .1 }
+                                    texture ImageTexture { url "im/slideDoorL.jpg" }
+                               }
+                               geometry Box { size 10 12 2.2 }
+                        }
+                    ]
+                 }                 	
+              #   DEF TouchR TouchSensor {}
+           ]
+	}
+	DEF Timey TimeSensor { cycleInterval 20 loop FALSE startTime -1 }
+	DEF ShiftL PositionInterpolator {
+	    key [ 0.0, 0.05, 0.25, 0.3, 0.7, 0.75, 0.95, 1.0 ]
+	    keyValue [ -5 5.5 0, -6 5.5 0, -13 5.5 0, -13.5 5.5 0, -13.5 5.5 0,  -13 5.5 0, -6 5.5 0, -5 5.5 0 ]
+	}
+	DEF ShiftR PositionInterpolator {
+	    key [ 0.0, 0.05, 0.25, 0.3, 0.7, 0.75, 0.95, 1.0 ]
+	    keyValue [ 5 5.5 0, 6 5.5 0, 13 5.5 0, 13.5 5.5 0, 13.5 5.5 0,  13 5.5 0, 6 5.5 0, 5 5.5 0 ]
+	}
+	ROUTE GateProximity.enterTime TO Timey.set_startTime
+	ROUTE Timey.fraction_changed TO ShiftL.set_fraction
+	ROUTE Timey.fraction_changed TO ShiftR.set_fraction
+	ROUTE ShiftL.value_changed TO LeftDoor.set_translation
+	ROUTE ShiftR.value_changed TO RightDoor.set_translation
+   ]
+ }
+} # end PROTO Gate
+
+# Gate 1             
+Transform {
+	translation 0 0 -58
+	children [ Gate {} ]
+}
+# Gate 2
+Transform {
+	translation 29 5.5 -40
+	rotation 0 1 0 1.5708
+	children [ 
+		Shape {
+                               appearance Appearance {
+                                    material Material { emissiveColor .2 .2 .1 }
+                                    texture ImageTexture { url "im/slideDoorL.jpg" }
+                               }
+                               geometry Box { size 10 12 2.2 }
+                }
+	]
+}
+Transform {
+	translation 29 5.5 -24
+	rotation 0 1 0 1.5708
+	children [ 
+		Shape {
+                               appearance Appearance {
+                                    material Material { emissiveColor .2 .2 .1 }
+                                    texture ImageTexture { url "im/slideDoorR.jpg" }
+                               }
+                               geometry Box { size 10 12 2.2 }
+                }
+	]
+}
+# Gate 3             
+#Transform { 
+#	translation 0 0 -58 
+#	rotation 0 1 0 1.5708
+#	cildren [ Gate {} ]
+#}
+# Gate 4             
+#Transform { 
+#	translation 0 0 -58
+#	children [ Gate {} ]
+#}
+
+
+
+#
+#### Walls
+#
+# a wall
+PROTO Wall [
+      field SFVec3f wallSize 20 30 2
+      field SFVec2f wallScale 10 10
+]
+{
+   Transform {
+        children [
+                 Shape {
+                       appearance Appearance {
+                                  material Material { diffuseColor 0.5 0.4 0.3 }
+                                  texture ImageTexture { url "im/rusty3.jpg" }
+                                  textureTransform TextureTransform { scale IS wallScale }
+                       }
+                       geometry Box { size IS wallSize }
+                 }
+        ]
+   }
+} # end PROTO Wall
+PROTO BrickWall [
+      field SFVec3f wallSize 20 30 2
+      field SFVec2f wallScale 10 10
+]
+{
+   Transform {
+        children [
+                 Shape {
+                       appearance Appearance {
+                                  material Material { diffuseColor 0.5 0.4 0.3 }
+                                  texture ImageTexture { url "im/Brick.gif" }
+                                  textureTransform TextureTransform { scale IS wallScale }
+                       }
+                       geometry Box { size IS wallSize }
+                 }
+        ]
+   }
+} # end PROTO Wall
+
+
+
+Transform {			# arch		# chamber 1:
+          translation 0 18 -60
+          children [ Wall { 
+          	wallSize 20 14 2 
+          	wallScale 10 5
+          } ]
+}
+Transform { 			# front
+          translation -4 10 0
+          children [ Wall { 
+          	wallSize 70 30 2
+                wallScale 35 10
+          } ]
+}
+Transform { 			# front, left corner
+          translation -34 10 -4.5
+          children [ Wall { 
+          	wallSize 10 30 2
+                wallScale 5 10
+          } ]
+}
+Transform { 			
+          translation -38 14 -2
+          rotation 0 1 0 1.5708
+          children [ Wall { 
+          	wallSize 4.5 23 2
+                wallScale 2.25 10
+          } ]
+}Transform {			# s arch
+          translation 30 18 -30
+          rotation 0 1 0 1.5708
+          children [ Wall { 
+          	wallSize 20 14 2
+          	wallScale 10 5
+          } ]
+}
+Transform { # s1 r
+          translation 30 10 -10
+          rotation 0 1 0 1.5708
+          children [ Wall { 
+          	wallSize 20 30 2
+          	wallScale 10 10
+          } ]          
+}
+Transform { # s2 r
+          translation 30 10 -50
+          rotation 0 1 0 1.5708
+          children [ Wall { 
+          	wallSize 20 30 2
+          	wallScale 10 10
+          } ]          
+}
+Transform { # s l
+          translation -30 10 -33
+          rotation 0 1 0 1.5708
+          children [ Wall { 
+          	wallSize 58 30 2
+          	wallScale 30 10
+          } ]          
+}
+Transform { # b r
+          translation 20 10 -60
+          children [ Wall { 
+          	wallSize 20 30 2
+          	wallScale 10 10
+          } ]          
+}
+Transform { # b l
+          translation -20 10 -60
+          children [ Wall { 
+          	wallSize 20 30 2
+          	wallScale 10 10
+          } ]          
+}
+Transform { 			# ground
+          translation -5 -1.1 -29.5
+          rotation 1 0 0 1.5708
+          children [ Wall { 
+          	wallSize 68 60 2
+          	wallScale 34 20
+          } ]          
+}
+Transform { # s l				# tunnel 1
+          translation -10 10 -80
+          rotation 0 1 0 1.5708
+          children [ BrickWall { 
+          	wallSize 40 30 2
+          	wallScale 20 10
+          } ]          
+}
+Transform { # s r
+          translation 10.5 10 -70.5
+          rotation 0 1 0 1.5708
+          children [ BrickWall { 
+          	wallSize 21 30 2
+          	wallScale 10.5 10
+          } ]          
+}
+Transform { # s f
+          translation 15 10 -100
+          children [ BrickWall { 
+          	wallSize 50 30 2
+          	wallScale 25 10
+          } ]          
+}
+Transform { # s b
+          translation 26 10 -80
+          children [ BrickWall { 
+          	wallSize 30 30 2
+          	wallScale 15 6.7
+          } ]          
+}
+Transform { # s l				# tunnel 2
+          translation 90 10 -55
+          rotation 0 1 0 1.5708
+          children [ BrickWall { 
+          	wallSize 32 30 2
+          	wallScale 16 10
+          } ]          
+}
+Transform { # s r
+          translation 110 10 -45
+          rotation 0 1 0 1.5708
+          children [ BrickWall { 
+          	wallSize 50 30 2
+          	wallScale 25 10
+          } ]          
+}
+Transform { # s back
+          translation 60 10 -40
+          children [ BrickWall { 
+          	wallSize 60 30 2
+          	wallScale 30 10
+          } ]          
+}
+Transform { # s f l
+          translation 39 10 -20
+          children [ BrickWall { 
+          	wallSize 18 30 2
+          	wallScale  6 10
+          } ]          
+}
+Transform { # s f r
+          translation 80.5 10 -20
+          children [ BrickWall { 
+          	wallSize 59 30 2
+          	wallScale 29.5 10
+          } ]          
+}
+Transform { # s f low
+    	  translation 49.5 4 -20
+          children [ BrickWall { 
+          	wallSize 3 20 2
+          	wallScale 1.5 6.7
+          } ]          
+}
+Transform { # s f high
+    	  translation 49.5 22 -20
+          children [ BrickWall { 
+          	wallSize 3 6 2
+          	wallScale 1 2
+          } ]          
+}
+Transform { # f r				# chamber 2:
+          translation 115 10 -70
+          children [ Wall { 
+          	wallSize 10 30 2
+          	wallScale 5 10
+          } ]          
+}
+Transform { # f l
+          translation 62 10 -70
+          children [ Wall { 
+          	wallSize 56 30 2
+          	wallScale 28 10
+          } ]          
+}
+Transform { # s r
+          translation 120 10 -95
+          rotation 0 1 0 1.57
+          children [ Wall { 
+          	wallSize 50 30 2
+          	wallScale 25 10
+          } ]          
+}
+Transform { # s1 l
+          translation 40 10 -110
+          rotation 0 1 0 1.57
+          children [ Wall { 
+          	wallSize 20 30 2
+          	wallScale 10 10
+          } ]          
+}
+Transform { # s2 l
+          translation 40 10 -75
+          rotation 0 1 0 1.57
+          children [ Wall { 
+          	wallSize 10 30 2
+          	wallScale 5 10
+          } ]          
+}
+Transform { # b
+          translation 72 10 -120
+          children [ Wall { 
+          	wallSize 72 30 2
+          	wallScale 36 10
+          } ]          
+}
+Transform { # b
+          translation 117 10 -120
+          children [ Wall { 
+          	wallSize 6 30 2
+          	wallScale 3 10
+          } ]          
+}
+Transform { # b
+          translation 111 15.5 -120
+          children [ Wall { 
+          	wallSize 6 19 2
+          	wallScale 3 6.3
+          } ]          
+}
+Transform { 			# ground
+          translation 80 -1.1 -95
+          rotation 1 0 0 1.5708
+          children [ Wall { 
+          	wallSize 80 50 2
+          	wallScale 40 18
+          } ]          
+}
+
+# water sound
+Sound {
+                 minFront 1.0
+                 minBack 1.0
+                 maxFront 1.0
+                 maxBack 1.0
+                 spatialize FALSE
+                 source AudioClip {
+                       loop TRUE
+                       url "../sound/water.wav"
+                 }
+}
+
+         # Sea Surface
+           # middle
+         Transform {
+                 translation 30 20 -120
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation 30 20 -80
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation 30 20 -40
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation 10 20 -0
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+           # left
+         Transform {
+                 translation -10 20 -120
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation -10 20 -80
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation -10 20 -40
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation -10 20 0
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+           # right
+         Transform {
+                 translation 70 20 -120
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation 70 20 -80
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation 70 20 -40
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+           # very right
+         Transform {
+                 translation 110 20 -120
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation 110 20 -80
+                 children [ Inline { url "surface2.wrl" } ]
+         }
+         Transform {
+                 translation 110 20 -40
+                 children [ Inline { url "surface2.wrl" } ]
+         }         
