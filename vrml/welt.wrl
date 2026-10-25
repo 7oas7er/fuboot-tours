@@ -7,9 +7,8 @@ DEF	Welt Transform {
 	
 		DEF Nav NavigationInfo{ 
 	headlight FALSE 
-	
-	type ["TRUE"]	  # Set False if hud navigation
-	
+	# Contact used ["TRUE"] to disable walk; X_ITE needs NONE so HUD TouchSensors get the mouse.
+	type ["NONE"]
 }
 
 DEF UBoot Transform {
@@ -92,7 +91,8 @@ DEF UBoot Transform {
         						}
 
 								DEF Antriebssteuerung Transform {
-									translation	-2.5 0.15 -0.02
+									# Lift slightly so speed cells sit above konback and receive picks.
+									translation	-2.5 0.2 -0.02
 									children [
 										DEF Hintergrundshape Shape {
 											appearance Appearance {
@@ -101,7 +101,8 @@ DEF UBoot Transform {
 												}
 											}
 											geometry Box {
-												size 0.30 0 1.44
+												# Non-zero thickness so X_ITE can pick the speed strip.
+												size 0.30 0.02 1.44
 											}
 										}
 										
@@ -119,7 +120,8 @@ DEF UBoot Transform {
 															}
 														}
 														geometry DEF A_Box Box {
-															size 0.13 0 0.08
+															# Non-zero thickness required for TouchSensor picking under X_ITE.
+															size 0.13 0.02 0.08
 														}
 													}
 													DEF	A1_Sensor TouchSensor {}
@@ -302,7 +304,8 @@ DEF UBoot Transform {
 									]
 								}
 								DEF Rudereinheit Transform {
-									translation	-0.56 0.08 0
+									# Lift slightly so pad cells sit above the ruder face for picking.
+									translation	-0.56 0.2 0
 									children [
 										Shape {
 											appearance Appearance {
@@ -311,7 +314,8 @@ DEF UBoot Transform {
 												}
 											}
 											geometry Box {
-												size 1.53 0 1.47
+												# Non-zero thickness so X_ITE can pick the rudder pad.
+												size 1.53 0.02 1.47
 											}
 										}
 										DEF KnopfgruppeB Transform {
@@ -3851,6 +3855,9 @@ DEF	anotherpileofrocks Transform {
 # Navigation Script
 
 DEF Navigator Script {
+	# X_ITE/VRML97: required to allow writing ImageTexture.url on USE'd SFNode fields.
+	directOutput TRUE
+	mustEvaluate TRUE
 	
 	# Zeitgeber
 	
@@ -4163,812 +4170,932 @@ DEF Navigator Script {
 		return Math.round(value*10000)/10000;
 	}
 	
-	function set_speed_clean() {
-		for(i=0;i<=12;i++) {
-			TexturenA[i].url = 'texturen/touchAback.png';
+	
+	function setTex(node, file) {
+		try {
+			node.url = new MFString(file);
+		} catch (e) {
+			node.url = file;
 		}
 	}
 
-	function set_speed_1() {
+	function isOn(value) {
+		return (value == TRUE) || (value == true);
+	}
+
+	function set_speed_clean() {
+		setTex(myA1_Textur, 'texturen/touchAback.png');
+		setTex(myA2_Textur, 'texturen/touchAback.png');
+		setTex(myA3_Textur, 'texturen/touchAback.png');
+		setTex(myA4_Textur, 'texturen/touchAback.png');
+		setTex(myA5_Textur, 'texturen/touchAback.png');
+		setTex(myA6_Textur, 'texturen/touchAback.png');
+		setTex(myA7_Textur, 'texturen/touchAback.png');
+		setTex(myA8_Textur, 'texturen/touchAback.png');
+		setTex(myA9_Textur, 'texturen/touchAback.png');
+		setTex(myA10_Textur, 'texturen/touchAback.png');
+		setTex(myA11_Textur, 'texturen/touchAback.png');
+		setTex(myA12_Textur, 'texturen/touchAback.png');
+		setTex(myA13_Textur, 'texturen/touchAback.png');
+	}
+
+	function set_speed_1(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA1_Textur.url = 'texturen/touchA.png'; 
+		setTex(myA1_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[0];
-		
 	}
-	function set_speed_2() {
+	function set_speed_2(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA2_Textur.url = 'texturen/touchA.png';
+		setTex(myA2_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[1];
-		
 	}
-	function set_speed_3() {
+	function set_speed_3(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA3_Textur.url = 'texturen/touchA.png';
+		setTex(myA3_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[2];
-		
 	}
-	function set_speed_4() {
+	function set_speed_4(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA4_Textur.url = 'texturen/touchA.png';
+		setTex(myA4_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[3];
-		
 	}
-	function set_speed_5() {
+	function set_speed_5(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA5_Textur.url = 'texturen/touchA.png';
+		setTex(myA5_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[4];
-		
 	}
-	function set_speed_6() {
+	function set_speed_6(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA6_Textur.url = 'texturen/touchA.png';
+		setTex(myA6_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[5];
-		
 	}
-	function set_speed_7() {
+	function set_speed_7(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA7_Textur.url = 'texturen/touchA.png';
-		Fahrtgeschwindigkeit = s[6];		
+		setTex(myA7_Textur, 'texturen/touchA.png');
+		Fahrtgeschwindigkeit = s[6];
 	}
 	
-	function set_speed_8() {
+	function set_speed_8(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA8_Textur.url = 'texturen/touchA.png';
+		setTex(myA8_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[7];
-		
 	}
-	function set_speed_9() {
+	function set_speed_9(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA9_Textur.url = 'texturen/touchA.png';
+		setTex(myA9_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[8];
-		
 	}
-	function set_speed_10() {
+	function set_speed_10(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA10_Textur.url = 'texturen/touchA.png';
+		setTex(myA10_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[9];
-		
 	}
-	function set_speed_11() {
+	function set_speed_11(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA11_Textur.url = 'texturen/touchA.png';
+		setTex(myA11_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[10];
-		
 	}
-	function set_speed_12() {
+	function set_speed_12(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA12_Textur.url = 'texturen/touchA.png';
+		setTex(myA12_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[11];
-		
 	}
-	function set_speed_13() {
+	function set_speed_13(value) {
+		if (!isOn(value)) return;
 		set_speed_clean();
-		myA13_Textur.url = 'texturen/touchA.png';
+		setTex(myA13_Textur, 'texturen/touchA.png');
 		Fahrtgeschwindigkeit = s[12];
-		
 	}
 	
 	function set_ruder_clean() {
-		myB1_Textur.url = 'texturen/touchAback.png'; 
-		myB2_Textur.url = 'texturen/touchAback.png';
-		myB3_Textur.url = 'texturen/touchAback.png';
-		myB4_Textur.url = 'texturen/touchAback.png';
-		myB5_Textur.url = 'texturen/touchAback.png';
-		myB6_Textur.url = 'texturen/touchAback.png';
-		myB7_Textur.url = 'texturen/touchAback.png';
-		myB8_Textur.url = 'texturen/touchAback.png';
-		myB9_Textur.url = 'texturen/touchAback.png';
-		myB10_Textur.url = 'texturen/touchAback.png';
-		myB11_Textur.url = 'texturen/touchAback.png';
-		myB12_Textur.url = 'texturen/touchAback.png';
-		myB13_Textur.url = 'texturen/touchAback.png';
-		myC1_Textur.url = 'texturen/touchAback.png'; 
-		myC2_Textur.url = 'texturen/touchAback.png';
-		myC3_Textur.url = 'texturen/touchAback.png';
-		myC4_Textur.url = 'texturen/touchAback.png';
-		myC5_Textur.url = 'texturen/touchAback.png';
-		myC6_Textur.url = 'texturen/touchAback.png';
-		myC8_Textur.url = 'texturen/touchAback.png';
-		myC9_Textur.url = 'texturen/touchAback.png';
-		myC10_Textur.url = 'texturen/touchAback.png';
-		myC11_Textur.url = 'texturen/touchAback.png';
-		myC12_Textur.url = 'texturen/touchAback.png';
-		myC13_Textur.url = 'texturen/touchAback.png';
-		myD1_Textur.url = 'texturen/touchAback.png'; 
-		myD2_Textur.url = 'texturen/touchAback.png';
-		myD3_Textur.url = 'texturen/touchAback.png';
-		myD4_Textur.url = 'texturen/touchAback.png';
-		myD5_Textur.url = 'texturen/touchAback.png';
-		myD6_Textur.url = 'texturen/touchAback.png';
-		myD8_Textur.url = 'texturen/touchAback.png';
-		myD9_Textur.url = 'texturen/touchAback.png';
-		myD10_Textur.url = 'texturen/touchAback.png';
-		myD11_Textur.url = 'texturen/touchAback.png';
-		myD12_Textur.url = 'texturen/touchAback.png';
-		myD13_Textur.url = 'texturen/touchAback.png';
-		myE1_Textur.url = 'texturen/touchAback.png'; 
-		myE2_Textur.url = 'texturen/touchAback.png';
-		myE3_Textur.url = 'texturen/touchAback.png';
-		myE4_Textur.url = 'texturen/touchAback.png';
-		myE5_Textur.url = 'texturen/touchAback.png';
-		myE6_Textur.url = 'texturen/touchAback.png';
-		myE8_Textur.url = 'texturen/touchAback.png';
-		myE9_Textur.url = 'texturen/touchAback.png';
-		myE10_Textur.url = 'texturen/touchAback.png';
-		myE11_Textur.url = 'texturen/touchAback.png';
-		myE12_Textur.url = 'texturen/touchAback.png';
-		myE13_Textur.url = 'texturen/touchAback.png';		
-		myF1_Textur.url = 'texturen/touchAback.png'; 
-		myF2_Textur.url = 'texturen/touchAback.png';
-		myF3_Textur.url = 'texturen/touchAback.png';
-		myF4_Textur.url = 'texturen/touchAback.png';
-		myF5_Textur.url = 'texturen/touchAback.png';
-		myF9_Textur.url = 'texturen/touchAback.png';
-		myF10_Textur.url = 'texturen/touchAback.png';
-		myF11_Textur.url = 'texturen/touchAback.png';
-		myF12_Textur.url = 'texturen/touchAback.png';
-		myF13_Textur.url = 'texturen/touchAback.png';
-		myG1_Textur.url = 'texturen/touchAback.png'; 
-		myG2_Textur.url = 'texturen/touchAback.png';
-		myG3_Textur.url = 'texturen/touchAback.png';
-		myG4_Textur.url = 'texturen/touchAback.png';
-		myG5_Textur.url = 'texturen/touchAback.png';
-		myG9_Textur.url = 'texturen/touchAback.png';
-		myG10_Textur.url = 'texturen/touchAback.png';
-		myG11_Textur.url = 'texturen/touchAback.png';
-		myG12_Textur.url = 'texturen/touchAback.png';
-		myG13_Textur.url = 'texturen/touchAback.png';
-		myH1_Textur.url = 'texturen/touchAback.png'; 
-		myH2_Textur.url = 'texturen/touchAback.png';
-		myH3_Textur.url = 'texturen/touchAback.png';
-		myH4_Textur.url = 'texturen/touchAback.png';
-		myH5_Textur.url = 'texturen/touchAback.png';
-		myH9_Textur.url = 'texturen/touchAback.png';
-		myH10_Textur.url = 'texturen/touchAback.png';
-		myH11_Textur.url = 'texturen/touchAback.png';
-		myH12_Textur.url = 'texturen/touchAback.png';
-		myH13_Textur.url = 'texturen/touchAback.png';
-		myI1_Textur.url = 'texturen/touchAback.png'; 
-		myI2_Textur.url = 'texturen/touchAback.png';
-		myI3_Textur.url = 'texturen/touchAback.png';
-		myI4_Textur.url = 'texturen/touchAback.png';
-		myI5_Textur.url = 'texturen/touchAback.png';
-		myI9_Textur.url = 'texturen/touchAback.png';
-		myI10_Textur.url = 'texturen/touchAback.png';
-		myI11_Textur.url = 'texturen/touchAback.png';
-		myI12_Textur.url = 'texturen/touchAback.png';
-		myI13_Textur.url = 'texturen/touchAback.png';
+		setTex(myB1_Textur, 'texturen/touchAback.png'); 
+		setTex(myB2_Textur, 'texturen/touchAback.png');
+		setTex(myB3_Textur, 'texturen/touchAback.png');
+		setTex(myB4_Textur, 'texturen/touchAback.png');
+		setTex(myB5_Textur, 'texturen/touchAback.png');
+		setTex(myB6_Textur, 'texturen/touchAback.png');
+		setTex(myB7_Textur, 'texturen/touchAback.png');
+		setTex(myB8_Textur, 'texturen/touchAback.png');
+		setTex(myB9_Textur, 'texturen/touchAback.png');
+		setTex(myB10_Textur, 'texturen/touchAback.png');
+		setTex(myB11_Textur, 'texturen/touchAback.png');
+		setTex(myB12_Textur, 'texturen/touchAback.png');
+		setTex(myB13_Textur, 'texturen/touchAback.png');
+		setTex(myC1_Textur, 'texturen/touchAback.png'); 
+		setTex(myC2_Textur, 'texturen/touchAback.png');
+		setTex(myC3_Textur, 'texturen/touchAback.png');
+		setTex(myC4_Textur, 'texturen/touchAback.png');
+		setTex(myC5_Textur, 'texturen/touchAback.png');
+		setTex(myC6_Textur, 'texturen/touchAback.png');
+		setTex(myC8_Textur, 'texturen/touchAback.png');
+		setTex(myC9_Textur, 'texturen/touchAback.png');
+		setTex(myC10_Textur, 'texturen/touchAback.png');
+		setTex(myC11_Textur, 'texturen/touchAback.png');
+		setTex(myC12_Textur, 'texturen/touchAback.png');
+		setTex(myC13_Textur, 'texturen/touchAback.png');
+		setTex(myD1_Textur, 'texturen/touchAback.png'); 
+		setTex(myD2_Textur, 'texturen/touchAback.png');
+		setTex(myD3_Textur, 'texturen/touchAback.png');
+		setTex(myD4_Textur, 'texturen/touchAback.png');
+		setTex(myD5_Textur, 'texturen/touchAback.png');
+		setTex(myD6_Textur, 'texturen/touchAback.png');
+		setTex(myD8_Textur, 'texturen/touchAback.png');
+		setTex(myD9_Textur, 'texturen/touchAback.png');
+		setTex(myD10_Textur, 'texturen/touchAback.png');
+		setTex(myD11_Textur, 'texturen/touchAback.png');
+		setTex(myD12_Textur, 'texturen/touchAback.png');
+		setTex(myD13_Textur, 'texturen/touchAback.png');
+		setTex(myE1_Textur, 'texturen/touchAback.png'); 
+		setTex(myE2_Textur, 'texturen/touchAback.png');
+		setTex(myE3_Textur, 'texturen/touchAback.png');
+		setTex(myE4_Textur, 'texturen/touchAback.png');
+		setTex(myE5_Textur, 'texturen/touchAback.png');
+		setTex(myE6_Textur, 'texturen/touchAback.png');
+		setTex(myE8_Textur, 'texturen/touchAback.png');
+		setTex(myE9_Textur, 'texturen/touchAback.png');
+		setTex(myE10_Textur, 'texturen/touchAback.png');
+		setTex(myE11_Textur, 'texturen/touchAback.png');
+		setTex(myE12_Textur, 'texturen/touchAback.png');
+		setTex(myE13_Textur, 'texturen/touchAback.png');		
+		setTex(myF1_Textur, 'texturen/touchAback.png'); 
+		setTex(myF2_Textur, 'texturen/touchAback.png');
+		setTex(myF3_Textur, 'texturen/touchAback.png');
+		setTex(myF4_Textur, 'texturen/touchAback.png');
+		setTex(myF5_Textur, 'texturen/touchAback.png');
+		setTex(myF9_Textur, 'texturen/touchAback.png');
+		setTex(myF10_Textur, 'texturen/touchAback.png');
+		setTex(myF11_Textur, 'texturen/touchAback.png');
+		setTex(myF12_Textur, 'texturen/touchAback.png');
+		setTex(myF13_Textur, 'texturen/touchAback.png');
+		setTex(myG1_Textur, 'texturen/touchAback.png'); 
+		setTex(myG2_Textur, 'texturen/touchAback.png');
+		setTex(myG3_Textur, 'texturen/touchAback.png');
+		setTex(myG4_Textur, 'texturen/touchAback.png');
+		setTex(myG5_Textur, 'texturen/touchAback.png');
+		setTex(myG9_Textur, 'texturen/touchAback.png');
+		setTex(myG10_Textur, 'texturen/touchAback.png');
+		setTex(myG11_Textur, 'texturen/touchAback.png');
+		setTex(myG12_Textur, 'texturen/touchAback.png');
+		setTex(myG13_Textur, 'texturen/touchAback.png');
+		setTex(myH1_Textur, 'texturen/touchAback.png'); 
+		setTex(myH2_Textur, 'texturen/touchAback.png');
+		setTex(myH3_Textur, 'texturen/touchAback.png');
+		setTex(myH4_Textur, 'texturen/touchAback.png');
+		setTex(myH5_Textur, 'texturen/touchAback.png');
+		setTex(myH9_Textur, 'texturen/touchAback.png');
+		setTex(myH10_Textur, 'texturen/touchAback.png');
+		setTex(myH11_Textur, 'texturen/touchAback.png');
+		setTex(myH12_Textur, 'texturen/touchAback.png');
+		setTex(myH13_Textur, 'texturen/touchAback.png');
+		setTex(myI1_Textur, 'texturen/touchAback.png'); 
+		setTex(myI2_Textur, 'texturen/touchAback.png');
+		setTex(myI3_Textur, 'texturen/touchAback.png');
+		setTex(myI4_Textur, 'texturen/touchAback.png');
+		setTex(myI5_Textur, 'texturen/touchAback.png');
+		setTex(myI9_Textur, 'texturen/touchAback.png');
+		setTex(myI10_Textur, 'texturen/touchAback.png');
+		setTex(myI11_Textur, 'texturen/touchAback.png');
+		setTex(myI12_Textur, 'texturen/touchAback.png');
+		setTex(myI13_Textur, 'texturen/touchAback.png');
 	}
 	
 	function set_idle_rudder(value) {
 		if (value == TRUE) {
 			if (idle == FALSE) {
-				myRuder_Textur.url = 'texturen/ruderidle.png';
+				setTex(myRuder_Textur, 'texturen/ruderidle.png');
 				idle = TRUE;
 			}
 			else if (idle == TRUE) {
-				myRuder_Textur.url = 'texturen/ruder.png';
+				setTex(myRuder_Textur, 'texturen/ruder.png');
 				idle = FALSE;
 			}
 		}
 	}
 
-	function set_ruder_B1() {
+	function set_ruder_B1(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB1_Textur.url = 'texturen/touchA.png';
+		setTex(myB1_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[0];
-		
 	}
-	function set_ruder_B2() {
+	function set_ruder_B2(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB2_Textur.url = 'texturen/touchA.png';
+		setTex(myB2_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[1];
-		
 	}
-	function set_ruder_B3() {
+	function set_ruder_B3(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB3_Textur.url = 'texturen/touchA.png';
+		setTex(myB3_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[2];
-		
 	}
-	function set_ruder_B4() {
+	function set_ruder_B4(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB4_Textur.url = 'texturen/touchA.png';
+		setTex(myB4_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[3];
-		
 	}
-	function set_ruder_B5() {
+	function set_ruder_B5(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB5_Textur.url = 'texturen/touchA.png';
+		setTex(myB5_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[4];
-		
 	}
-	function set_ruder_B6() {
+	function set_ruder_B6(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB6_Textur.url = 'texturen/touchA.png';
+		setTex(myB6_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[5];
-		
 	}
-	function set_ruder_B7() {
+	function set_ruder_B7(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB7_Textur.url = 'texturen/touchA.png';
+		setTex(myB7_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_B8() {
+	function set_ruder_B8(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB8_Textur.url = 'texturen/touchA.png';
+		setTex(myB8_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[7];
-		
 	}
-	function set_ruder_B9() {
+	function set_ruder_B9(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB9_Textur.url = 'texturen/touchA.png';
+		setTex(myB9_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[8];
-		
 	}
-	function set_ruder_B10() {
+	function set_ruder_B10(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB10_Textur.url = 'texturen/touchA.png';
+		setTex(myB10_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[9];
-		
 	}
-	function set_ruder_B11() {
+	function set_ruder_B11(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB11_Textur.url = 'texturen/touchA.png';
+		setTex(myB11_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[10];
-		
 	}
-	function set_ruder_B12() {
+	function set_ruder_B12(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB12_Textur.url = 'texturen/touchA.png';
+		setTex(myB12_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[11];
-		
 	}
-	function set_ruder_B13() {
+	function set_ruder_B13(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myB13_Textur.url = 'texturen/touchA.png';
+		setTex(myB13_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[6];
 		Ruderanschlag = r[12];
-		
 	}
 	
-	function set_ruder_C1() {
+	function set_ruder_C1(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC1_Textur.url = 'texturen/touchA.png';
+		setTex(myC1_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[0];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C2() {
+	function set_ruder_C2(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC2_Textur.url = 'texturen/touchA.png';
+		setTex(myC2_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[1];
 		Ruderanschlag = r[6];
 	}
-	function set_ruder_C3() {
+	function set_ruder_C3(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC3_Textur.url = 'texturen/touchA.png';
+		setTex(myC3_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[2];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C4() {
+	function set_ruder_C4(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC4_Textur.url = 'texturen/touchA.png';
+		setTex(myC4_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[3];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C5() {
+	function set_ruder_C5(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC5_Textur.url = 'texturen/touchA.png';
+		setTex(myC5_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[4];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C6() {
+	function set_ruder_C6(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC6_Textur.url = 'texturen/touchA.png';
+		setTex(myC6_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[5];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C8() {
+	function set_ruder_C8(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC8_Textur.url = 'texturen/touchA.png';
+		setTex(myC8_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[7];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C9() {
+	function set_ruder_C9(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC9_Textur.url = 'texturen/touchA.png';
+		setTex(myC9_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[8];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C10() {
+	function set_ruder_C10(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC10_Textur.url = 'texturen/touchA.png';
+		setTex(myC10_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[9];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C11() {
+	function set_ruder_C11(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC11_Textur.url = 'texturen/touchA.png';
+		setTex(myC11_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[10];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C12() {
+	function set_ruder_C12(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC12_Textur.url = 'texturen/touchA.png';
+		setTex(myC12_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[11];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_C13() {
+	function set_ruder_C13(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myC13_Textur.url = 'texturen/touchA.png';
+		setTex(myC13_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[12];
 		Ruderanschlag = r[6];
-		
 	}
-	function set_ruder_D1() {
+	function set_ruder_D1(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD1_Textur.url = 'texturen/touchA.png';
+		setTex(myD1_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[0];
 		Ruderanschlag = r[0];
-		
 	}
-	function set_ruder_D2() {
+	function set_ruder_D2(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD2_Textur.url = 'texturen/touchA.png';
+		setTex(myD2_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[1];
 		Ruderanschlag = r[1];
 	}
-	function set_ruder_D3() {
+	function set_ruder_D3(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD3_Textur.url = 'texturen/touchA.png';
+		setTex(myD3_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[2];
 		Ruderanschlag = r[2];
-		
 	}
-	function set_ruder_D4() {
+	function set_ruder_D4(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD4_Textur.url = 'texturen/touchA.png';
+		setTex(myD4_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[3];
 		Ruderanschlag = r[3];
-		
 	}
-	function set_ruder_D5() {
+	function set_ruder_D5(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD5_Textur.url = 'texturen/touchA.png';
+		setTex(myD5_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[4];
 		Ruderanschlag = r[4];
-		
 	}
-	function set_ruder_D6() {
+	function set_ruder_D6(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD6_Textur.url = 'texturen/touchA.png';
+		setTex(myD6_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[5];
 		Ruderanschlag = r[5];
-		
 	}
-	function set_ruder_D8() {
+	function set_ruder_D8(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD8_Textur.url = 'texturen/touchA.png';
+		setTex(myD8_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[7];
 		Ruderanschlag = r[7];
-		
 	}
-	function set_ruder_D9() {
+	function set_ruder_D9(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD9_Textur.url = 'texturen/touchA.png';
+		setTex(myD9_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[8];
 		Ruderanschlag = r[8];
-		
 	}
-	function set_ruder_D10() {
+	function set_ruder_D10(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD10_Textur.url = 'texturen/touchA.png';
+		setTex(myD10_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[9];
 		Ruderanschlag = r[9];
-		
 	}
-	function set_ruder_D11() {
+	function set_ruder_D11(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD11_Textur.url = 'texturen/touchA.png';
+		setTex(myD11_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[10];
 		Ruderanschlag = r[10];
-		
 	}
-	function set_ruder_D12() {
+	function set_ruder_D12(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD12_Textur.url = 'texturen/touchA.png';
+		setTex(myD12_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[11];
 		Ruderanschlag = r[11];
-		
 	}
-	function set_ruder_D13() {
+	function set_ruder_D13(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myD13_Textur.url = 'texturen/touchA.png';
+		setTex(myD13_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[12];
 		Ruderanschlag = r[12];
-		
 	}
-	function set_ruder_E1() {
+	function set_ruder_E1(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE1_Textur.url = 'texturen/touchA.png';
+		setTex(myE1_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[0];
 		Ruderanschlag = r[12];
-		
 	}
-	function set_ruder_E2() {
+	function set_ruder_E2(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE2_Textur.url = 'texturen/touchA.png';
+		setTex(myE2_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[1];
 		Ruderanschlag = r[11];
 	}
-	function set_ruder_E3() {
+	function set_ruder_E3(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE3_Textur.url = 'texturen/touchA.png';
+		setTex(myE3_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[2];
 		Ruderanschlag = r[10];
-		
 	}
-	function set_ruder_E4() {
+	function set_ruder_E4(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE4_Textur.url = 'texturen/touchA.png';
+		setTex(myE4_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[3];
 		Ruderanschlag = r[9];
-		
 	}
-	function set_ruder_E5() {
+	function set_ruder_E5(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE5_Textur.url = 'texturen/touchA.png';
+		setTex(myE5_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[4];
 		Ruderanschlag = r[8];
-		
 	}
-	function set_ruder_E6() {
+	function set_ruder_E6(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE6_Textur.url = 'texturen/touchA.png';
+		setTex(myE6_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[5];
 		Ruderanschlag = r[7];
-		
 	}
-	function set_ruder_E8() {
+	function set_ruder_E8(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE8_Textur.url = 'texturen/touchA.png';
+		setTex(myE8_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[7];
 		Ruderanschlag = r[5];
-		
 	}
-	function set_ruder_E9() {
+	function set_ruder_E9(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE9_Textur.url = 'texturen/touchA.png';
+		setTex(myE9_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[8];
 		Ruderanschlag = r[4];
-		
 	}
-	function set_ruder_E10() {
+	function set_ruder_E10(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE10_Textur.url = 'texturen/touchA.png';
+		setTex(myE10_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[9];
 		Ruderanschlag = r[3];
-		
 	}
-	function set_ruder_E11() {
+	function set_ruder_E11(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE11_Textur.url = 'texturen/touchA.png';
+		setTex(myE11_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[10];
 		Ruderanschlag = r[2];
-		
 	}
-	function set_ruder_E12() {
+	function set_ruder_E12(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE12_Textur.url = 'texturen/touchA.png';
+		setTex(myE12_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[11];
 		Ruderanschlag = r[1];
-		
 	}
-	function set_ruder_E13() {
+	function set_ruder_E13(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myE13_Textur.url = 'texturen/touchA.png';
+		setTex(myE13_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[12];
 		Ruderanschlag = r[0];
-		
 	}
-	function set_ruder_F1() {
+	function set_ruder_F1(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF1_Textur.url = 'texturen/touchA.png';
+		setTex(myF1_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[0];
 		Ruderanschlag = r[12];
-		
 	}
-	function set_ruder_F2() {
+	function set_ruder_F2(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF2_Textur.url = 'texturen/touchA.png';
+		setTex(myF2_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[1];
 		Ruderanschlag = r[11];
 	}
-	function set_ruder_F3() {
+	function set_ruder_F3(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF3_Textur.url = 'texturen/touchA.png';
+		setTex(myF3_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[2];
 		Ruderanschlag = r[10];
-		
 	}
-	function set_ruder_F4() {
+	function set_ruder_F4(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF4_Textur.url = 'texturen/touchA.png';
+		setTex(myF4_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[3];
 		Ruderanschlag = r[9];
-		
 	}
-	function set_ruder_F5() {
+	function set_ruder_F5(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF5_Textur.url = 'texturen/touchA.png';
+		setTex(myF5_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[4];
 		Ruderanschlag = r[8];
-		
 	}
-	function set_ruder_F9() {
+	function set_ruder_F9(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF9_Textur.url = 'texturen/touchA.png';
+		setTex(myF9_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[8];
 		Ruderanschlag = r[4];
-		
 	}
-	function set_ruder_F10() {
+	function set_ruder_F10(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF10_Textur.url = 'texturen/touchA.png';
+		setTex(myF10_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[9];
 		Ruderanschlag = r[3];
-		
 	}
-	function set_ruder_F11() {
+	function set_ruder_F11(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF11_Textur.url = 'texturen/touchA.png';
+		setTex(myF11_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[10];
 		Ruderanschlag = r[2];
-		
 	}
-	function set_ruder_F12() {
+	function set_ruder_F12(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF12_Textur.url = 'texturen/touchA.png';
+		setTex(myF12_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[11];
 		Ruderanschlag = r[1];
-		
 	}
-	function set_ruder_F13() {
+	function set_ruder_F13(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myF13_Textur.url = 'texturen/touchA.png';
+		setTex(myF13_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[12];
 		Ruderanschlag = r[0];
-		
 	}
-	function set_ruder_G1() {
+	function set_ruder_G1(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG1_Textur.url = 'texturen/touchA.png';
+		setTex(myG1_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[0];
 		Ruderanschlag = r[0];
-		
 	}
-	function set_ruder_G2() {
+	function set_ruder_G2(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG2_Textur.url = 'texturen/touchA.png';
+		setTex(myG2_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[1];
 		Ruderanschlag = r[1];
 	}
-	function set_ruder_G3() {
+	function set_ruder_G3(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG3_Textur.url = 'texturen/touchA.png';
+		setTex(myG3_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[2];
 		Ruderanschlag = r[2];
-		
 	}
-	function set_ruder_G4() {
+	function set_ruder_G4(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG4_Textur.url = 'texturen/touchA.png';
+		setTex(myG4_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[3];
 		Ruderanschlag = r[3];
-		
 	}
-	function set_ruder_G5() {
+	function set_ruder_G5(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG5_Textur.url = 'texturen/touchA.png';
+		setTex(myG5_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[4];
 		Ruderanschlag = r[4];
-		
 	}
-	function set_ruder_G9() {
+	function set_ruder_G9(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG9_Textur.url = 'texturen/touchA.png';
+		setTex(myG9_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[8];
 		Ruderanschlag = r[8];
-		
 	}
-	function set_ruder_G10() {
+	function set_ruder_G10(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG10_Textur.url = 'texturen/touchA.png';
+		setTex(myG10_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[9];
 		Ruderanschlag = r[9];
-		
 	}
-	function set_ruder_G11() {
+	function set_ruder_G11(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG11_Textur.url = 'texturen/touchA.png';
+		setTex(myG11_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[10];
 		Ruderanschlag = r[10];
-		
 	}
-	function set_ruder_G12() {
+	function set_ruder_G12(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG12_Textur.url = 'texturen/touchA.png';
+		setTex(myG12_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[11];
 		Ruderanschlag = r[11];
-		
 	}
-	function set_ruder_G13() {
+	function set_ruder_G13(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myG13_Textur.url = 'texturen/touchA.png';
+		setTex(myG13_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[12];
 		Ruderanschlag = r[12];
-		
 	}
-	function set_ruder_H1() {
+	function set_ruder_H1(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH1_Textur.url = 'texturen/touchA.png';
+		setTex(myH1_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[0];
 		Ruderanschlag = r[0];
-		
 	}
-	function set_ruder_H2() {
+	function set_ruder_H2(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH2_Textur.url = 'texturen/touchA.png';
+		setTex(myH2_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[1];
 		Ruderanschlag = r[1];
 	}
-	function set_ruder_H3() {
+	function set_ruder_H3(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH3_Textur.url = 'texturen/touchA.png';
+		setTex(myH3_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[2];
 		Ruderanschlag = r[2];
-		
 	}
-	function set_ruder_H4() {
+	function set_ruder_H4(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH4_Textur.url = 'texturen/touchA.png';
+		setTex(myH4_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[3];
-		Ruderanschlag = n[3];
-		
+		Ruderanschlag = r[3];
 	}
-	function set_ruder_H5() {
+	function set_ruder_H5(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH5_Textur.url = 'texturen/touchA.png';
+		setTex(myH5_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[4];
 		Ruderanschlag = r[4];
-		
 	}
-	function set_ruder_H9() {
+	function set_ruder_H9(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH9_Textur.url = 'texturen/touchA.png';
+		setTex(myH9_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[8];
 		Ruderanschlag = r[8];
-		
 	}
-	function set_ruder_H10() {
+	function set_ruder_H10(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH10_Textur.url = 'texturen/touchA.png';
+		setTex(myH10_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[9];
 		Ruderanschlag = r[9];
-		
 	}
-	function set_ruder_H11() {
+	function set_ruder_H11(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH11_Textur.url = 'texturen/touchA.png';
+		setTex(myH11_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[10];
 		Ruderanschlag = r[10];
-		
 	}
-	function set_ruder_H12() {
+	function set_ruder_H12(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH12_Textur.url = 'texturen/touchA.png';
+		setTex(myH12_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[11];
 		Ruderanschlag = r[11];
-		
 	}
-	function set_ruder_H13() {
+	function set_ruder_H13(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myH13_Textur.url = 'texturen/touchA.png';
+		setTex(myH13_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[12];
 		Ruderanschlag = r[12];
-		
 	}
-	function set_ruder_I1() {
+	function set_ruder_I1(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI1_Textur.url = 'texturen/touchA.png';
+		setTex(myI1_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[0];
 		Ruderanschlag = r[12];
-		
 	}
-	function set_ruder_I2() {
+	function set_ruder_I2(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI2_Textur.url = 'texturen/touchA.png';
+		setTex(myI2_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[1];
 		Ruderanschlag = r[11];
 	}
-	function set_ruder_I3() {
+	function set_ruder_I3(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI3_Textur.url = 'texturen/touchA.png';
+		setTex(myI3_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[2];
 		Ruderanschlag = r[10];
-		
 	}
-	function set_ruder_I4() {
+	function set_ruder_I4(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI4_Textur.url = 'texturen/touchA.png';
+		setTex(myI4_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[3];
 		Ruderanschlag = r[9];
-		
 	}
-	function set_ruder_I5() {
+	function set_ruder_I5(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI5_Textur.url = 'texturen/touchA.png';
+		setTex(myI5_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[4];
 		Ruderanschlag = r[8];
-		
 	}
-	function set_ruder_I9() {
+	function set_ruder_I9(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI9_Textur.url = 'texturen/touchA.png';
+		setTex(myI9_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[8];
 		Ruderanschlag = r[4];
-		
 	}
-	function set_ruder_I10() {
+	function set_ruder_I10(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI10_Textur.url = 'texturen/touchA.png';
+		setTex(myI10_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[9];
 		Ruderanschlag = r[3];
-		
 	}
-	function set_ruder_I11() {
+	function set_ruder_I11(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI11_Textur.url = 'texturen/touchA.png';
+		setTex(myI11_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[10];
 		Ruderanschlag = r[2];
-		
 	}
-	function set_ruder_I12() {
+	function set_ruder_I12(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI12_Textur.url = 'texturen/touchA.png';
+		setTex(myI12_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[11];
 		Ruderanschlag = r[1];
-		
 	}
-	function set_ruder_I13() {
+	function set_ruder_I13(value) {
+		if (!isOn(value)) return;
+		if (idle == TRUE) return;
 		set_ruder_clean();
-		myI13_Textur.url = 'texturen/touchA.png';
+		setTex(myI13_Textur, 'texturen/touchA.png');
 		Neigungswinkel = n[12];
 		Ruderanschlag = r[0];
-		
 	}
 	function set_fraction (frac, tm) {
 		
