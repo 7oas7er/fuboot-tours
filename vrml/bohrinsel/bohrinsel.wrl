@@ -1,0 +1,85 @@
+#VRML V2.0 utf8
+#
+
+Group {
+    children [
+        WorldInfo {
+            title "VRML Bohrinsel"
+            info [ "Pheroven" ]
+        },
+
+        DEF Entry Viewpoint {
+            position 5.0 1.6 8.0
+            orientation 0.0 1.0 0.0 0.52
+            description "Entry View"
+        },
+        NavigationInfo {
+            headlight FALSE
+        },
+	DEF Proximity ProximitySensor {
+            size 10.0 10.0 50.0
+        },
+
+#
+#  Light Sources
+#
+        PointLight {
+            ambientIntensity 0.2
+            color 0.7 0.7 0.7
+            location 0.0 8.0 10.0
+        },
+
+#
+#  Stehle
+#
+        # First
+        Transform {
+            translation -3.0 0.5 0.0
+            children [
+                # Pedestal
+                DEF Pedestal Inline {
+                    url "stehle.wrl"
+                },
+            ]
+        },
+
+        # Second
+        Transform {
+            translation -3.0 0.5 -3.0
+            children [
+                # Pedestal
+                USE Pedestal,
+            ]
+        },
+
+        # Third
+        Transform {
+            translation 1.0 0.5 0.0
+            children [
+                # Pedestal
+                USE Pedestal,
+            ]
+        },
+
+        # Fourth
+        Transform {
+            translation 1.0 0.5 -3.0
+            children [
+                # Pedestal
+                USE Pedestal,
+            ]
+        },
+
+ 	# Drill
+        Transform {
+            translation -1. 7.0 -1.5
+            children [
+                # import bohrer
+                DEF Drillb Inline {
+                    url "bohrer.wrl"
+                },
+            ]
+        },
+    ]
+}
+

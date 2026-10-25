@@ -74,17 +74,30 @@ EXTERNPROTO Counter [
         field    SFVec3f  location
 ] "collection.wrl#Counter"
 
+# Seabed sphere (Meeresgrund-Kugel) — restored from the MAX export in addon/.
+# Original world floated the avatar above this deformed sphere; harbour props sit near the top.
+Transform {
+        # Place the deformed sphere so its "north pole" sits just under the harbour floor.
+        translation 50 -1028 -80
+        children [ Inline { url "seabed.wrl" } ]
+}
+
 # HUD:
+# X_ITE/X3D: use a huge ProximitySensor and do NOT feed position back into set_center
+# (that Blaxxun-era loop leaves HudGeometry at the world origin under modern browsers).
+# Pattern matches the Web3D HeadsUpDisplay prototype.
 DEF Hud Collision {
         collide FALSE
         children [
-                # Proximity sensor for notifying viewpoint changes
                 DEF HudProximity ProximitySensor {
-                        center 0 1.8 10
-                        size 200 200 200
+                        size 10000000 10000000 10000000
                 }
-                DEF HudGeometry Transform {                ##### - Licht nur wenn direkt geladen !!
+                DEF HudGeometry Transform {
                         children [
+                                # Screen-space offset in front of the camera
+                                Transform {
+                                        translation 0 0 -1.8
+                                        children [
                                 # HUD-Spotlights
                                 Transform {
                                   translation 0 -2 10
@@ -115,73 +128,73 @@ DEF Hud Collision {
                                 }
                                  ### Registers:
                                  DEF Reg1 Register {
-                                        location -.65 0.56 -1.5
+                                        location -.65 0.56 0
                                         pic1 "im/pics/pic1.png"
                                         pic2 "im/pics/pic1_.png"
                                  }
                                  DEF Reg2 Register {
-                                        location -.5 0.56 -1.5
+                                        location -.5 0.56 0
                                         pic1 "im/pics/pic2.png"
                                         pic2 "im/pics/pic2_.png"
                                  }
                                  DEF Reg3 Register {
-                                        location -.35 0.56 -1.5
+                                        location -.35 0.56 0
                                         pic1 "im/pics/pic3.png"
                                         pic2 "im/pics/pic3_.png"
                                  }
                                  DEF Reg4 Register {
-                                        location -.2 0.56 -1.5
+                                        location -.2 0.56 0
                                         pic1 "im/pics/pic4.png"
                                         pic2 "im/pics/pic4_.png"
                                  }
                                  DEF Reg5 Register {
-                                        location .2 0.56 -1.5
+                                        location .2 0.56 0
                                         pic1 "im/pics/pic5.png"
                                         pic2 "im/pics/pic5_.png"
                                  }
                                  DEF Reg6 Register {  # bottle
-                                        location .35 0.56 -1.5
+                                        location .35 0.56 0
                                         pic1 "im/pics/pic6.png"
                                         pic2 "im/pics/pic6_.png"
                                  }
                                  DEF Reg7 Register {  # sword
-                                        location .5 0.56 -1.5
+                                        location .5 0.56 0
                                         pic1 "im/pics/pic7.png"
                                         pic2 "im/pics/pic7_.png"
                                  }
                                  DEF Reg8 Register {  # ball
-                                        location .65 0.56 -1.5
+                                        location .65 0.56 0
                                         pic1 "im/pics/pic8.png"
                                         pic2 "im/pics/pic8_.png"
                                  }
-                                 DEF ScoreCount Counter { location 0 0.56 -1.5 }
+                                 DEF ScoreCount Counter { location 0 0.56 0 }
                                  ### Bar:
                                  Transform {
-                                        translation 0 0.75 -2
+                                        translation 0 0.75 0
                                         children [
                                                 Shape {
                                                         appearance Appearance {
                                                                 material Material {
-                                                                         diffuseColor 0 0 0
-                                                                         emissiveColor 0 0 0
-                                                                         transparency 0
+                                                                         diffuseColor 0.15 0.2 0.05
+                                                                         emissiveColor 0.45 0.55 0.15
+                                                                         transparency 0.15
                                                                 }
+                                                                texture ImageTexture { url "im/lightSand.gif" }
+                                                                textureTransform TextureTransform { scale 10 2 }
                                                         }
                                                         geometry Box {
-                                                                size 2.9 0.16 0
+                                                                size 2.9 0.16 0.02
                                                         }
                                                 }
                                         ]
                                  }
+                                        ]
+                                }
                         ]
                 }
         ]
 }
-# Place the proximity center at the current viewpoint
-ROUTE HudProximity.position_changed TO HudProximity.set_center
-# Adjust the orientation of the Hud geometry
 ROUTE HudProximity.orientation_changed TO HudGeometry.set_rotation
-# Adjust the position of the Hud geometry
 ROUTE HudProximity.position_changed TO HudGeometry.set_translation
 
 Transform {

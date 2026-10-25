@@ -1,0 +1,71 @@
+#VRML V2.0 utf8
+#
+
+Group {
+    children [
+        WorldInfo {
+            title "the Drill"
+            info [ "by P. Heroven" ]
+        },
+        DEF Proximity ProximitySensor {
+            size 10.0 10.0 50.0
+        },
+
+# Drill
+
+	DEF Drill Transform {
+            children [
+               	Shape {
+		    appearance Appearance {
+                        material DEF BohrinselM Material {
+                            ambientIntensity 0.2
+                        }
+                        texture DEF BohrinselT ImageTexture {
+                            url "drill.gif"
+                        }
+                        textureTransform TextureTransform {
+                            translation 0.2 0.2
+                            rotation 0.1
+                            scale 10.0 20
+ 			}
+                     }   
+                     geometry Cylinder {
+                         height 15.0
+                         radius 0.2
+                     }
+                }
+            ]
+	}
+	
+     ]
+}
+  
+# AnimationControl
+
+DEF TimerDrill TimeSensor { 
+         	cycleInterval 1 
+		loop TRUE 
+}
+
+# DEF TimerPos TimeSensor { 
+#          	cycleInterval 1 
+# 		loop TRUE 
+# }
+
+DEF DrillOri OrientationInterpolator {
+key 		[ 0, 1 ]
+keyValue 	[ 0 1 0 0.0, 0 1 0 3.1428 ]
+}
+
+# DEF DrillPos PositionInterpolator {
+# key 		[ 0, 	.5, 	1 ]
+# keyValue 	[ 0 0 0, 0 1 0, 0 0 0 ]
+# }
+
+ROUTE Proximity.enterTime          TO TimerDrill.set_startTime
+ROUTE TimerDrill.fraction_changed  TO DrillOri.set_fraction
+ROUTE DrillOri.value_changed       TO Drill.set_rotation
+
+# ROUTE Proximity.enterTime          TO TimerPos.set_startTime
+# ROUTE TimerPos.fraction_changed  TO DrillPos.set_fraction
+# ROUTE DrillPos.value_changed       TO Drill.set_translation

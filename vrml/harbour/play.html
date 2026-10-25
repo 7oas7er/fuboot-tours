@@ -19,6 +19,15 @@
       height: 100%;
       outline: none;
     }
+    /* Submarine viewport frame (im/hud.png) — black center keys out via screen blend. */
+    .sub-hud {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: url("im/hud.png") center / 100% 100% no-repeat;
+      mix-blend-mode: screen;
+    }
     .hint {
       position: fixed;
       left: 12px;
@@ -46,6 +55,7 @@
     tabindex="0">
     <p>Loading FUBoot Tours harbour world…</p>
   </x3d-canvas>
+  <div class="sub-hud" aria-hidden="true"></div>
   <div class="hint" id="hint">
     Loading…
   </div>
@@ -82,7 +92,7 @@
       try {
         await attachKeyboardNavigation(canvas.browser);
         focusCanvas();
-        hint.textContent = "Click the view, then walk with ↑↓←→ or WASD. Mouse-drag also works (X_ITE Walk).";
+        hint.textContent = "Click the view, then walk with ↑↓←→ or WASD. Top bar = collectible HUD; yellow frame = sub viewport.";
         console.info("[FUBoot] Harbour.wrl ready");
       } catch (error) {
         console.error("[FUBoot] keyboard nav setup failed", error);

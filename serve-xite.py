@@ -42,11 +42,13 @@ def main() -> None:
     os.chdir(ROOT)
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", args.port), functools.partial(Handler, directory=ROOT)) as httpd:
-        play = f"http://127.0.0.1:{args.port}/vrml/harbour/play.html"
+        opensea = f"http://127.0.0.1:{args.port}/vrml/play-opensea.html"
+        harbour = f"http://127.0.0.1:{args.port}/vrml/harbour/play.html"
         framed = f"http://127.0.0.1:{args.port}/vrml/harbour/index-xite.html"
         print(f"Serving {ROOT}")
-        print(f"  Play:    {play}")
-        print(f"  Frames:  {framed}")
+        print(f"  Open sea: {opensea}")
+        print(f"  Harbour:  {harbour}")
+        print(f"  Frames:   {framed}")
         print("Ctrl+C to stop.")
         httpd.serve_forever()
 
