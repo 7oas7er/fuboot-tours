@@ -27,12 +27,12 @@ DEF UBoot Transform {
 
 		# Alles wird von einem ProxySensor umfasst
 									
-		# HUD on +Y radial (Navigator Position.y). After Untergrund ~180 deg
-		# flip, +Y seabed is near y~798; start just above, pitched down so
-		# ground fills the view ahead and below.
+		# HUD on +Y radial (Navigator Position.y). Orbit = UBoot rotation
+		# around the sphere centre; dive/rise = Hoehe only. Fixed slight
+		# look-down keeps the craft parallel to the surface (no pitch-tilt).
 		DEF HUD Transform {
   			translation 0 835 0
-			rotation 1 0 0 -0.55
+			rotation 1 0 0 -0.3
 			
 			children [
 				
@@ -4299,7 +4299,8 @@ DEF Navigator Script {
 	field SFRotation Fahrt 1 0 0 0
 	field SFRotation Ruder 0 1 0 0
 	field SFRotation Neigung 1 0 0 0
-	field SFRotation oldNeigung 1 0 0 -0.55
+	field SFRotation oldNeigung 1 0 0 -0.3
+	field SFRotation basePitch 1 0 0 -0.3
 
 	field SFBool idle FALSE
 
@@ -4313,8 +4314,9 @@ DEF Navigator Script {
 		oldRot = new SFRotation(0, 0, 0, 0);
 		Ruder = new SFRotation(0, 1, 0, 0);
 		Neigung = new SFRotation(1, 0, 0, 0);
-		oldNeigung = new SFRotation(1, 0, 0, -0.55);
-		Hoehe = clampAboveSeabed(Hoehe);
+		oldNeigung = new SFRotation(1, 0, 0, -0.3);
+		basePitch = new SFRotation(1, 0, 0, -0.3);
+		myHUD.set_rotation = basePitch;
 		Position.y = Hoehe;
 		myHUD.set_translation = Position;
 		s = new MFFloat(-0.001, -0.0007, -0.0005, -0.0004, -0.00036, -0.00033, 0, 0.00033, 0.00036, 0.0004, 0.0005, 0.0007,  0.001);
@@ -5264,22 +5266,19 @@ DEF Navigator Script {
 		Neigungswinkel = n[12];
 		Ruderanschlag = r[0];
 	}
-	// Rotate local +Y by UBoot orientation to get world radial direction,
-	// then keep Hoehe above the seabed surface in that direction.
+	// World radial = UBoot-local +Y. Used only to stop active dives into the mesh.
 	function radialUp() {
 		var ux = oldRot.x, uy = oldRot.y, uz = oldRot.z;
 		var len = Math.sqrt(ux*ux + uy*uy + uz*uz);
 		if (len < 1e-8) return new SFVec3f(0, 1, 0);
 		ux /= len; uy /= len; uz /= len;
 		var ca = Math.cos(oldRot.angle), sa = Math.sin(oldRot.angle);
-		// local (0,1,0)
-		var vx = 0, vy = 1, vz = 0;
 		var dot = uy;
 		var cx = uz, cy = 0, cz = -ux;
 		return new SFVec3f(
-			vx*ca + cx*sa + ux*dot*(1-ca),
-			vy*ca + cy*sa + uy*dot*(1-ca),
-			vz*ca + cz*sa + uz*dot*(1-ca)
+			cx*sa + ux*dot*(1-ca),
+			ca + uy*dot*(1-ca),
+			cz*sa + uz*dot*(1-ca)
 		);
 	}
 	function seabedRadius(dir) {
@@ -5297,10 +5296,14 @@ DEF Navigator Script {
 		}
 		return bestR;
 	}
-	function clampAboveSeabed(h) {
+	// Dive floor only: stop descending through the mesh, but never raise
+	// altitude when terrain rises under a constant-radius orbit.
+	function clampDive(prev, next) {
+		if (!(next < prev)) return next;
 		var floor = seabedRadius(radialUp()) + MinClearance;
-		if (h < floor) return floor;
-		return h;
+		if (prev <= floor) return prev;
+		if (next < floor) return floor;
+		return next;
 	}
 	function set_fraction (frac, tm) {
 		
@@ -5314,34 +5317,35 @@ DEF Navigator Script {
 			if (trunc(aktuelleGeschwindigkeit) != 0) {
 				Ruder.angle = aktuellesRuder;
 				aktuellesRuder = aktuellesRuder + 1/10*(Ruderanschlag - aktuellesRuder);
-				myUBoot.set_rotation = Ruder.multiply(Fahrt.multiply(oldRot));
-				oldRot = myUBoot.rotation_changed;
+				// Accumulate orbit in-script so the craft stays radial (parallel
+				// to the sphere) while sliding around the centre.
+				oldRot = Ruder.multiply(Fahrt.multiply(oldRot));
+				myUBoot.set_rotation = oldRot;
 
 				if (((gesamtNeigung < -0.4) && (Neigungswinkel > 0)) || ((gesamtNeigung > 0.4) && (Neigungswinkel < 0)) || ((gesamtNeigung >= -0.4) && (gesamtNeigung <= 0.4))){
 					Neigung.angle = aktuelleNeigung;
 					aktuelleNeigung = aktuelleNeigung +1/10*(Neigungswinkel - aktuelleNeigung);
 					gesamtNeigung = gesamtNeigung + aktuelleNeigung;
-					myHUD.set_rotation = Neigung.multiply(oldNeigung);
-					oldNeigung = myHUD.rotation_changed;
+					// Dive/rise drives Hoehe only - do not pitch-tilt the HUD.
+					myHUD.set_rotation = basePitch;
 				}
 			}
 			else {
 				Ruder.angle = aktuellesRuder;
 				aktuellesRuder = aktuellesRuder + 1/30*(0 - aktuellesRuder);
-				myUBoot.set_rotation = Ruder.multiply(Fahrt.multiply(oldRot));
-				oldRot = myUBoot.rotation_changed;
+				oldRot = Ruder.multiply(Fahrt.multiply(oldRot));
+				myUBoot.set_rotation = oldRot;
 				if ((gesamtNeigung >= -0.4) && (gesamtNeigung <= 0.4)){
 					Neigung.angle = aktuelleNeigung;
 					aktuelleNeigung = aktuelleNeigung +1/30*(0 - aktuelleNeigung);
 					gesamtNeigung = gesamtNeigung + aktuelleNeigung;
-					myHUD.set_rotation = Neigung.multiply(oldNeigung);
-					oldNeigung = myHUD.rotation_changed;
+					myHUD.set_rotation = basePitch;
 				}
 			}
 
 		
-			Hoehe = Hoehe - (gesamtNeigung*aktuelleGeschwindigkeit*1000);
-			Hoehe = clampAboveSeabed(Hoehe);
+			var nextHoehe = Hoehe - (gesamtNeigung*aktuelleGeschwindigkeit*1000);
+			Hoehe = clampDive(Hoehe, nextHoehe);
 			Position.y = Hoehe;
 			myHUD.set_translation = Position;
 		}
