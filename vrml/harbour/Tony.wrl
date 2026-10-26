@@ -1,0 +1,9 @@
+#VRML V2.0 utf8
+#
+# Standalone Tony collectible (was missing from the archive).
+# Reuses the PROTO defined in objects.wrl.
+#
+
+EXTERNPROTO Tony [ eventOut SFInt32 found ] "objects.wrl#Tony"
+
+Tony {}

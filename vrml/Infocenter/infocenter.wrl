@@ -1,0 +1,474 @@
+#VRML V2.0 utf8
+
+# This is a group of informationcenter by Philipp
+
+# Main Information Center
+
+DEF Infomain Transform {
+	scale 2 2 2 # big 
+	translation	0 1 0
+	children [
+		DEF Entry Viewpoint {
+            position 0 0 20
+            orientation 0.0 1.0 0.0 0.52
+            description "Entry View"
+        },
+		# a ring proto
+		DEF Kuppel Transform {
+			translation	0 0 0
+			children [
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF Defmaterial Material {
+							diffuseColor 0 0.65 0
+                			ambientIntensity 0.219608
+                			specularColor 1.359 1.359 1.359
+                			shininess 0.525
+                		    transparency 0.5
+						}
+		    			texture	ImageTexture {
+			    			url	"green.png"
+						}
+						textureTransform TextureTransform {
+							scale 2 2
+						}
+					}
+	    			geometry Sphere {
+						radius 3
+					}
+				}
+				DEF InfoCenterLight SpotLight {
+					intensity 1.5
+					color 0 1 0
+					location  0.3 4.5 0
+					direction 0.00435991 -0.999221 0.0392296
+					cutOffAngle 1
+					beamWidth 1.4
+					on TRUE
+					#radius 198
+				}
+			]
+		}
+		DEF InnerKuppel Transform	{
+			translation	0 0 0
+			scale 0.9 0.9 0.9
+			children [ 
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF MaterialInnerkuppel Material {
+							transparency 0.7	
+						}
+		    		}
+	    			geometry Sphere {
+						radius 2.9
+					}
+				}
+			]
+		}
+		DEF	Stage Transform {
+			translation	0 -0.2 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {
+							ambientIntensity 0.2
+						}
+					}
+					geometry Cylinder {
+					    height 0.1
+						radius 3.2
+					}
+				}
+			]
+		} 
+		DEF	Bottom Transform {
+			translation	0 -1 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {}
+						texture ImageTexture  {
+							url "infocenter.png" # outer texture
+						}
+						textureTransform TextureTransform {
+							scale 2 1
+						}
+					}
+					geometry Cylinder {
+					    height 1.5
+						radius 3.5
+					}
+				}
+			]
+		} 
+		DEF	Infocube Transform {
+			translation	0 0.75 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {}
+						texture MovieTexture  {
+							url "getinfo.gif" # animated gif for information things
+							loop TRUE
+							speed 1.0
+						}
+						
+					}
+					geometry Box {
+					    size 2.0 2.0 2.0
+					}
+				}
+			]
+		} 
+	]
+}
+# another small infocenter for commercial use
+DEF Infocenter Transform {
+	translation 0 -2 -12
+
+	children [
+		# a ring proto
+		DEF Kuppel Transform {
+			translation	0 0 0
+			children [
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF Defmaterial Material {
+							diffuseColor 0 0.65 0
+                			ambientIntensity 0.219608
+                			specularColor 1.359 1.359 1.359
+                			shininess 0.525
+                		    transparency 0.5
+						}
+		    			texture	ImageTexture {
+			    			url	"green.png"
+						}
+						textureTransform TextureTransform {
+							scale 2 2
+						}
+					}
+	    			geometry Sphere {
+						radius 3
+					}
+				}
+				DEF InfoCenterLight SpotLight {
+					intensity 1.5
+					color 0 1 0
+					location  0.3 4.5 0
+					direction 0.00435991 -0.999221 0.0392296
+					cutOffAngle 1
+					beamWidth 1.4
+					on TRUE
+					#radius 198
+				}
+			]
+		}
+		DEF InnerKuppel Transform	{
+			translation	0 0 0
+			scale 0.9 0.9 0.9
+			children [ 
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF MaterialInnerkuppel Material {
+							transparency 0.7	
+						}
+		    		}
+	    			geometry Sphere {
+						radius 2.9
+					}
+				}
+			]
+		}
+		DEF	Stage Transform {
+			translation	0 -0.2 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {
+							ambientIntensity 0.2
+						}
+					}
+					geometry Cylinder {
+					    height 0.1
+						radius 3.2
+					}
+				}
+			]
+		} 
+		DEF	Bottom Transform {
+			translation	0 -1 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {}
+						texture ImageTexture  {
+							url "infocenter.png"
+						}
+						textureTransform TextureTransform {
+							scale 2 1
+						}
+					}
+					geometry Cylinder {
+					    height 1.5
+						radius 3.5
+					}
+				}
+			]
+		} 
+		DEF	Infocube Transform {	# For comercial use only
+			translation	0 0.75 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {}
+						texture ImageTexture {
+							url "werbung.jpg"
+						}
+						
+					}
+					geometry Box {
+					    size 2.0 2.0 2.0
+					}
+				}
+			]
+		} 
+	]
+}
+DEF Infocenter2 Transform {
+	translation -8 -1 8
+
+	children [
+		# a ring proto
+		DEF Kuppel Transform {
+			translation	0 0 0
+			children [
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF Defmaterial Material {
+							diffuseColor 0 0.65 0
+                			ambientIntensity 0.219608
+                			specularColor 1.359 1.359 1.359
+                			shininess 0.525
+                		    transparency 0.5
+						}
+		    			texture	ImageTexture {
+			    			url	"green.png"
+						}
+						textureTransform TextureTransform {
+							scale 2 2
+						}
+					}
+	    			geometry Sphere {
+						radius 3
+					}
+				}
+				DEF InfoCenterLight SpotLight {
+					intensity 1.5
+					color 0 1 0
+					location  0.3 4.5 0
+					direction 0.00435991 -0.999221 0.0392296
+					cutOffAngle 1
+					beamWidth 1.4
+					on TRUE
+					#radius 198
+				}
+			]
+		}
+		DEF InnerKuppel Transform	{
+			translation	0 0 0
+			scale 0.9 0.9 0.9
+			children [ 
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF MaterialInnerkuppel Material {
+							transparency 0.7	
+						}
+		    		}
+	    			geometry Sphere {
+						radius 2.9
+					}
+				}
+			]
+		}
+		DEF	Stage Transform {
+			translation	0 -0.2 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {
+							ambientIntensity 0.2
+						}
+					}
+					geometry Cylinder {
+					    height 0.1
+						radius 3.2
+					}
+				}
+			]
+		} 
+		DEF	Bottom Transform {
+			translation	0 -1 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {}
+						texture ImageTexture  {
+							url "infocenter.png"
+						}
+						textureTransform TextureTransform {
+							scale 2 1
+						}
+					}
+					geometry Cylinder {
+					    height 1.5
+						radius 3.5
+					}
+				}
+			]
+		} 
+		DEF	Infocube Transform {	# For comercial use only
+			translation	0 0.75 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {}
+						texture ImageTexture {
+							url "werbung2.jpg"
+						}
+						
+					}
+					geometry Box {
+					    size 2.0 2.0 2.0
+					}
+				}
+			]
+		} 
+	]
+}
+DEF Infocenter3 Transform {
+	translation 8 0.5 8
+
+	children [
+		# a ring proto
+		DEF Kuppel Transform {
+			translation	0 0 0
+			children [
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF Defmaterial Material {
+							diffuseColor 0 0.65 0
+                			ambientIntensity 0.219608
+                			specularColor 1.359 1.359 1.359
+                			shininess 0.525
+                		    transparency 0.5
+						}
+		    			texture	ImageTexture {
+			    			url	"green.png"
+						}
+						textureTransform TextureTransform {
+							scale 2 2
+						}
+					}
+	    			geometry Sphere {
+						radius 3
+					}
+				}
+				DEF InfoCenterLight SpotLight {
+					intensity 1.5
+					color 0 1 0
+					location  0.3 4.5 0
+					direction 0.00435991 -0.999221 0.0392296
+					cutOffAngle 1
+					beamWidth 1.4
+					on TRUE
+					#radius 198
+				}
+			]
+		}
+		DEF InnerKuppel Transform	{
+			translation	0 0 0
+			scale 0.9 0.9 0.9
+			children [ 
+				Shape {
+					appearance
+					Appearance {
+		    			material
+						DEF MaterialInnerkuppel Material {
+							transparency 0.7	
+						}
+		    		}
+	    			geometry Sphere {
+						radius 2.9
+					}
+				}
+			]
+		}
+		DEF	Stage Transform {
+			translation	0 -0.2 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {
+							ambientIntensity 0.2
+						}
+					}
+					geometry Cylinder {
+					    height 0.1
+						radius 3.2
+					}
+				}
+			]
+		} 
+		DEF	Bottom Transform {
+			translation	0 -1 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {}
+						texture ImageTexture  {
+							url "infocenter.png"
+						}
+						textureTransform TextureTransform {
+							scale 2 1
+						}
+					}
+					geometry Cylinder {
+					    height 1.5
+						radius 3.5
+					}
+				}
+			]
+		} 
+		DEF	Infocube Transform {	# For comercial use only
+			translation	0 0.75 0
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material {}
+						texture ImageTexture {
+							url "werbung3.jpg"
+						}
+						
+					}
+					geometry Box {
+					    size 2.0 2.0 2.0
+					}
+				}
+			]
+		} 
+	]
+}

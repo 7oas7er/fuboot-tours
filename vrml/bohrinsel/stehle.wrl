@@ -1,0 +1,80 @@
+#VRML V2.0 utf8
+#
+
+Group {
+    children [
+
+#
+#  Bohrinsel base
+#
+        Transform {
+            translation 0.0 0.05 0.0
+            children [
+                Shape {
+                    appearance Appearance {
+                        material DEF BohrinselM Material {
+                            ambientIntensity 0.2
+                        }
+                        texture DEF BohrinselT ImageTexture {
+                            url "Metall.png"
+                        }
+                        textureTransform TextureTransform {
+                            translation 0.2 0.2
+                            rotation 0.1
+                            scale 1.0 0.1
+                        }
+                    }
+                    geometry Cylinder {
+			height 1 
+                        radius 0.5
+ 		    }
+                }
+            ]
+        },
+
+#
+#  Main pedestal
+#
+        Transform {
+            translation 0.0 7.5 0.0
+            children [
+                Shape {
+                    appearance Appearance {
+                        material USE BohrinselM
+                        texture USE BohrinselT 
+                    }
+                    geometry Cylinder {
+                        height 15.
+                        radius 0.35
+                        bottom FALSE
+                        top FALSE
+                    }
+                }
+            ]
+        },
+
+
+        Transform {
+            translation 0.0 5 0.0
+            children [
+                Shape {
+                    appearance Appearance {
+                        texture ImageTexture {
+                           url "werbung.gif"
+                        }
+                    }
+                    geometry Cylinder {
+                        height 2.
+                        radius 0.38
+                        bottom FALSE
+                        top FALSE
+                    }
+                }
+            ]
+        },
+
+
+    ]
+}
+
+

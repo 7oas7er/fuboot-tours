@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FUBoot Tours — X_ITE</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/x_ite@16.6.0/dist/x_ite.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #000;
+      color: #c8d4c0;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    x3d-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+    /* Submarine viewport frame (im/hud.png) — black center keys out via screen blend. */
+    .sub-hud {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: url("im/hud.png") center / 100% 100% no-repeat;
+      mix-blend-mode: screen;
+    }
+    .hint {
+      position: fixed;
+      left: 12px;
+      bottom: 12px;
+      z-index: 2;
+      max-width: 32rem;
+      padding: 0.6rem 0.8rem;
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(200, 212, 192, 0.25);
+      font-size: 0.8rem;
+      line-height: 1.35;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <x3d-canvas
+    id="world"
+    src="Harbour.wrl"
+    contentScale="auto"
+    update="auto"
+    cache="false"
+    debug="true"
+    splashScreen="false"
+    tabindex="0">
+    <p>Loading FUBoot Tours harbour world…</p>
+  </x3d-canvas>
+  <div class="sub-hud" aria-hidden="true"></div>
+  <div class="hint" id="hint">
+    Loading…
+  </div>
+  <script>
+    const canvas = document.getElementById("world");
+    const hint = document.getElementById("hint");
+
+    async function attachKeyboardNavigation(browser) {
+      // X_ITE Walk is mouse-drag by default; Blaxxun-style keys need KeySensor wiring.
+      const inline = browser.currentScene.createNode("Inline");
+      inline.url = new X3D.MFString(new URL("keyboard-nav.x3d", window.location.href).href);
+      browser.currentScene.rootNodes.push(inline);
+      console.info("[FUBoot] keyboard-nav.x3d attached");
+    }
+
+    function focusCanvas() {
+      canvas.focus({ preventScroll: true });
+    }
+
+    canvas.addEventListener("pointerdown", focusCanvas);
+    canvas.addEventListener("click", focusCanvas);
+
+    // Keep arrow/WASD from scrolling the page while playing.
+    window.addEventListener("keydown", (event) => {
+      if (!canvas.contains(document.activeElement) && document.activeElement !== canvas)
+        return;
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " ", "Space"].includes(event.key)
+          || ["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)) {
+        event.preventDefault();
+      }
+    }, { passive: false });
+
+    canvas.addEventListener("load", async () => {
+      try {
+        await attachKeyboardNavigation(canvas.browser);
+        focusCanvas();
+        hint.textContent = "Click the view, then walk with ↑↓←→ or WASD. Top bar = collectible HUD; yellow frame = sub viewport.";
+        console.info("[FUBoot] Harbour.wrl ready");
+      } catch (error) {
+        console.error("[FUBoot] keyboard nav setup failed", error);
+        hint.textContent = "World loaded, but keyboard nav failed — see console. Mouse-drag Walk still works.";
+      }
+    });
+
+    canvas.addEventListener("error", (event) => {
+      console.error("[FUBoot] X_ITE load error", event);
+      hint.textContent = "Load error — see browser console for details.";
+    });
+  </script>
+</body>
+</html>

@@ -7,14 +7,33 @@ VRML mini-game from a Freie Universität Berlin course (*Webbasierte 3D-Anwendun
 | Path | Description |
 |------|-------------|
 | `index.html` | Framed website entry |
-| `vrml/` | VRML worlds, textures, sounds, and the harbour/submarine scene |
+| `vrml/welt.wrl` | Open-sea world (UBoot HUD + Navigator + seabed sphere) |
+| `vrml/play-opensea.html` | X_ITE player for the open sea |
+| `vrml/harbour/` | Harbour scavenger hunt + `play.html` |
 | `dokumentation/` | Course documentation (Word) |
 | `sponsoren/` | Sponsor assets |
 | `addon/` | Notes on historical VRML tooling (installers excluded from git) |
 
+## Play with X_ITE (localhost)
+
+```bash
+python3 serve-xite.py
+```
+
+- Open sea (gauge HUD): http://127.0.0.1:8765/vrml/play-opensea.html
+- Harbour scavenger: http://127.0.0.1:8765/vrml/harbour/play.html
+
+On the open sea, hover the left strip for forward/back speed and the circular pad for turn + dive/rise; click the pad to lock/unlock course.
+
 ## Requirements (historical)
 
-Originally needed a browser with the **Blaxxun Contact** VRML plugin and a PC of about Pentium III / Athlon era with 3D acceleration. Modern browsers no longer ship VRML plugins; the sources remain as an archive of the project.
+Originally needed a browser with the **Blaxxun Contact** VRML plugin and a PC of about Pentium III / Athlon era with 3D acceleration. Modern browsers can use the X_ITE pages above instead.
+
+## Agents / security
+
+- [`AGENTS.md`](AGENTS.md) — agent workflow (PRs → `staging`)
+- [`SECURITY.md`](SECURITY.md) — reporting and secrets
+- [`docs/github-branch-protection.md`](docs/github-branch-protection.md) — GitHub security floor
 
 ## Authors
 

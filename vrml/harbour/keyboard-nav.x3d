@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 4.0//EN" "https://www.web3d.org/specifications/x3d-4.0.dtd">
+<!--
+  Arrow-key / WASD walk navigation for X_ITE.
+  Adapted from https://create3000.github.io/media/x_ite/examples/keyboard-navigation/
+  Uses Browser.activeViewpoint so it works with FUBoot's many Viewpoint nodes.
+-->
+<X3D profile="Immersive" version="4.0">
+  <head>
+    <component name="EnvironmentalSensor" level="3"/>
+    <component name="KeyDeviceSensor" level="2"/>
+    <component name="Scripting" level="1"/>
+  </head>
+  <Scene>
+    <ProximitySensor DEF="Proxy" size="-1 -1 -1"/>
+    <KeySensor DEF="Keys"/>
+    <TimeSensor DEF="Timer" enabled="false" loop="true"/>
+    <Script DEF="NavigationScript" directOutput="true">
+      <field accessType="inputOnly" type="SFInt32" name="set_actionKeyPress"/>
+      <field accessType="inputOnly" type="SFInt32" name="set_actionKeyRelease"/>
+      <field accessType="inputOnly" type="SFString" name="set_keyPress"/>
+      <field accessType="inputOnly" type="SFString" name="set_keyRelease"/>
+      <field accessType="inputOnly" type="SFBool" name="set_active"/>
+      <field accessType="inputOnly" type="SFTime" name="set_time"/>
+      <field accessType="inputOutput" type="SFFloat" name="speed" value="2.5"/>
+      <field accessType="inputOutput" type="SFFloat" name="turnSpeed" value="1.4"/>
+      <field accessType="initializeOnly" type="SFNode" name="proxy">
+        <ProximitySensor USE="Proxy"/>
+      </field>
+      <![CDATA[ecmascript:
+
+const UP = 17, DOWN = 18, LEFT = 19, RIGHT = 20;
+const UP_X3D = 1004, DOWN_X3D = 1005, LEFT_X3D = 1006, RIGHT_X3D = 1007;
+
+let actionKey = -1;
+let lastTime = -1;
+let boost = 1;
+
+function mapActionKey (value)
+{
+  switch (value)
+  {
+    case UP:
+    case UP_X3D: return UP;
+    case DOWN:
+    case DOWN_X3D: return DOWN;
+    case LEFT:
+    case LEFT_X3D: return LEFT;
+    case RIGHT:
+    case RIGHT_X3D: return RIGHT;
+    default: return -1;
+  }
+}
+
+function mapCharKey (value)
+{
+  switch (String (value) .toLowerCase ())
+  {
+    case "w": return UP;
+    case "s": return DOWN;
+    case "a": return LEFT;
+    case "d": return RIGHT;
+    default: return -1;
+  }
+}
+
+function set_actionKeyPress (value)
+{
+  const mapped = mapActionKey (value);
+  if (mapped >= 0)
+    actionKey = mapped;
+}
+
+function set_actionKeyRelease (value)
+{
+  const mapped = mapActionKey (value);
+  if (mapped === actionKey)
+    actionKey = -1;
+}
+
+function set_keyPress (value)
+{
+  const mapped = mapCharKey (value);
+  if (mapped >= 0)
+    actionKey = mapped;
+}
+
+function set_keyRelease (value)
+{
+  const mapped = mapCharKey (value);
+  if (mapped === actionKey)
+    actionKey = -1;
+}
+
+function set_active (value, time)
+{
+  if (!value)
+    return;
+
+  lastTime = time;
+
+  const vp = Browser .activeViewpoint;
+  if (!vp)
+    return;
+
+  // Fold walk-viewer user offsets into the bound viewpoint fields.
+  vp .set_bind    = true;
+  vp .position    = proxy .position_changed;
+  vp .orientation = proxy .orientation_changed;
+}
+
+function set_time (value, time)
+{
+  if (actionKey < 0)
+  {
+    lastTime = time;
+    return;
+  }
+
+  const vp = Browser .activeViewpoint;
+  if (!vp)
+    return;
+
+  const dt = Math .max (0, Math .min (0.05, time - lastTime));
+  lastTime = time;
+
+  switch (actionKey)
+  {
+    case UP:
+    {
+      const translation = proxy .orientation_changed
+        .multVec (new SFVec3f (0, 0, speed * boost * -dt))
+        .multVec (new SFVec3f (1, 0, 1));
+      vp .position = vp .position .add (Browser .constrainTranslation (translation));
+      break;
+    }
+    case DOWN:
+    {
+      const translation = proxy .orientation_changed
+        .multVec (new SFVec3f (0, 0, speed * boost * dt))
+        .multVec (new SFVec3f (1, 0, 1));
+      vp .position = vp .position .add (Browser .constrainTranslation (translation));
+      break;
+    }
+    case LEFT:
+    {
+      vp .orientation = vp .orientation .multiply (new SFRotation (0, 1, 0, turnSpeed * boost * dt));
+      break;
+    }
+    case RIGHT:
+    {
+      vp .orientation = vp .orientation .multiply (new SFRotation (0, 1, 0, -turnSpeed * boost * dt));
+      break;
+    }
+  }
+}
+]]>
+    </Script>
+    <ROUTE fromNode="Keys" fromField="actionKeyPress" toNode="NavigationScript" toField="set_actionKeyPress"/>
+    <ROUTE fromNode="Keys" fromField="actionKeyRelease" toNode="NavigationScript" toField="set_actionKeyRelease"/>
+    <ROUTE fromNode="Keys" fromField="keyPress" toNode="NavigationScript" toField="set_keyPress"/>
+    <ROUTE fromNode="Keys" fromField="keyRelease" toNode="NavigationScript" toField="set_keyRelease"/>
+    <ROUTE fromNode="Keys" fromField="isActive" toNode="Timer" toField="set_enabled"/>
+    <ROUTE fromNode="Timer" fromField="time" toNode="NavigationScript" toField="set_time"/>
+    <ROUTE fromNode="Timer" fromField="isActive" toNode="NavigationScript" toField="set_active"/>
+  </Scene>
+</X3D>

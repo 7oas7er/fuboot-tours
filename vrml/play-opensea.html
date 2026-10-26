@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FUBoot Tours — Open Sea (X_ITE)</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/x_ite@16.6.0/dist/x_ite.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #000;
+      color: #c8d4c0;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    x3d-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+    .hint {
+      position: fixed;
+      left: 12px;
+      bottom: 12px;
+      z-index: 2;
+      max-width: 36rem;
+      padding: 0.6rem 0.8rem;
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(200, 212, 192, 0.25);
+      font-size: 0.8rem;
+      line-height: 1.35;
+      pointer-events: none;
+    }
+    .hint a {
+      color: #9ec27a;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <x3d-canvas
+    id="world"
+    src="welt.wrl"
+    contentScale="auto"
+    update="auto"
+    cache="false"
+    debug="true"
+    splashScreen="false"
+    tabindex="0">
+    <p>Loading FUBoot Tours open-sea world…</p>
+  </x3d-canvas>
+  <div class="hint" id="hint">Loading…</div>
+  <script>
+    const canvas = document.getElementById("world");
+    const hint = document.getElementById("hint");
+
+    function focusCanvas() {
+      canvas.focus({ preventScroll: true });
+    }
+
+    canvas.addEventListener("pointerdown", focusCanvas);
+    canvas.addEventListener("click", focusCanvas);
+
+    canvas.addEventListener("load", () => {
+      focusCanvas();
+      hint.innerHTML =
+        "Open sea: hover the left strip for forward/back speed; hover the circular pad for turn + dive/rise. " +
+        "Click the pad to lock/unlock course. " +
+        '<a href="harbour/play.html">Harbour scavenger</a>';
+      console.info("[FUBoot] welt.wrl ready");
+    });
+
+    canvas.addEventListener("error", (event) => {
+      console.error("[FUBoot] X_ITE load error", event);
+      hint.textContent = "Load error — see browser console for details.";
+    });
+  </script>
+</body>
+</html>

@@ -113,13 +113,13 @@ DEF Cont1a Content {
 EXTERNPROTO Bony [
   eventIn
   eventOut SFInt32 found
-] Bony.wrl#findableBony
+] "Bony.wrl#findableBony"
 
 
 EXTERNPROTO AMine [
   field  SFInt32 power
   eventOut SFInt32 damage
-] Mine2.wrl#Mine
+] "Mine2.wrl#Mine"
 Transform {
         translation -2 0 -8
         scale .4 .4 .4
