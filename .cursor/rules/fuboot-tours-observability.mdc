@@ -1,0 +1,11 @@
+---
+description: FUBoot Tours Grafana labels and dashboards
+alwaysApply: true
+---
+
+# FUBoot Tours — observability
+
+- Dashboards: `infra/terraform/grafana/dashboards/fuboot-tours-{prod,stg}.json` (regenerate via scripts/generate-env-dashboards.py).
+- Synthetics: `/`, `/vrml/play-opensea.html`, `/vrml/harbour/play.html` — not `/api/scores`.
+- GitHub DS uid: `github-fuboot-tours`. Labels `project=fuboot-tours`.
+- No second APM/synthetics SaaS; Grafana Cloud Free only.

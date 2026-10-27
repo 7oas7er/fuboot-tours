@@ -1,0 +1,11 @@
+{
+  "name": "fuboot-tours-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-reporter=spec unit/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
