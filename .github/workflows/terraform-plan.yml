@@ -209,6 +209,7 @@ jobs:
       && needs.changes.outputs.plan_aws_matrix != '[]'
       && needs.fmt.result == 'success'
       && (needs.validate.result == 'success' || needs.validate.result == 'skipped')
+      && vars.AWS_TERRAFORM_PLAN_ROLE_ARN != ''
     runs-on: ubuntu-latest
     timeout-minutes: 25
     environment: terraform
@@ -295,6 +296,7 @@ jobs:
       && needs.changes.outputs.plan_cloudflare == 'true'
       && needs.fmt.result == 'success'
       && (needs.validate.result == 'success' || needs.validate.result == 'skipped')
+      && vars.AWS_TERRAFORM_PLAN_ROLE_ARN != ''
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: terraform
@@ -346,6 +348,7 @@ jobs:
       && needs.changes.outputs.plan_grafana == 'true'
       && needs.fmt.result == 'success'
       && (needs.validate.result == 'success' || needs.validate.result == 'skipped')
+      && vars.AWS_TERRAFORM_PLAN_ROLE_ARN != ''
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: terraform
