@@ -32,6 +32,6 @@ jobs:
       - name: Gate map
         run: |
           set -euo pipefail
-          echo "FUBoot Tours is a static VRML archive + X_ITE localhost players."
-          echo "Path-filtered Deploy / Terraform / CodeQL gates are not present yet."
-          echo "Required CI = Actions SHA-pin check only until hosting CI is added."
+          echo "FUBoot Tours — static VRML archive + X_ITE (site/)."
+          echo "Required CI = Actions SHA-pin check (always)."
+          echo "Path-filtered: Site smoke tests (deploy), Terraform plan/Checkov, npm audit, CodeQL."

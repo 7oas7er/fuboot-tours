@@ -1,0 +1,13 @@
+# Path scope for FUBoot Tours SAST. Full query suite comes from the workflow
+# (`security-extended`). Document triage in docs/codeql.md.
+name: fuboot-tours-codeql
+
+paths:
+  - site
+  - .github/workflows
+
+paths-ignore:
+  - "**/*.md"
+  - "**/package-lock.json"
+  - "infra/terraform/**"
+  - "tests/node_modules/**"

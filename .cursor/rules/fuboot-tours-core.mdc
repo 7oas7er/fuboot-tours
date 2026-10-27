@@ -1,0 +1,13 @@
+---
+description: FUBoot Tours product overlay (static VRML archive); platform defaults live in app-* rules
+alwaysApply: true
+---
+
+# FUBoot Tours — product
+
+Platform defaults: `app-core`, `app-aws-regions`, `app-observability` (see `.cursor/rules/README.md`). Shared GitHub repo for zone/Grafana Free objects: [`7oas7er/platform`](https://github.com/7oas7er/platform) — see `docs/architecture.md`.
+
+- **Product**: public VRML submarine archive + X_ITE play pages. No high-scores API.
+- **Delivery**: static site under `site/` — HTML, VRML, images. No framework, bundler, or build step. Tests under `tests/` gate deploy.
+- **Local**: `python3 serve-xite.py` serves `site/`.
+- **Agents**: `AGENTS.md`, `README.md`, `docs/architecture.md`, `docs/adr/`, `SECURITY.md`. Prefer small diffs.

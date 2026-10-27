@@ -1,0 +1,14 @@
+---
+description: FUBoot Tours Terraform naming and domains
+globs:
+  - infra/terraform/**
+---
+
+# FUBoot Tours — Terraform
+
+- Naming: `{env}-fuboot-tours-...` and `shared-fuboot-tours-...`. Project tag `fuboot-tours`.
+- Domains: `fuboot.7oas7er.com` (prod), `fuboot-stg.7oas7er.com` (stg).
+- State bucket: `shared-fuboot-tours-terraform-state-bucket`.
+- Site module is **S3 + CloudFront only** — no Lambda / `/api/scores`.
+- Cloudflare root = DNS only; origin-verify + cache hosts live in platform shared-edge.
+- Never commit `terraform.tfvars` or state.

@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Local static server with VRML/X3D MIME types for X_ITE."""
+"""Local static server with VRML/X3D MIME types for X_ITE.
+
+By default serves the public deploy tree under site/ (same paths as production).
+"""
 
 from __future__ import annotations
 
@@ -9,7 +12,8 @@ import http.server
 import os
 import socketserver
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_ROOT = os.path.join(REPO_ROOT, "site")
 DEFAULT_PORT = 8765
 
 EXTRA_TYPES = {
@@ -37,15 +41,26 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-p", "--port", type=int, default=DEFAULT_PORT)
+    parser.add_argument(
+        "--root",
+        default=DEFAULT_ROOT,
+        help=f"Directory to serve (default: {DEFAULT_ROOT})",
+    )
     args = parser.parse_args()
 
-    os.chdir(ROOT)
+    root = os.path.abspath(args.root)
+    if not os.path.isdir(root):
+        raise SystemExit(f"Serve root does not exist: {root}")
+
+    os.chdir(root)
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", args.port), functools.partial(Handler, directory=ROOT)) as httpd:
+    with socketserver.TCPServer(("", args.port), functools.partial(Handler, directory=root)) as httpd:
+        landing = f"http://127.0.0.1:{args.port}/"
         opensea = f"http://127.0.0.1:{args.port}/vrml/play-opensea.html"
         harbour = f"http://127.0.0.1:{args.port}/vrml/harbour/play.html"
         framed = f"http://127.0.0.1:{args.port}/vrml/harbour/index-xite.html"
-        print(f"Serving {ROOT}")
+        print(f"Serving {root}")
+        print(f"  Landing:  {landing}")
         print(f"  Open sea: {opensea}")
         print(f"  Harbour:  {harbour}")
         print(f"  Frames:   {framed}")
