@@ -13,3 +13,25 @@ Thumbs.db
 *~
 .idea/
 .vscode/
+
+# Terraform
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/terraform.tfvars
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Node
+node_modules/
+tests/node_modules/
+tests/test-results/
+
+# Local secrets / scan dumps
+strix_runs/
+.env
+.env.*

@@ -1,0 +1,12 @@
+---
+description: FUBoot Tours static site / VRML tree
+globs:
+  - site/**
+---
+
+# FUBoot Tours — frontend
+
+- Public tree is `site/` (landing + `site/vrml/`). Keep X_ITE play pages working.
+- Do not add a bundler, SPA framework, or package manager for the archive.
+- Prefer the existing dark/green archive aesthetic; no purple AI-slop themes.
+- Do not copy `addon/`, `dokumentation/`, `reports/`, `research_notes/`, or `*.corrupt.bak` into `site/`.

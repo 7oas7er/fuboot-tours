@@ -1,0 +1,11 @@
+---
+description: FUBoot Tours deploy workflow
+globs:
+  - .github/workflows/**
+---
+
+# FUBoot Tours — deploy
+
+- Workflow: `.github/workflows/deploy-fuboot-tours.yml` syncs `site/` to S3 (OIDC).
+- Path filters + smoke tests in `tests/` gate deploy.
+- All Actions `uses:` must be full 40-char SHAs (`docs/github-actions-pinning.md`).

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FUBoot Tours</title>
+  <style>
+    :root {
+      --bg: #050805;
+      --fg: #8dff84;
+      --muted: #6a9a64;
+      --line: rgba(141, 255, 132, 0.22);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(40, 90, 50, 0.35), transparent 55%),
+        linear-gradient(180deg, #0a120a 0%, var(--bg) 45%, #030503 100%);
+      color: var(--fg);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    main {
+      max-width: 36rem;
+      margin: 0 auto;
+      padding: 4.5rem 1.25rem 3rem;
+    }
+    h1 {
+      margin: 0 0 0.35rem;
+      font-size: clamp(2rem, 6vw, 2.75rem);
+      font-weight: normal;
+      letter-spacing: 0.04em;
+    }
+    .tag {
+      margin: 0 0 1.75rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-top: 1px solid var(--line);
+    }
+    li { border-bottom: 1px solid var(--line); }
+    a {
+      display: block;
+      padding: 1rem 0.15rem;
+      color: var(--fg);
+      text-decoration: none;
+    }
+    a:hover { color: #fff; }
+    a span {
+      display: block;
+      margin-top: 0.25rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>FUBoot Tours</h1>
+    <p class="tag">VRML submarine archive from FU Berlin <em>Webbasierte 3D</em>, playable in the browser via X_ITE.</p>
+    <ul>
+      <li>
+        <a href="vrml/play-opensea.html">
+          Open Sea
+          <span>Steer the U-Boot with the gauge HUD</span>
+        </a>
+      </li>
+      <li>
+        <a href="vrml/harbour/play.html">
+          Harbour
+          <span>Scavenger hunt around the Murmansk basin</span>
+        </a>
+      </li>
+    </ul>
+    <footer>
+      Local play: <code>python3 serve-xite.py</code> (serves this <code>site/</code> tree).
+    </footer>
+  </main>
+</body>
+</html>

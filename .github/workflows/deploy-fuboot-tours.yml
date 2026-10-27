@@ -1,0 +1,209 @@
+name: Deploy FUBoot Tours
+
+# staging → staging AWS env; main → production AWS env.
+# Tests must pass before deploy. Deploy roles trust only those branch refs via OIDC.
+on:
+  push:
+    branches:
+      - staging
+      - main
+    paths:
+      - "site/**"
+      - "tests/**"
+      - ".github/workflows/deploy-fuboot-tours.yml"
+  pull_request:
+    branches:
+      - staging
+      - main
+    paths:
+      - "site/**"
+      - "tests/**"
+      - ".github/workflows/deploy-fuboot-tours.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-fuboot-tours-${{ github.workflow }}-${{ github.ref_name }}-${{ github.event_name }}
+  # Cancel superseded PR test runs; never cancel in-progress push/deploy runs.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  changes:
+    name: Detect site changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      site: ${{ steps.filter.outputs.site }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Filter paths
+        id: filter
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        with:
+          filters: |
+            site:
+              - 'site/**'
+              - '.github/workflows/deploy-fuboot-tours.yml'
+
+  test:
+    name: Site smoke tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+
+      - name: Install test dependencies
+        run: npm ci
+
+      - name: Run smoke tests
+        run: npm test
+        env:
+          CI: true
+
+  deploy:
+    name: Publish to S3
+    needs:
+      - test
+      - changes
+    # Skip S3/CloudFront/Cloudflare when only tests/** changed. Manual runs always deploy.
+    if: >
+      github.event_name != 'pull_request'
+      && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
+      && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.site == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    steps:
+      - name: Check environment variables
+        run: |
+          if [ -z "${{ vars.AWS_DEPLOY_ROLE_ARN }}" ]; then
+            echo "Set AWS_DEPLOY_ROLE_ARN on the GitHub Environment to the Terraform github_deploy_role_arn output."
+            exit 1
+          fi
+          if [ -z "${{ vars.AWS_REGION }}" ]; then
+            echo "Set AWS_REGION on the GitHub Environment to the Terraform deploy_region output."
+            exit 1
+          fi
+          if [ -z "${{ vars.AWS_SITE_BUCKET }}" ]; then
+            echo "Set AWS_SITE_BUCKET on the GitHub Environment to the Terraform bucket_name output."
+            exit 1
+          fi
+          if [ -z "${{ vars.AWS_DISTRIBUTION_ID }}" ]; then
+            echo "Set AWS_DISTRIBUTION_ID on the GitHub Environment to the Terraform distribution_id output."
+            exit 1
+          fi
+          if [ -z "${{ vars.SITE_HOST }}" ]; then
+            echo "Set SITE_HOST on the GitHub Environment (e.g. fuboot-stg.7oas7er.com or fuboot.7oas7er.com)."
+            exit 1
+          fi
+          if [ -z "${{ vars.CLOUDFLARE_ZONE_ID }}" ]; then
+            echo "Set CLOUDFLARE_ZONE_ID on the GitHub Environment to the Cloudflare zone id."
+            exit 1
+          fi
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
+            echo "Set CLOUDFLARE_API_TOKEN on the GitHub Environment (Zone.Cache Purge + Zone.Read)."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: fuboot-tours-${{ github.run_id }}
+
+      - name: Sync site/ to S3
+        run: |
+          set -euo pipefail
+          # Origin Cache-Control; platform shared-edge cache rules respect this.
+          # HTML / play pages short-lived; VRML + images longer TTL.
+          bucket="s3://${{ vars.AWS_SITE_BUCKET }}"
+          aws s3 sync site "${bucket}" \
+            --delete \
+            --exclude ".DS_Store" \
+            --exclude "*/.DS_Store" \
+            --exclude "*.corrupt.bak" \
+            --exclude "*.wrl" \
+            --exclude "*.WRL" \
+            --exclude "*.jpg" \
+            --exclude "*.jpeg" \
+            --exclude "*.png" \
+            --exclude "*.gif" \
+            --exclude "*.x3d" \
+            --cache-control "public, max-age=60, must-revalidate"
+          aws s3 sync site "${bucket}" \
+            --exclude "*" \
+            --include "*.wrl" \
+            --include "*.WRL" \
+            --include "*.jpg" \
+            --include "*.jpeg" \
+            --include "*.png" \
+            --include "*.gif" \
+            --include "*.x3d" \
+            --exclude ".DS_Store" \
+            --exclude "*/.DS_Store" \
+            --exclude "*.corrupt.bak" \
+            --cache-control "public, max-age=86400"
+
+      - name: Invalidate CloudFront
+        run: |
+          set -euo pipefail
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ vars.AWS_DISTRIBUTION_ID }}" \
+            --paths "/*"
+
+      - name: Purge Cloudflare edge cache
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+          SITE_HOST: ${{ vars.SITE_HOST }}
+        run: |
+          set -euo pipefail
+          # Free plan supports purge-by-URL (not hostname).
+          mapfile -t paths < <(printf '%s\n' \
+            "/" \
+            "/index.html" \
+            "/vrml/play-opensea.html" \
+            "/vrml/harbour/play.html")
+          files_json='['
+          first=1
+          for path in "${paths[@]}"; do
+            if [ "$path" = "/" ]; then
+              url="https://${SITE_HOST}/"
+            else
+              url="https://${SITE_HOST}${path}"
+            fi
+            if [ "$first" -eq 1 ]; then
+              first=0
+            else
+              files_json+=','
+            fi
+            files_json+=$(printf '"%s"' "$url")
+          done
+          files_json+=']'
+          response="$(curl -sS -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "{\"files\": ${files_json}}")"
+          echo "$response" | python3 -c 'import json,sys; data=json.load(sys.stdin); raise SystemExit(0 if data.get("success") else 1)'
+          echo "Purged Cloudflare cache for ${SITE_HOST}"
