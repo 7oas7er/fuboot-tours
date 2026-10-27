@@ -36,8 +36,10 @@ output "synthetic_check_jobs" {
   value = [
     grafana_synthetic_monitoring_check.prod_site.job,
     grafana_synthetic_monitoring_check.stg_site.job,
-    grafana_synthetic_monitoring_check.prod_scores.job,
-    grafana_synthetic_monitoring_check.stg_scores.job,
+    grafana_synthetic_monitoring_check.prod_opensea.job,
+    grafana_synthetic_monitoring_check.stg_opensea.job,
+    grafana_synthetic_monitoring_check.prod_harbour.job,
+    grafana_synthetic_monitoring_check.stg_harbour.job,
   ]
 }
 
