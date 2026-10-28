@@ -8,11 +8,16 @@
 
 ## CSP notes
 
-Play pages load X_ITE from `cdn.jsdelivr.net` and use inline `<script>` / `<style>`. The CloudFront CSP therefore allows:
+Play pages **self-host** X_ITE under `site/vendor/x_ite/` (same origin) and use inline `<script>` / `<style>`. Prefer `'self'` so a stale Cloudflare cache of an older CSP cannot blank the WebGL canvas again.
 
-- `script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net`
-- `style-src 'self' 'unsafe-inline'`
+The CloudFront CSP still allows jsDelivr as a fallback:
+
+- `script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://cdn.jsdelivr.net` (`unsafe-eval` for VRML `javascript:` Script nodes)
+- `style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net` (required if the CDN build is used; without X_ITE CSS the canvas stays 1×1)
+- `font-src` / `img-src` include jsDelivr for CDN fonts/assets
 - `connect-src` / `worker-src` / `child-src` for jsDelivr + `blob:` as needed by X_ITE
+
+After CSP or play-HTML changes: **purge Cloudflare** as well as CloudFront — CF can keep an old `Content-Security-Policy` header on a HIT long after the origin policy is updated.
 
 There is no `/api/scores` behavior and no `strip_aws_headers` Function.
 

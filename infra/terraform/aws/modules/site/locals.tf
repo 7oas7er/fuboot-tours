@@ -16,12 +16,14 @@ locals {
   cache_policy_caching_optimized    = "658327ea-f89d-4fab-a63d-7e88639e58f6"
 
   # Static VRML + X_ITE from jsDelivr; play pages use inline script/style.
+  # X_ITE also pulls its stylesheet + PT Sans fonts from the same CDN — without
+  # those origins the canvas host can be full-size while the WebGL surface stays 1×1.
   content_security_policy = join("; ", [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
-    "font-src 'self' data:",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://cdn.jsdelivr.net",
+    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+    "img-src 'self' data: blob: https://cdn.jsdelivr.net",
+    "font-src 'self' data: https://cdn.jsdelivr.net",
     "connect-src 'self' https://cdn.jsdelivr.net",
     "worker-src 'self' blob:",
     "child-src 'self' blob:",
