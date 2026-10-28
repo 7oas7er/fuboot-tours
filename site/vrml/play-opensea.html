@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>FUBoot Tours — Open Sea (X_ITE)</title>
-  <script defer src="https://cdn.jsdelivr.net/npm/x_ite@16.6.0/dist/x_ite.min.js"></script>
+  <!-- Self-hosted so CSP style-src 'self' is enough (CDN CSS was blocked → 1×1 WebGL canvas). -->
+  <link rel="stylesheet" href="../vendor/x_ite/16.6.0/dist/x_ite.css">
+  <script defer src="../vendor/x_ite/16.6.0/dist/x_ite.min.js"></script>
   <style>
     html, body {
       margin: 0;
@@ -42,8 +44,8 @@
   <x3d-canvas
     id="world"
     src="welt.wrl"
-    contentScale="auto"
-    update="auto"
+    contentScale="1"
+    update="always"
     cache="false"
     debug="true"
     splashScreen="false"
