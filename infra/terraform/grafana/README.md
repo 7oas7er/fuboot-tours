@@ -62,7 +62,8 @@ Top rows use **fixed relative ranges** (hour / day / week / month / year):
 
 - **Requests / 4xx+5xx** — Cloudflare GraphQL Adaptive for ≤30d windows; **year uses CloudWatch** (Free Adaptive max span ≈ 4w2d)
 - **Latency** — CloudFront `OriginLatency` + Cloudflare `avg.originResponseDurationMs` (Free does **not** expose edge TTFB)
-- Month window is `now-30d` with hourly buckets (`datetimeDay_ASC` is not a valid Adaptive orderBy)
+- Month window is `now-29d` with hourly buckets (stays under CF Free Adaptive `maxDuration` ≈ 30d inclusive; `datetimeDay_ASC` is not a valid Adaptive orderBy)
+- Infinity CF GraphQL datetime filters use panel-aware `${__timeFrom}` / `${__timeTo}` (not dashboard `${__from}` / `${__to}`) so fixed-window tiles query their own `timeFrom`
 
 Below that: synthetics (env-scoped landing + play pages); Cloudflare volume / cache & bots / paths & firewall; GitHub CI. CloudWatch scrape remains for year-window / OriginLatency series only (no dedicated CloudWatch dashboard section).
 

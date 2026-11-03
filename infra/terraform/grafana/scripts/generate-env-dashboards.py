@@ -45,9 +45,9 @@ WINDOWS = [
         "order_by": "datetimeHour_ASC",
     },
     {
-        # CF Free maxDuration ≈ 30d; label stays "Last month"
+        # CF Free maxDuration ≈ 30d inclusive; use 29d so Adaptive stays under the cap
         "title": "Last month",
-        "time_from": "now-30d",
+        "time_from": "now-29d",
         "source": "cf",
         "dim": "datetimeHour",
         "order_by": "datetimeHour_ASC",
@@ -212,8 +212,8 @@ def cf_graphql(
         f"        limit: {limit}\n"
         f"        orderBy: [{order_by}]\n"
         "        filter: {\n"
-        '          datetime_geq: "${__from:date:iso}"\n'
-        '          datetime_leq: "${__to:date:iso}"\n'
+        '          datetime_geq: "${__timeFrom:date:iso}"\n'
+        '          datetime_leq: "${__timeTo:date:iso}"\n'
         f'          clientRequestHTTPHost: "{host}"\n'
         f"{eyeball_line}"
         f"{extra_filter}"
@@ -247,8 +247,8 @@ def cf_firewall_events(ref_id: str, host: str) -> dict:
         "        limit: 50\n"
         "        orderBy: [datetime_DESC]\n"
         "        filter: {\n"
-        '          datetime_geq: "${__from:date:iso}"\n'
-        '          datetime_leq: "${__to:date:iso}"\n'
+        '          datetime_geq: "${__timeFrom:date:iso}"\n'
+        '          datetime_leq: "${__timeTo:date:iso}"\n'
         f'          clientRequestHTTPHost: "{host}"\n'
         "        }\n"
         "      ) {\n"
