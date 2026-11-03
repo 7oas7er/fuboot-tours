@@ -65,7 +65,7 @@ Metric tiles use **panel `timeFrom`**, not the dashboard picker alone — so hou
 | Last hour | `now-1h` | Cloudflare Adaptive (`datetimeMinute`) |
 | Last day | `now-1d` | Cloudflare Adaptive (`datetimeHour`) |
 | Last week | `now-7d` | Cloudflare Adaptive (`datetimeHour`) |
-| Last month | `now-30d` | Cloudflare Adaptive (`datetimeHour`) — Free max span ≈ 30d; **no** `datetimeDay_ASC` |
+| Last month | `now-29d` | Cloudflare Adaptive (`datetimeHour`) — Free maxDuration ≈ 30d inclusive; **no** `datetimeDay_ASC` |
 | Last year | `now-365d` | **CloudWatch / Prometheus** only (Adaptive cannot cover a year on Free) |
 
 ## Formatting / layout
@@ -80,6 +80,7 @@ Metric tiles use **panel `timeFrom`**, not the dashboard picker alone — so hou
 
 - Query **`httpRequestsAdaptiveGroups`** for traffic; **`firewallEventsAdaptive`** (table rows) for firewall — **never** `firewallEventsAdaptiveGroups` on Free.
 - Infinity GraphQL query must live in `url_options.body_graphql_query` (and/or `url_options.data`). A top-level `data` field is ignored → empty query → misleading JSONata errors.
+- Infinity CF datetime filters must use `${__timeFrom:date:iso}` / `${__timeTo:date:iso}` (panel relative time), not dashboard `${__from}` / `${__to}`.
 - Filter by `clientRequestHTTPHost` for the env host; zone via `${cf_zone}`.
 - Latency: use `avg.originResponseDurationMs` — Free does **not** entitle edge TTFB (`edgeTimeToFirstByteMs`).
 - Year-window traffic/errors: CloudWatch metrics labeled `project=<slug>` and CloudFront `Name=<env>-<slug>-site-distribution` (or the app’s real distribution Name tag).
