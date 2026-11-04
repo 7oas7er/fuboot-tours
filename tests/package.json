@@ -3,8 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test --test-reporter=spec unit/*.test.mjs"
+    "test": "npm run test:unit",
+    "test:unit": "node --test --test-reporter=spec unit/*.test.mjs"
   },
+
   "engines": {
     "node": ">=20"
   },
