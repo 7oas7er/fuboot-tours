@@ -37,6 +37,16 @@ See [`docs/architecture.md`](docs/architecture.md). Apply order sketch: bootstra
 
 Smoke tests: `cd tests && npm test`
 
+**Pre-commit** (optional but recommended — catches `terraform fmt` and unit-test regressions before CI):
+
+```bash
+pipx install pre-commit   # or: brew install pre-commit
+pre-commit install
+pre-commit run --all-files
+```
+
+Config: [`.pre-commit-config.yaml`](.pre-commit-config.yaml). Hooks run `terraform fmt` under `infra/terraform/` and `npm run test:unit` when `tests/` or `site/` change. Full `terraform validate` stays in CI (needs init/backends).
+
 ## Agents / security
 
 - [`AGENTS.md`](AGENTS.md) — agent workflow (PRs → `staging`)

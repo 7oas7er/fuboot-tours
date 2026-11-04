@@ -33,4 +33,4 @@ Public archive of the FU Berlin *Webbasierte 3D* FUBoot Tours VRML mini-game, wi
 1. [ ] Change matches the request; no unrelated refactors.
 2. [ ] No secrets staged.
 3. [ ] If asked for a PR: target **`staging`** unless Frank asked for a promote-to-`main` PR.
-4. [ ] Docs updated when operator steps change (README or this file).
+4. [ ] Docs updated when operator steps change (README or this file). Optional: `pre-commit install` locally (`.pre-commit-config.yaml`).
