@@ -45,8 +45,8 @@ distribution `Name` tag, and synthetic probe jobs. Do not mix prod and stg serie
 
 Keep this order and these row titles (env-specific hostnames/jobs inside panels):
 
-1. **Traffic — requests** — five fixed windows (see below)
-2. **Errors — 4xx / 5xx (CF counts ≤30d; year = CloudWatch rates)**
+1. **Traffic — request rate (req/s)** — five fixed windows (see below). CF Adaptive: `count / bucket_seconds` (`datetimeMinute` → `/60`, `datetimeHour` → `/3600`); year CloudWatch: PromQL `rate(…[1h])` (already /s). Use rate, not absolute bucket counts, so hour/day/month y-scales are comparable.
+2. **Errors — 4xx / 5xx (% of requests; CF Adaptive ≤30d; year = CloudWatch)** — y-axis 0–100%. CF Adaptive: one query per panel selecting `ratio { status4xx status5xx }` (Cloudflare's `count(4xx|5xx) / count` per time bucket, 0–1) plotted with unit `percentunit`, no panel transforms. Do **not** split total/4xx/5xx into separate queries + `joinByField` + `calculateField`: the join suffixes field display names with the refId (`total A`, `4xx B`), the by-name lookup misses, and `parseFloat("4xx…")` = 4 yields a flat 400% (pinned at 100%). Year: CloudWatch `4xxErrorRate` / `5xxErrorRate` via Prom (already %).
 3. **Latency — origin (CloudFront) + CF `originResponseDurationMs`**
 4. **Synthetics — availability** — site + critical API uptime stats, success/latency charts, check logs
 5. **Cloudflare — volume** — bandwidth, visits, status mix
@@ -65,8 +65,8 @@ Metric tiles use **panel `timeFrom`**, not the dashboard picker alone — so hou
 | Last hour | `now-1h` | Cloudflare Adaptive (`datetimeMinute`) |
 | Last day | `now-1d` | Cloudflare Adaptive (`datetimeHour`) |
 | Last week | `now-7d` | Cloudflare Adaptive (`datetimeHour`) |
-| Last month | `now-29d` | Cloudflare Adaptive (`datetimeHour`) — Free maxDuration ≈ 30d inclusive; **no** `datetimeDay_ASC` |
-| Last year | `now-365d` | **CloudWatch / Prometheus** only (Adaptive cannot cover a year on Free) |
+| Last month | `now-29d` | Cloudflare Adaptive (`datetimeHour`) — Free max span ≈ 30d; use **29d** so inclusive bounds stay under `maxDuration`; **no** `datetimeDay_ASC` |
+| Last year | `now-365d` | Intended CloudWatch history — **but** scrape→Prometheus on Grafana Cloud Free only retains **14 days**, so year tiles stay empty unless you add a native CloudWatch DS or upgrade retention |
 
 ## Formatting / layout
 
@@ -80,15 +80,15 @@ Metric tiles use **panel `timeFrom`**, not the dashboard picker alone — so hou
 
 - Query **`httpRequestsAdaptiveGroups`** for traffic; **`firewallEventsAdaptive`** (table rows) for firewall — **never** `firewallEventsAdaptiveGroups` on Free.
 - Infinity GraphQL query must live in `url_options.body_graphql_query` (and/or `url_options.data`). A top-level `data` field is ignored → empty query → misleading JSONata errors.
-- Infinity CF datetime filters must use `${__timeFrom:date:iso}` / `${__timeTo:date:iso}` (panel relative time), not dashboard `${__from}` / `${__to}`.
+- Fixed-window Infinity panels must use **`${__timeFrom:date:iso}` / `${__timeTo:date:iso}`** (Infinity backend macros). Do **not** use Grafana `${__from}` / `${__to}` — those follow the dashboard picker only, so panel `timeFrom` (hour/day/week/month) is ignored and longer tiles look empty.
 - Filter by `clientRequestHTTPHost` for the env host; zone via `${cf_zone}`.
 - Latency: use `avg.originResponseDurationMs` — Free does **not** entitle edge TTFB (`edgeTimeToFirstByteMs`).
-- Year-window traffic/errors: CloudWatch metrics labeled `project=<slug>` and CloudFront `Name=<env>-<slug>-site-distribution` (or the app’s real distribution Name tag).
+- Year-window traffic/errors: today query Prometheus metrics from CloudWatch scrape (`project=<slug>`, CloudFront `Name=<env>-<slug>-site-distribution`). That path cannot show a calendar year on Grafana Cloud Free (14-day metrics retention). True year history needs a native CloudWatch data source (AWS retains ~15 months) or a paid Grafana retention tier.
 
 ## CloudWatch scrape expectations
 
 - Scrape `AWS/CloudFront` (include **`OriginLatency` Average**) and app compute (e.g. `AWS/Lambda`) in `eu-north-1` + `us-east-1` when CloudFront is involved.
-- Label `project=<slug>`. No dedicated “CloudWatch section” on the dashboard — scrape feeds year windows + origin latency (+ synthetics stack elsewhere).
+- Label `project=<slug>`. No dedicated “CloudWatch section” on the dashboard — scrape feeds origin latency + short-retention Prom series (not a full year on Free).
 
 ## GitHub CI panels
 
