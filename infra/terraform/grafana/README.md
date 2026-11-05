@@ -68,10 +68,9 @@ Platform template (structure / windows / Free limits / new-app checklist):
 
 Top rows use **fixed relative ranges** (hour / day / week / month / year):
 
-- **Requests / 4xx+5xx** — Cloudflare GraphQL Adaptive for ≤30d windows; **year uses CloudWatch** (Free Adaptive max span ≈ 4w2d)
+- **Traffic (req/s) / Errors (% of requests)** — Cloudflare GraphQL Adaptive for ≤29d windows (`${__timeFrom}`/`${__timeTo}` so panel `timeFrom` is honored); Errors = Cloudflare `ratio { status4xx status5xx }` (`count(4xx|5xx) / count` per bucket) in one query, unit `percentunit`, no panel transforms (`scripts/probe-cloudflare-graphql.sh` checks the field on the zone). **Year panels query CloudWatch scrape → Prometheus** (error rates already %; Free retains metrics **14 days** — not a real year unless native CloudWatch DS / Pro)
 - **Latency** — CloudFront `OriginLatency` + Cloudflare `avg.originResponseDurationMs` (Free does **not** expose edge TTFB)
-- Month window is `now-29d` with hourly buckets (stays under CF Free Adaptive `maxDuration` ≈ 30d inclusive; `datetimeDay_ASC` is not a valid Adaptive orderBy)
-- Infinity CF GraphQL datetime filters use panel-aware `${__timeFrom}` / `${__timeTo}` (not dashboard `${__from}` / `${__to}`) so fixed-window tiles query their own `timeFrom`
+- Month window is `now-29d` with hourly buckets (`datetimeDay_ASC` is not a valid Adaptive orderBy; `now-30d` can exceed Free `maxDuration`)
 
 Below that: synthetics (env-scoped landing + play pages); Cloudflare volume / cache & bots / paths & firewall; GitHub CI. CloudWatch scrape remains for year-window / OriginLatency series only (no dedicated CloudWatch dashboard section).
 
