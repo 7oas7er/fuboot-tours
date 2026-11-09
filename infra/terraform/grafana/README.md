@@ -11,7 +11,7 @@ CloudWatch scrape is enabled by default (`enable_cloudwatch_scrape = true`). Org
 | `shared-fuboot-tours-grafana-cloudwatch-role` | IAM role Grafana Labs assumes to read CloudWatch |
 | `grafana_cloud_provider_aws_account` | Links the AWS account to the Grafana stack |
 | `grafana_cloud_provider_aws_cloudwatch_scrape_job` | Scrapes Lambda + CloudFront metrics |
-| Synthetic HTTP checks | Prod/stg landing + play pages (prod: ≤2 EU probes @ 5m; stg: 1 probe @ 15m) |
+| Synthetic HTTP checks | Prod/stg landing + play pages (prod: ≤2 EU probes @ 15m; stg: 1 probe @ 30m) |
 | Infinity data source | Cloudflare GraphQL edge traffic + firewall / rate-limit events (optional until token set) |
 | GitHub data source | Actions workflow runs / usage for deploy + terraform-plan (optional until token set) |
 | Folder + dashboards `FUBoot Tours — Production` / `FUBoot Tours — Staging` | Fixed-window traffic/errors/latency + synthetics + Cloudflare edge + GitHub CI |
@@ -39,14 +39,22 @@ Probe script (optional) still lives under `scripts/` here, or use platform
 
 ### GitHub Actions CI
 
-1. Create a fine-grained PAT for repo `7oas7er/site` with **Actions: Read**, **Metadata: Read**, and **Contents: Read** if the plugin requires it.
-2. Set `github_access_token` in `terraform.tfvars` (or `GITHUB_GRAFANA_TOKEN`).
-3. The `grafana-github-datasource` **plugin** is installed by platform `shared-obs`. This root only creates DS `github-fuboot-tours`.
-4. Both env dashboards include GitHub panels for `deploy-fuboot-tours.yml` and `terraform-plan.yml`.
+1. Create a fine-grained PAT for repo `7oas7er/fuboot-tours` with **Actions: Read**,
+   **Metadata: Read**, and **Contents: Read** if the plugin requires it.
+2. Set `github_access_token` in `terraform.tfvars` (or export `TF_VAR_github_access_token`).
+3. For CI Plan Grafana, also set Environment **`terraform`** secret `GRAFANA_GITHUB_TOKEN`
+   to the same PAT (see [`../docs/terraform-plan-ci.md`](../docs/terraform-plan-ci.md)).
+   Without it, every CI plan proposes destroying DS `github-fuboot-tours` once the DS exists
+   in state (or never creates it). Actions forbids secret names starting with `GITHUB_`.
+4. The `grafana-github-datasource` **plugin** is installed by platform `shared-obs`.
+   This root only creates DS `github-fuboot-tours`.
+5. Both env dashboards include GitHub panels for `deploy-fuboot-tours.yml` and `terraform-plan.yml`.
    Panel targets must put the file name in `options.workflow` (not a top-level `workflow`
    field) — otherwise the plugin queries an empty name and returns `workflow not found`.
 
 Without the GitHub token, synthetics + CloudWatch still apply; the GitHub DS is skipped.
+Dashboards still reference `${github}` → `github-fuboot-tours`, so the GitHub filter shows
+**Datasource not found** until you apply with the token.
 
 ## Dashboards
 
@@ -60,10 +68,9 @@ Platform template (structure / windows / Free limits / new-app checklist):
 
 Top rows use **fixed relative ranges** (hour / day / week / month / year):
 
-- **Requests / 4xx+5xx** — Cloudflare GraphQL Adaptive for ≤30d windows; **year uses CloudWatch** (Free Adaptive max span ≈ 4w2d)
+- **Traffic (req/s) / Errors (% of requests)** — Cloudflare GraphQL Adaptive for ≤29d windows (`${__timeFrom}`/`${__timeTo}` so panel `timeFrom` is honored); Errors = Cloudflare `ratio { status4xx status5xx }` (`count(4xx|5xx) / count` per bucket) in one query, unit `percentunit`, no panel transforms (`scripts/probe-cloudflare-graphql.sh` checks the field on the zone). **Year panels query CloudWatch scrape → Prometheus** (error rates already %; Free retains metrics **14 days** — not a real year unless native CloudWatch DS / Pro)
 - **Latency** — CloudFront `OriginLatency` + Cloudflare `avg.originResponseDurationMs` (Free does **not** expose edge TTFB)
-- Month window is `now-29d` with hourly buckets (stays under CF Free Adaptive `maxDuration` ≈ 30d inclusive; `datetimeDay_ASC` is not a valid Adaptive orderBy)
-- Infinity CF GraphQL datetime filters use panel-aware `${__timeFrom}` / `${__timeTo}` (not dashboard `${__from}` / `${__to}`) so fixed-window tiles query their own `timeFrom`
+- Month window is `now-29d` with hourly buckets (`datetimeDay_ASC` is not a valid Adaptive orderBy; `now-30d` can exceed Free `maxDuration`)
 
 Below that: synthetics (env-scoped landing + play pages); Cloudflare volume / cache & bots / paths & firewall; GitHub CI. CloudWatch scrape remains for year-window / OriginLatency series only (no dedicated CloudWatch dashboard section).
 
