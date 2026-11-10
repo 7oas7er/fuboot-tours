@@ -12,18 +12,22 @@ resource "grafana_cloud_provider_aws_account" "fuboot_tours" {
   stack_id = data.grafana_cloud_stack.fuboot_tours.id
   role_arn = aws_iam_role.grafana_cloudwatch.arn
   name     = "fuboot-tours"
-  regions  = local.scrape_regions
+  # Both regions stay on the account; jobs use regions_subset_override
+  # (Lambda → eu-north-1, CloudFront → us-east-1).
+  regions = local.scrape_regions
 }
 
-resource "grafana_cloud_provider_aws_cloudwatch_scrape_job" "fuboot_tours" {
+# Phase 2 GMD trim: Lambda metrics only in the app region.
+resource "grafana_cloud_provider_aws_cloudwatch_scrape_job" "fuboot_tours_lambda" {
   count    = var.enable_cloudwatch_scrape ? 1 : 0
   provider = grafana.cloud_provider
 
   stack_id                = data.grafana_cloud_stack.fuboot_tours.id
-  name                    = "fuboot-tours-cloudwatch"
+  name                    = "fuboot-tours-lambda"
   aws_account_resource_id = grafana_cloud_provider_aws_account.fuboot_tours[0].resource_id
   enabled                 = true
   export_tags             = true
+  regions_subset_override = ["eu-north-1"]
 
   service {
     name                    = "AWS/Lambda"
@@ -46,11 +50,28 @@ resource "grafana_cloud_provider_aws_cloudwatch_scrape_job" "fuboot_tours" {
 
     metric {
       name       = "Duration"
-      statistics = ["Average", "Maximum"]
+      statistics = ["Average"]
     }
 
     tags_to_add_to_metrics = ["Name"]
   }
+
+  static_labels = {
+    project = "fuboot-tours"
+  }
+}
+
+# Phase 2 GMD trim: CloudFront metrics only in us-east-1 (global service).
+resource "grafana_cloud_provider_aws_cloudwatch_scrape_job" "fuboot_tours_cloudfront" {
+  count    = var.enable_cloudwatch_scrape ? 1 : 0
+  provider = grafana.cloud_provider
+
+  stack_id                = data.grafana_cloud_stack.fuboot_tours.id
+  name                    = "fuboot-tours-cloudfront"
+  aws_account_resource_id = grafana_cloud_provider_aws_account.fuboot_tours[0].resource_id
+  enabled                 = true
+  export_tags             = true
+  regions_subset_override = ["us-east-1"]
 
   service {
     name                    = "AWS/CloudFront"
@@ -62,22 +83,7 @@ resource "grafana_cloud_provider_aws_cloudwatch_scrape_job" "fuboot_tours" {
     }
 
     metric {
-      name       = "BytesDownloaded"
-      statistics = ["Sum"]
-    }
-
-    metric {
-      name       = "4xxErrorRate"
-      statistics = ["Average"]
-    }
-
-    metric {
       name       = "5xxErrorRate"
-      statistics = ["Average"]
-    }
-
-    metric {
-      name       = "TotalErrorRate"
       statistics = ["Average"]
     }
 
