@@ -10,7 +10,7 @@ CloudWatch scrape is enabled by default (`enable_cloudwatch_scrape = true`). Org
 |----------|---------|
 | `shared-fuboot-tours-grafana-cloudwatch-role` | IAM role Grafana Labs assumes to read CloudWatch |
 | `grafana_cloud_provider_aws_account` | Links the AWS account to the Grafana stack |
-| `grafana_cloud_provider_aws_cloudwatch_scrape_job` | Scrapes Lambda + CloudFront metrics |
+| `grafana_cloud_provider_aws_cloudwatch_scrape_job` | Two jobs: Lambda (`eu-north-1`) + CloudFront (`us-east-1`), 900s |
 | Synthetic HTTP checks | Prod/stg landing + play pages (prod: ≤2 EU probes @ 15m; stg: 1 probe @ 30m) |
 | Infinity data source | Cloudflare GraphQL edge traffic + firewall / rate-limit events (optional until token set) |
 | GitHub data source | Actions workflow runs / usage for deploy + terraform-plan (optional until token set) |
@@ -82,7 +82,7 @@ Regenerate JSON after layout edits:
 python3 infra/terraform/grafana/scripts/generate-env-dashboards.py
 ```
 
-CloudWatch scrape includes `OriginLatency` (Average). After changing `cloudwatch.tf`, `terraform apply` this root so Grafana re-exports the metric before latency panels fill in.
+CloudWatch scrape (**900s**): Lambda Invocations/Errors/Throttles/Duration Average; CloudFront Requests/5xxErrorRate/OriginLatency. After changing `cloudwatch.tf`, `terraform apply` this root so Grafana re-exports the metric before latency panels fill in.
 
 ## Apply
 
@@ -100,6 +100,6 @@ AWS profile: `7oas7er`. Tokens may also be supplied via `GRAFANA_*` env vars whe
 
 - Set `enable_cloudwatch_scrape = false` in `terraform.tfvars` to remove the Cloud Provider AWS account + scrape job without deleting the IAM role.
 - Set `enable_cloudflare_edge = false` to skip Cloudflare zoneTag dashboard wiring; `enable_github_ci = false` skips DS `github-fuboot-tours`.
-- CloudWatch scrape covers `eu-north-1` and `us-east-1` (CloudFront metrics).
+- CloudWatch scrape: Lambda job `eu-north-1` only; CloudFront job `us-east-1` only (account still lists both regions). Interval **900s**. Phase 2 metric keep-list: Lambda Invocations/Errors/Throttles/Duration Average; CF Requests/5xxErrorRate/OriginLatency.
 - Tagged AWS resources (`Name` tags on FUBoot Tours) improve metric discovery.
 - Metrics-only for now — no CloudWatch Logs shipping into Grafana.
