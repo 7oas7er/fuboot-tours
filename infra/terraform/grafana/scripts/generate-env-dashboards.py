@@ -27,7 +27,8 @@ Errors y-axis is % of total requests (0–100%), not absolute 4xx/5xx counts:
   CF Adaptive: one query per panel; Cloudflare computes per time bucket
     ratio.status4xx = count(4xx) / count (0–1; same for 5xx)
     plotted as-is with unit percentunit — no panel transforms.
-  CloudWatch year: avg(aws_cloudfront_{4,5}xx_error_rate_average{…})  # already 0–100
+  CloudWatch year: avg(aws_cloudfront_5xx_error_rate_average{…})  # already 0–100
+    (4xx / BytesDownloaded / TotalErrorRate dropped in Phase 2 GMD scrape trim)
 
 Do NOT split total / 4xx / 5xx into separate queries joined with joinByField +
 calculateField. The join adds a `name=<refId>` label to every joined field, so
@@ -443,9 +444,11 @@ def errors_panel(panel_id: int, cfg: dict, win: dict, grid_pos: dict) -> dict:
             "type": "timeseries",
             "title": title,
             "description": (
-                f"CloudFront 4xx/5xx as % of requests ({cf_name}) via CloudWatch scrape → "
-                "Prometheus (already rates 0–100%). Grafana Cloud Free metrics retention "
-                "is 14 days — year history needs native CloudWatch DS or Pro."
+                f"CloudFront 5xx as % of requests ({cf_name}) via CloudWatch scrape → "
+                "Prometheus (already rates 0–100%). Year window is 5xx-only after Phase 2 "
+                "GMD trim (4xx still on Cloudflare Adaptive ≤30d). Grafana Cloud Free "
+                "metrics retention is 14 days — year history needs native CloudWatch DS "
+                "or Pro."
             ),
             "gridPos": grid_pos,
             "timeFrom": time_from,
@@ -455,14 +458,6 @@ def errors_panel(panel_id: int, cfg: dict, win: dict, grid_pos: dict) -> dict:
             "targets": [
                 {
                     "refId": "A",
-                    "expr": (
-                        f'avg(aws_cloudfront_4xx_error_rate_average{{project="fuboot-tours", '
-                        f'Name="{cf_name}"}})'
-                    ),
-                    "legendFormat": "4xx %",
-                },
-                {
-                    "refId": "B",
                     "expr": (
                         f'avg(aws_cloudfront_5xx_error_rate_average{{project="fuboot-tours", '
                         f'Name="{cf_name}"}})'

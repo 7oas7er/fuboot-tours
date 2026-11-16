@@ -87,7 +87,8 @@ Metric tiles use **panel `timeFrom`**, not the dashboard picker alone — so hou
 
 ## CloudWatch scrape expectations
 
-- Scrape `AWS/CloudFront` (include **`OriginLatency` Average**) and app compute (e.g. `AWS/Lambda`) in `eu-north-1` + `us-east-1` when CloudFront is involved.
+- Scrape `AWS/CloudFront` (include **`OriginLatency` Average**) and app compute (e.g. `AWS/Lambda`). Prefer **900s** interval (GMD cost); split jobs / region overrides when useful (Lambda → app region, CloudFront → `us-east-1`).
+- Keep-list floor: Lambda Invocations/Errors/Throttles/Duration Average; CF Requests/5xxErrorRate/OriginLatency (avoid BytesDownloaded / 4xx / TotalErrorRate / Duration Maximum unless a panel needs them).
 - Label `project=<slug>`. No dedicated “CloudWatch section” on the dashboard — scrape feeds origin latency + short-retention Prom series (not a full year on Free).
 
 ## GitHub CI panels

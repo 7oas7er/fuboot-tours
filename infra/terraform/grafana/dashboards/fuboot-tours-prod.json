@@ -1010,7 +1010,7 @@
       "id": 12,
       "type": "timeseries",
       "title": "Last year",
-      "description": "CloudFront 4xx/5xx as % of requests (prod-fuboot-tours-site-distribution) via CloudWatch scrape \u2192 Prometheus (already rates 0\u2013100%). Grafana Cloud Free metrics retention is 14 days \u2014 year history needs native CloudWatch DS or Pro.",
+      "description": "CloudFront 5xx as % of requests (prod-fuboot-tours-site-distribution) via CloudWatch scrape \u2192 Prometheus (already rates 0\u2013100%). Year window is 5xx-only after Phase 2 GMD trim (4xx still on Cloudflare Adaptive \u226430d). Grafana Cloud Free metrics retention is 14 days \u2014 year history needs native CloudWatch DS or Pro.",
       "gridPos": {
         "h": 4,
         "w": 8,
@@ -1083,11 +1083,6 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "avg(aws_cloudfront_4xx_error_rate_average{project=\"fuboot-tours\", Name=\"prod-fuboot-tours-site-distribution\"})",
-          "legendFormat": "4xx %"
-        },
-        {
-          "refId": "B",
           "expr": "avg(aws_cloudfront_5xx_error_rate_average{project=\"fuboot-tours\", Name=\"prod-fuboot-tours-site-distribution\"})",
           "legendFormat": "5xx %"
         }

@@ -34,6 +34,7 @@ One ruleset covering `refs/heads/staging` and `refs/heads/main`:
 2. **Block force pushes** — on  
 3. **Require a pull request before merging** — on (0 approvals while solo; raise to 1 when a second human joins)  
 4. **Require status checks to pass** — on, context **`Required CI`** only (`strict` / up-to-date optional)  
+5. **Require signed commits** — on (verified GPG; Frank’s key `413A590799A3CF31AB2C9ECDE27E5FD506790203` / `frank@schlesinger.com`)  
 
 Do **not** require linear history unless you already use squash-only merges.
 
@@ -46,7 +47,7 @@ Do **not** require linear history unless you already use squash-only merges.
 | Secret scanning | **Enabled** | Public repos may inherit newer-create defaults; **old repos do not** — always enable explicitly |
 | Push protection | **Enabled** | Same |
 | CodeQL **default** setup | **Off** (`not-configured`) | In-repo advanced setup only (`docs/codeql.md`) |
-| Branch ruleset `default` | **Active** on `main` + `staging` | As above |
+| Branch ruleset `default` | **Active** on `main` + `staging` (incl. **require signed commits**) | As above |
 | Actions `GITHUB_TOKEN` | **Read** | Settings → Actions → General → Workflow permissions |
 | Approve PRs with `GITHUB_TOKEN` | **Off** | Same screen |
 | Issues / Wiki / Projects | **Off** (template default) | Optional product override; prefer off for static apps |
@@ -119,11 +120,20 @@ gh api -X POST "repos/$REPO/rulesets" --input - <<'EOF'
         "do_not_enforce_on_create": false,
         "required_status_checks": [{ "context": "Required CI" }]
       }
-    }
+    },
+    { "type": "required_signatures" }
   ],
   "bypass_actors": []
 }
 EOF
+```
+
+Local signing (once per machine): GPG key for `frank@schlesinger.com` must be added under GitHub → Settings → SSH and GPG keys, then:
+
+```bash
+git config --global user.signingkey 413A590799A3CF31AB2C9ECDE27E5FD506790203
+git config --global commit.gpgsign true
+git config --global tag.gpgsign true
 ```
 
 ### Verify (required before checking the box)
@@ -135,6 +145,9 @@ gh api -i "repos/$REPO/vulnerability-alerts" | head -n 1   # expect 204
 gh api "repos/$REPO/actions/permissions/workflow"
 gh api "repos/$REPO/code-scanning/default-setup" --jq .state   # expect not-configured
 gh api "repos/$REPO/rulesets" --jq '.[] | {id,name,enforcement}'
+# expect rules include required_signatures (and deletion, non_fast_forward, pull_request, required_status_checks)
+RULESET_ID=$(gh api "repos/$REPO/rulesets" --jq '.[] | select(.name=="default") | .id')
+gh api "repos/$REPO/rulesets/$RULESET_ID" --jq '[.rules[].type]'
 ```
 
 If secret scanning / Dependabot alerts still show disabled after PUT/PATCH, stop and fix permissions (repo admin) — do not document them as enabled.

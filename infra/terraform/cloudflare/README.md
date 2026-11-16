@@ -1,8 +1,10 @@
 # Cloudflare — FUBoot Tours (DNS only)
 
-Manages DNS for `fuboot.7oas7er.com`, `fuboot-stg.7oas7er.com`, `www`, and apex on zone `7oas7er.com`.
+Manages DNS for `fuboot.7oas7er.com` and `fuboot-stg.7oas7er.com` on zone `7oas7er.com`.
 
-**Zone rulesets** (origin-verify, cache, cache, SSL mode (and sibling-app rate limits / redirects)) are owned by the platform repo:
+Does **not** manage zone apex or `www` (homepage owns `www`; apex → `www` redirect lives in platform `shared-edge`).
+
+**Zone rulesets** (origin-verify, cache, apex redirects, SSL mode (and sibling-app rate limits)) are owned by the platform repo:
 
 https://github.com/7oas7er/platform → `infra/terraform/shared-edge`
 
